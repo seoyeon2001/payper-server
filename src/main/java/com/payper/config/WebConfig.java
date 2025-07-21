@@ -1,5 +1,6 @@
 package com.payper.config;
 
+import com.payper.security.config.SecurityConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.MultipartConfigElement;
@@ -14,7 +15,8 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[] {
-                RootConfig.class
+                RootConfig.class,
+                SecurityConfig.class
         };
     }
 
