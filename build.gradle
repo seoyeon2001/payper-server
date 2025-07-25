@@ -24,6 +24,13 @@ tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
 }
 
+configurations {
+//  compileOnly {
+//    extendsFrom annotationProcessor
+//    }
+  mybatisGenerator
+}
+
 
 dependencies {
   // 스프링
@@ -55,7 +62,6 @@ dependencies {
   implementation 'org.apache.logging.log4j:log4j-api:2.18.0'
   implementation 'org.apache.logging.log4j:log4j-core:2.18.0'
   implementation 'org.slf4j:slf4j-api:2.0.13'
-
 
   // xml내 한글 처리
   implementation 'xerces:xercesImpl:2.12.2'
@@ -94,10 +100,22 @@ dependencies {
   implementation("io.jsonwebtoken:jjwt-api:0.11.5")
   runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
   implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
-
+  
   //sql
   implementation 'javax.annotation:javax.annotation-api:1.3.2'
   implementation 'org.apache.commons:commons-dbcp2:2.9.0'
+
+  // MyBatis Generator
+  mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.4.0'
+  mybatisGenerator 'mysql:mysql-connector-java:8.0.22'
+}
+
+task mybatisGenerator(type: JavaExec) {
+  group = "MyBatis"
+  description = "Run MyBatis Generator"
+  classpath = configurations.mybatisGenerator
+  mainClass = 'org.mybatis.generator.api.ShellRunner'
+  args = ['-configfile', 'src/main/resources/generatorConfig.xml', '-overwrite']
 }
 
 

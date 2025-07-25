@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC
+  "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "https://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+  <context id="MyContext" targetRuntime="MyBatis3">
+
+    <commentGenerator>
+      <property name="suppressAllComments" value="true"/>
+      <property name="suppressDate" value="true"/>
+    </commentGenerator>
+
+    <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+      connectionURL="jdbc:mysql://localhost:3306/final_db?serverTimezone=Asia/Seoul"
+      userId="root"
+      password="1234" />
+
+    <javaModelGenerator targetPackage="com.payper.domain" targetProject="src/main/java">
+      <property name="enableSubPackages" value="true"/>
+      <property name="trimStrings" value="true"/>
+    </javaModelGenerator>
+
+<!--    <sqlMapGenerator targetPackage="com.payper.mapper" targetProject="src/main/resources">-->
+<!--      <property name="enableSubPackages" value="true"/>-->
+<!--      <property name="trimStrings" value="true"/>-->
+<!--    </sqlMapGenerator>-->
+
+<!--    <javaClientGenerator type="XMLMAPPER" targetPackage="com.payper.mapper" targetProject="src/main/java">-->
+<!--      <property name="enableSubPackages" value="true"/>-->
+<!--      <property name="trimStrings" value="true"/>-->
+<!--    </javaClientGenerator>-->
+
+    <table tableName="company" domainObjectName="Company">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="user" domainObjectName="User">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="card" domainObjectName="Card">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="user_card" domainObjectName="UserCard">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="grade" domainObjectName="Grade">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="benefit" domainObjectName="Benefit">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="category" domainObjectName="Category">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="partner" domainObjectName="Partner">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="benefit_limit" domainObjectName="BenefitLimit">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="annual_cost" domainObjectName="AnnualCost">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="discount" domainObjectName="Discount">
+      <generatedKey column="company_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="benefit_grade" domainObjectName="BenefitGrade">
+      <generatedKey column="benefit_grade_id" sqlStatement="JDBC"/>
+    </table>
+    <table tableName="user_card_month_amount" domainObjectName="UserCardMonthAmount">
+      <generatedKey column="user_card_month_amount_id" sqlStatement="JDBC"/>
+    </table>
+
+  </context>
+</generatorConfiguration>
