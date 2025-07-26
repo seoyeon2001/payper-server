@@ -10,11 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UserCardMonthAmount {
-    private Long userCardMonthAmountId;
-
-    private Long userCardId;
-
+    private Integer userCardMonthAmountId;
+    private Integer userCardId;
     private String month;
-
     private Long totalAmount;
 }

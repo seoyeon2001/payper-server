@@ -10,11 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Partner {
-    private Long partnerId;
-
-    private Long categoryId;
-
-    private Long benefitId;
-
+    private Integer partnerId;
+    private Integer categoryId;
+    private Integer benefitId;
     private String partnerName;
 }

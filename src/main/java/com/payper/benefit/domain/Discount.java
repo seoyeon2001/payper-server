@@ -10,13 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Discount {
-    private Long discountId;
-
+    private Integer discountId;
     private String type;
-
-    private Integer amount;
-
-    private Integer limitCount;
-
-    private Integer limitAmount;
+    private Long amount;
+    private Long limitCount;
+    private Long limitAmount;
+    private Integer benefitGradeId;
 }

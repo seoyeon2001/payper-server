@@ -10,11 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class BenefitGrade {
-    private Long benefitGradeId;
-
-    private Long discountId;
-
-    private Long gradeId;
-
-    private Long benefitId;
+    private Integer benefitGradeId;
+    private Integer gradeId;
+    private Integer benefitId;
 }

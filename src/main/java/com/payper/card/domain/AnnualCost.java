@@ -5,18 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AnnualCost {
-    private Long annualCostId;
-
-    private Long cardId;
-
+    private Integer annualCostId;
+    private Integer cardId;
     private String brandName;
-
-    private Integer annualFee;
-
-    private Integer coAnnualFee;
+    private Long annualFee;
+    private Long coAnnualFee;
 }

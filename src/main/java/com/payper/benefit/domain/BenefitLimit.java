@@ -10,15 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class BenefitLimit {
-    private Long benefitLimitId;
-
-    private Long benefitId;
-
-    private Integer limitCountPerDay;
-
-    private Integer limitCountPerMonth;
-
-    private Integer limitCountPerYear;
-
-    private Integer limitAmountPerPay;
+    private Integer benefitLimitId;
+    private Integer benefitId;
+    private Long limitCountPerDay;
+    private Long limitCountPerMonth;
+    private Long limitCountPerYear;
+    private Long limitAmountPerPay;
 }
