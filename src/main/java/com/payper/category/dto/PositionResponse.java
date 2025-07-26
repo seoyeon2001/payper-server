@@ -1,4 +1,4 @@
-package com.payper.user.dto;
+package com.payper.category.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserResponse {
-    private int id;
-    private String name;
+public class PositionResponse {
+    String x;
+    String y;
+    int distance;
 }

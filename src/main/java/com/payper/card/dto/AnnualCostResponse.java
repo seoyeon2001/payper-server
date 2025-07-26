@@ -1,4 +1,4 @@
-package com.payper.user.dto;
+package com.payper.card.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserResponse {
-    private int id;
-    private String name;
+public class AnnualCostResponse {
+	private String brandName;
+	private String annualFee;
+	private String coAnnualFee;
 }

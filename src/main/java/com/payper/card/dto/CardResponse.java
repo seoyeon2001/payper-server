@@ -3,17 +3,23 @@ package com.payper.card.dto;
 import java.util.List;
 
 import com.payper.benefit.dto.BenefitResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class CardResponse{
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CardResponse {
 	private int id;
 	private String name;
 	private String type;
 	private String imageUrl;
 	private CardCompanyResponse company;
-	private List<BenefitResponse> benefit;
-	private AnnualCost annualCost;
-	private List<GradeResponse> grade;
+	private List<BenefitResponse> benefits;
+	private AnnualCostResponse annualCost;
+	private List<GradeResponse> grades;
 	private String cardIssueUrl;
 }
