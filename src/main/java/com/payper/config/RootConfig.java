@@ -21,7 +21,10 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
-@ComponentScan({"com.payper.config"})
+@ComponentScan(basePackages = {
+        "com.payper.config",
+        "com.payper.partner.service"
+})
 @Log4j2
 @EnableTransactionManagement
 public class RootConfig {

@@ -7,7 +7,10 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 import org.springframework.web.servlet.config.annotation.*;
 
 @EnableWebMvc
-@ComponentScan(basePackages={"com.payper.exception"})
+@ComponentScan(basePackages={
+        "com.payper.exception",
+        "com.payper.partner.controller"
+})
 public class ServletConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
