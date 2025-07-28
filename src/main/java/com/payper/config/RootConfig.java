@@ -20,7 +20,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource({"classpath:/application.properties"})
+@PropertySource({
+        "classpath:/application.properties",
+        "classpath:/application-db.properties",
+        "classpath:/application-kakao.properties"
+})
 @ComponentScan(basePackages = {
         "com.payper.config",
         "com.payper.partner.service"
