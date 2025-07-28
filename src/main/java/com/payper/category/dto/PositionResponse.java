@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class PositionResponse {
     String x;
     String y;
-    int distance;
+    Integer distance;
 }

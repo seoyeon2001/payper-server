@@ -14,14 +14,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class BenefitResponse {
-	private int id;
+	private Integer id;
 	private String title;
 	private String summary;
 	private String description;
 	private String iconUrl;
 	private LimitResponse limit;
-	private List<BenefitGradeResponse> benefitGrades;
-	private List<CategoryResponse> categories;
-	private List<PartnerResponse> partners;
-	private int minPayment;
+	private List<BenefitGradeResponse> benefitGradeList;
+	private List<CategoryResponse> categoryList;
+	private List<PartnerResponse> partnerList;
+	private Long minPayment;
 }

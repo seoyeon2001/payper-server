@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CardResponse {
-	private int id;
+	private Integer id;
 	private String name;
 	private String type;
 	private String imageUrl;
 	private CardCompanyResponse company;
-	private List<BenefitResponse> benefits;
+	private List<BenefitResponse> benefitList;
 	private AnnualCostResponse annualCost;
-	private List<GradeResponse> grades;
+	private List<GradeResponse> gradeList;
 	private String cardIssueUrl;
 }

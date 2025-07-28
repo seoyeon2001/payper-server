@@ -13,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class PartnerResponse {
-    private int id;
+    private Integer id;
     private String name;
     private PositionResponse position;
-    private List<CardResponse> myCards;
+    private List<CardResponse> cardList;
 }
 

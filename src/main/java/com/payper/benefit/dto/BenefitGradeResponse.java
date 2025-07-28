@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class BenefitGradeResponse {
-	private int id;
+	private Integer id;
 	private GradeResponse grade;
 	private DiscountResponse discount;
 }

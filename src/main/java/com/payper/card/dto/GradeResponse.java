@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class GradeResponse {
-	private int id;
-	private int start;
-	private int end;
-	private int totalDiscount;
+	private Integer id;
+	private Long start;
+	private Long end;
+	private Long totalDiscount;
 }

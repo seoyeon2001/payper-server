@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CategoryResponse {
-	private int id;
+	private Integer id;
 	private String name;
 }

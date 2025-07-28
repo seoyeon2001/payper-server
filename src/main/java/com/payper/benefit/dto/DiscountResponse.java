@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DiscountResponse {
 	private String type;
-	private int amount;
-	private int limitCount;
-	private int limitAmount;
+	private Long amount;
+	private Long limitCount;
+	private Long limitAmount;
 }

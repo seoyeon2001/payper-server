@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LimitResponse {
-	private int limitCountPerDay;
-	private int limitCountPerMonth;
-	private int limitCountPerYear;
-	private int limitAmountPerPay;
+	private Long limitCountPerDay;
+	private Long limitCountPerMonth;
+	private Long limitCountPerYear;
+	private Long limitAmountPerPay;
 }
