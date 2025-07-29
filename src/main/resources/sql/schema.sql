@@ -1,3 +1,4 @@
+START TRANSACTION;
 -- =========================
 -- DROP TABLES IN FK ORDER
 -- =========================
@@ -5,18 +6,14 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS user_card_month_amount;
-DROP TABLE IF EXISTS benefit_grade;
-DROP TABLE IF EXISTS discount;
-DROP TABLE IF EXISTS benefit_limit;
-DROP TABLE IF EXISTS partner;
+DROP TABLE IF EXISTS benefit_grade_discount;
+DROP TABLE IF EXISTS benefit_category;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS benefit;
 DROP TABLE IF EXISTS grade;
-DROP TABLE IF EXISTS annual_cost;
 DROP TABLE IF EXISTS user_card;
 DROP TABLE IF EXISTS card;
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS company;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -25,36 +22,25 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- CREATE TABLES START
 -- =========================
 
-
-
--- 카드사
-CREATE TABLE `company` (
-                           `company_id` INT NOT NULL AUTO_INCREMENT,
-                           `company_name` VARCHAR(10) NOT NULL,
-                           PRIMARY KEY (`company_id`)
-);
-
 -- 사용자
 CREATE TABLE `user` (
                         `user_id` INT NOT NULL AUTO_INCREMENT,
                         `oauth_provider` VARCHAR(255) NOT NULL,
                         `oauth_id` VARCHAR(255) NOT NULL,
                         `user_name` VARCHAR(10) NOT NULL,
+                        `connected_id` VARCHAR(255) NULL,
                         PRIMARY KEY (`user_id`)
 );
 
 -- 카드
 CREATE TABLE `card` (
                         `card_id` INT NOT NULL AUTO_INCREMENT,
-                        `company_id` INT NOT NULL,
                         `card_name` VARCHAR(100) NOT NULL,
                         `card_type` ENUM('CREDIT', 'CHECK') NOT NULL,
                         `card_image_url` VARCHAR(255) NOT NULL,
                         `card_issue_url` VARCHAR(255) NOT NULL,
-                        PRIMARY KEY (`card_id`),
-                        CONSTRAINT `FK_company_TO_card` FOREIGN KEY (`company_id`)
-                            REFERENCES `company` (`company_id`)
-                            ON DELETE CASCADE ON UPDATE CASCADE
+                        `company_name` VARCHAR(10) NOT NULL,
+                        PRIMARY KEY (`card_id`)
 );
 
 -- 사용자별 카드
@@ -75,7 +61,7 @@ CREATE TABLE `user_card` (
 CREATE TABLE `grade` (
                          `grade_id` INT NOT NULL AUTO_INCREMENT,
                          `card_id` INT NOT NULL,
-                         `start` BIGINT NULL,
+                         `start` BIGINT DEFAULT 0,
                          `end` BIGINT NULL,
                          `total_discount` BIGINT NULL,
                          PRIMARY KEY (`grade_id`),
@@ -92,7 +78,6 @@ CREATE TABLE `benefit` (
                            `benefit_summary` VARCHAR(255) NOT NULL,
                            `benefit_description` LONGTEXT NOT NULL,
                            `benefit_icon_url` VARCHAR(255) NOT NULL,
-                           `min_payment` BIGINT NULL,
                            PRIMARY KEY (`benefit_id`),
                            CONSTRAINT `FK_card_TO_benefit` FOREIGN KEY (`card_id`)
                                REFERENCES `card` (`card_id`)
@@ -102,87 +87,46 @@ CREATE TABLE `benefit` (
 -- 카테고리
 CREATE TABLE `category` (
                             `category_id` INT NOT NULL AUTO_INCREMENT,
-                            `benefit_id` INT NOT NULL,
                             `category_name` VARCHAR(10) NOT NULL,
                             `pre_category_id` INT NULL,
                             PRIMARY KEY (`category_id`),
-                            CONSTRAINT `FK_benefit_TO_category` FOREIGN KEY (`benefit_id`)
-                                REFERENCES `benefit` (`benefit_id`)
-                                ON DELETE CASCADE ON UPDATE CASCADE,
                             CONSTRAINT `FK_category_TO_category` FOREIGN KEY (`pre_category_id`)
                                 REFERENCES `category` (`category_id`)
                                 ON DELETE SET NULL ON UPDATE CASCADE
 );
 
--- 가맹점
-CREATE TABLE `partner` (
-                           `partner_id` INT NOT NULL AUTO_INCREMENT,
-                           `category_id` INT NOT NULL,
+-- 혜택_카테고리
+CREATE TABLE `benefit_category` (
+                           `benefit_category_id` INT NOT NULL AUTO_INCREMENT,
                            `benefit_id` INT NOT NULL,
-                           `partner_name` VARCHAR(100) NOT NULL,
-                           PRIMARY KEY (`partner_id`),
-                           CONSTRAINT `FK_category_TO_partner` FOREIGN KEY (`category_id`)
-                               REFERENCES `category` (`category_id`)
-                               ON DELETE CASCADE ON UPDATE CASCADE,
-                           CONSTRAINT `FK_benefit_TO_partner` FOREIGN KEY (`benefit_id`)
+                           `category_id` INT NOT NULL,
+                           PRIMARY KEY (`benefit_category_id`),
+                           CONSTRAINT `FK_benefit_TO_benefit_category` FOREIGN KEY (`benefit_id`)
                                REFERENCES `benefit` (`benefit_id`)
+                               ON DELETE CASCADE ON UPDATE CASCADE,
+                            CONSTRAINT `FK_category_TO_benefit_category` FOREIGN KEY (`category_id`)
+                               REFERENCES `category` (`category_id`)
                                ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- 혜택 제한
-CREATE TABLE `benefit_limit` (
-                                 `benefit_limit_id` INT NOT NULL AUTO_INCREMENT,
-                                 `benefit_id` INT NOT NULL,
-                                 `limit_count_per_day` BIGINT NULL,
-                                 `limit_count_per_month` BIGINT NULL,
-                                 `limit_count_per_year` BIGINT NULL,
-                                 `limit_amount_per_pay` BIGINT NULL,
-                                 PRIMARY KEY (`benefit_limit_id`),
-                                 CONSTRAINT `FK_benefit_TO_benefit_limit` FOREIGN KEY (`benefit_id`)
-                                     REFERENCES `benefit` (`benefit_id`)
-                                     ON DELETE CASCADE ON UPDATE CASCADE
-);
 
-
--- 연회비
-CREATE TABLE `annual_cost` (
-                               `annual_cost_id` INT NOT NULL AUTO_INCREMENT,
-                               `card_id` INT NOT NULL,
-                               `brand_name` VARCHAR(10) NULL,
-                               `annual_fee` BIGINT NULL,
-                               `co_annual_fee` BIGINT NULL,
-                               PRIMARY KEY (`annual_cost_id`),
-                               CONSTRAINT `FK_card_TO_annual_cost` FOREIGN KEY (`card_id`)
-                                   REFERENCES `card` (`card_id`)
-                                   ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- 혜택별 실적별
-CREATE TABLE `benefit_grade` (
+-- 혜택별 실적별 할인
+CREATE TABLE `benefit_grade_discount` (
                                  `benefit_grade_id` INT NOT NULL AUTO_INCREMENT,
                                  `grade_id` INT NOT NULL,
                                  `benefit_id` INT NOT NULL,
+                                 `type` ENUM('RATE', 'FIXED_AMOUNT') NOT NULL,
+                                 `amount` BIGINT NOT NULL,
+                                 `limit_count` BIGINT NULL,
+                                 `limit_amount` BIGINT NULL,
+                                 `min_payment` BIGINT DEFAULT 0,
                                  PRIMARY KEY (`benefit_grade_id`),
-                                 CONSTRAINT `FK_grade_TO_benefit_grade` FOREIGN KEY (`grade_id`)
+                                 CONSTRAINT `FK_grade_TO_benefit_grade_discount` FOREIGN KEY (`grade_id`)
                                      REFERENCES `grade` (`grade_id`)
                                      ON DELETE CASCADE ON UPDATE CASCADE,
-                                 CONSTRAINT `FK_benefit_TO_benefit_grade` FOREIGN KEY (`benefit_id`)
+                                 CONSTRAINT `FK_benefit_TO_benefit_grade_discount` FOREIGN KEY (`benefit_id`)
                                      REFERENCES `benefit` (`benefit_id`)
                                      ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- 할인
-CREATE TABLE `discount` (
-                            `discount_id` INT NOT NULL AUTO_INCREMENT,
-                            `benefit_grade_id` INT NOT NULL,
-                            `type` ENUM('RATE', 'FIXED_AMOUNT') NOT NULL,
-                            `amount` BIGINT NOT NULL,
-                            `limit_count` BIGINT NULL,
-                            `limit_amount` BIGINT NULL,
-                            PRIMARY KEY (`discount_id`),
-                            CONSTRAINT `FK_benefit_grade_TO_discount` FOREIGN KEY (`benefit_grade_id`)
-                                REFERENCES `benefit_grade` (`benefit_grade_id`)
-                                ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -197,3 +141,4 @@ CREATE TABLE `user_card_month_amount` (
                                               REFERENCES `user_card` (`user_card_id`)
                                               ON DELETE CASCADE ON UPDATE CASCADE
 );
+COMMIT;
