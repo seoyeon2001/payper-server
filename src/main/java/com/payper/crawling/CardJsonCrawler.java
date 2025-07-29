@@ -16,11 +16,10 @@ public class CardJsonCrawler {
         ObjectMapper mapper = new ObjectMapper();
         OkHttpClient client = new OkHttpClient();
 
-        String baseUrl = "https://www.banksalad.com/_next/data/FyWzuXb7PkPehgVsR-3sk/product/cards/CARD%06d.json";
+        String baseUrl = "https://api.card-gorilla.com:8080/v1/cards/";
 
-        for (int i = 1; i <= 2; i++) { //test용
-            String cardId = String.format("CARD%06d", i);
-            String url = String.format(baseUrl, i);
+        for (int cardId = 1; cardId <= 2; cardId++) { //test용
+            String url = baseUrl + cardId;
 
             try {
                 Request request = new Request.Builder()
@@ -36,19 +35,10 @@ public class CardJsonCrawler {
                     continue;
                 }
 
-                if (!new org.json.JSONObject(body)
-                        .getJSONObject("pageProps")
-                        .optBoolean("shouldShowErrorPage", false)) {
-
-                    CardData data = parseCardJson(body);
-                    log.info("ID {} 유효", cardId);
-                    log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data));
-                    // 여기서 data를 DB insert 로직 또는 LLM 요청에 넘기면 됨
-
-                } else {
-                    log.info("ID {} 무효", cardId);
-                }
-
+                CardData data = parseCardJson(body);
+                log.info("ID {} 유효", cardId);
+                log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data));
+                    // 여기서 data를 DB insert 로직 또는 LLM 요청에 넘기면 됨.
             } catch (Exception e) {
                 log.info("ID {} 예외 발생 : {}", cardId, e.getMessage());
             }

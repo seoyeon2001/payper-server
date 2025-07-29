@@ -14,49 +14,23 @@ public class CardJsonExtractor {
         JsonNode root = mapper.readTree(json);
 
         CardData data = new CardData();
-
-        JsonNode card = root.path("pageProps")
-                .path("dehydratedState")
-                .path("queries").get(0)
-                .path("state")
-                .path("data")
-                .path("card")
-                .path("card");
-
-        data.cardName = card.path("name").asText("");
-        data.imageUrl = card.path("imageUrl").asText("");
-
-        // 카드사
-        JsonNode organization = card.path("organization");
-        data.companyName = organization.path("name").asText("");
-
-        // 카드 타입
-        String cardTypeEnum = card.path("cardTypeEnum").asText("");
-        if (cardTypeEnum.startsWith("CARD_TYPE_")) {
-            data.cardType = cardTypeEnum.substring("CARD_TYPE_".length());
-        } else {
-            data.cardType = "UNKNOWN";
-        }
-
-        // 발급 URL
-        JsonNode issueUrls = card.path("issueUrls");
-        if (issueUrls.isArray()) {
-            for (JsonNode issue : issueUrls) {
-                if ("CARD_ISSUE_CHANNEL_WEB".equals(issue.path("channel").asText())) {
-                    data.issueUrl = issue.path("url").asText("");
-                    break;
-                }
-            }
-        }
+        data.cardName = root.path("name").asText("");
+        data.companyName = root.path("corp").path("name").asText("");
+        data.cardType = MatchCardType(root.path("cate").asText(""));
+        data.imageUrl = root.path("card_img").path("url").asText("");
+        data.issueUrl = root.path("request_pc").asText(null);
 
         data.benefits = new ArrayList<>();
-        JsonNode steps = card.path("chartBenefits");
-        if (steps.isArray()) {
-            for (JsonNode step : steps) {
+        JsonNode keyBenefits = root.path("key_benefit");
+        if (keyBenefits.isArray()) {
+            for (JsonNode keyBenefit : keyBenefits) {
+                if(keyBenefit.path("cate").path("idx").asInt() == 28 ||
+                                keyBenefit.path("cate").path("name").asText("").equals("유의사항")
+                ) continue;
                 Benefit benefit = new Benefit();
-                benefit.title = step.path("title").asText("");
-                benefit.summary = step.path("summary").asText("");
-                benefit.description = step.path("description").asText("");
+                benefit.title = keyBenefit.path("title").asText("");
+                benefit.summary = keyBenefit.path("comment").asText("");
+                benefit.description = keyBenefit.path("info").asText("");
 
                 data.benefits.add(benefit);
             }
@@ -65,13 +39,11 @@ public class CardJsonExtractor {
         return data;
     }
 
-//    // test
-//    public static void main(String[] args) throws Exception {
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode root = mapper.readTree(new File("C:/Users/keji1/IdeaProjects/payper-devs/payper-server/CARD004231.json"));
-//        String json = mapper.writeValueAsString(root);
-//
-//        CardData data = parseCardJson(json);
-//        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data));
-//    }
+    private static String MatchCardType(String cate) throws Exception {
+        switch (cate) {
+            case "CRD": return "CREDIT";
+            case "CHK": return "CHECK";
+            default: return "";
+        }
+    }
 }
