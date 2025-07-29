@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class UserCardMonthAmount {
     private Integer userCardMonthAmountId;
     private Integer userCardId;
-    private String month;
-    private Long totalAmount;
+    private String month; // ex.202507
+    private Long totalAmount; // 누적 금액
 }

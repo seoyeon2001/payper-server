@@ -1,6 +1,5 @@
 package com.payper.category.domain;
 
-import java.util.Date;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -14,8 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Category {
     private Integer categoryId;
-    private Integer benefitId;
     private String categoryName;
-    private Integer preCategoryId;
-    private List<Partner> partnerList;
+    private Integer preCategoryId; // 상위 카테고리 Id nullable
+    private List<BenefitCategory> benefitCategoryList;
 }

@@ -1,7 +1,6 @@
 package com.payper.benefit.domain;
 
-import com.payper.category.domain.Category;
-import com.payper.category.domain.Partner;
+import com.payper.category.domain.BenefitCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,12 +15,10 @@ import java.util.List;
 public class Benefit {
     private Integer benefitId;
     private Integer cardId;
-    private String benefitTitle;
-    private String benefitSummary;
+    private String benefitTitle; // 혜택 제목
+    private String benefitSummary; // 혜택 간단 설명
+    private String benefitDescription; // 혜택 확인 사항
     private String benefitIconUrl;
-    private Long minPayment;
-    private String benefitDescription;
-    private List<Category> cartegoryList; // 카테고리 리스트
-    private List<Partner> partnerList; // 파트너 리스트
-    private List<BenefitGrade> benefitGradeList;
+    private List<BenefitCategory> benefitCategoryList;
+    private List<BenefitGradeDiscount> benefitGradeDiscountList;
 }

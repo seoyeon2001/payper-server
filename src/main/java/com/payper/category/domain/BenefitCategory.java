@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Partner {
-    private Integer partnerId;
-    private Integer categoryId;
+public class BenefitCategory {
+    private Integer benefitCategoryId;
     private Integer benefitId;
-    private String partnerName;
+    private Integer categoryId;
 }
