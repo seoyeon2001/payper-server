@@ -9,7 +9,8 @@ import org.springframework.web.servlet.config.annotation.*;
 @EnableWebMvc
 @ComponentScan(basePackages={
         "com.payper.exception",
-        "com.payper.partner.controller"
+        "com.payper.partner.controller",
+        "com.payper.codef.controller"
 })
 public class ServletConfig implements WebMvcConfigurer {
     @Override

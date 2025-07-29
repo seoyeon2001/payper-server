@@ -36,7 +36,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .addFilterBefore(encodingFilter(), CsrfFilter.class)
-                .csrf(Customizer.withDefaults())              // CSRF 보호 기본 설정 적용 (생략해도 자동 적용됨)
+                .csrf().disable()
+//                .csrf(Customizer.withDefaults())              // CSRF 보호 기본 설정 적용 (생략해도 자동 적용됨)
                 //.httpBasic(Customizer.withDefaults())         // HTTP 기본 인증 사용 (브라우저 팝업 뜨는 방식)
                 //.formLogin(Customizer.withDefaults())         // 기본 로그인 폼 사용
                 .authorizeHttpRequests(authorize -> authorize
