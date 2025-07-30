@@ -1,7 +1,6 @@
 package com.payper.partner.service;
 
 import com.payper.partner.dto.PartnerKeywordSearchRequest;
-import com.payper.partner.dto.PartnerSearchOption;
 import com.payper.partner.dto.PartnerKeywordSearchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,34 +14,22 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 @RequiredArgsConstructor
 public class PartnerService {
-    @Value("${kakao.api.key}")
+    @Value("${kakao.client.id}")
     private String apiKey;
 
-    @Value("${kakao.api.url}")
+    @Value("${kakao.map.url}")
     private String apiUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    private PartnerSearchOption getOptionByCategory(String category){
-        switch (category){
-            case "CS2":
-                return new PartnerSearchOption("편의점", 500);
-            case "CT1":
-                return new PartnerSearchOption("영화관", 2000);
-            default:
-                return new PartnerSearchOption("", 500);
-        }
-    }
 
     public PartnerKeywordSearchResponse findNearbyKeyword(PartnerKeywordSearchRequest request) {
-        PartnerSearchOption option = getOptionByCategory(request.getCategory());
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
-                .queryParam("category_group_code", request.getCategory())
-                .queryParam("query", option.getQuery())
+                .queryParam("query", request.getQuery())
                 .queryParam("x", request.getX())
                 .queryParam("y", request.getY())
-                .queryParam("radius", option.getRadius())
+                .queryParam("radius", 1000)
                 .queryParam("sort", "distance");
 
         HttpHeaders headers = new HttpHeaders();
