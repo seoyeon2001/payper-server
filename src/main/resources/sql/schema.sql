@@ -40,6 +40,7 @@ CREATE TABLE `card` (
                         `card_image_url` VARCHAR(255) NOT NULL,
                         `card_issue_url` VARCHAR(255) NOT NULL,
                         `company_name` VARCHAR(10) NOT NULL,
+                        `annual_fee` VARCHAR(255) default '',
                         PRIMARY KEY (`card_id`)
 );
 
@@ -50,11 +51,9 @@ CREATE TABLE `user_card` (
                              `card_id` INT NOT NULL,
                              PRIMARY KEY (`user_card_id`),
                              CONSTRAINT `FK_user_TO_user_card` FOREIGN KEY (`user_id`)
-                                 REFERENCES `user` (`user_id`)
-                                 ON DELETE CASCADE ON UPDATE CASCADE,
+                                 REFERENCES `user` (`user_id`),
                              CONSTRAINT `FK_card_TO_user_card` FOREIGN KEY (`card_id`)
                                  REFERENCES `card` (`card_id`)
-                                 ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- 실적 등급
@@ -67,7 +66,6 @@ CREATE TABLE `grade` (
                          PRIMARY KEY (`grade_id`),
                          CONSTRAINT `FK_card_TO_grade` FOREIGN KEY (`card_id`)
                              REFERENCES `card` (`card_id`)
-                             ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- 혜택
@@ -81,7 +79,6 @@ CREATE TABLE `benefit` (
                            PRIMARY KEY (`benefit_id`),
                            CONSTRAINT `FK_card_TO_benefit` FOREIGN KEY (`card_id`)
                                REFERENCES `card` (`card_id`)
-                               ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- 카테고리
@@ -92,7 +89,6 @@ CREATE TABLE `category` (
                             PRIMARY KEY (`category_id`),
                             CONSTRAINT `FK_category_TO_category` FOREIGN KEY (`pre_category_id`)
                                 REFERENCES `category` (`category_id`)
-                                ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- 혜택_카테고리
@@ -106,7 +102,6 @@ CREATE TABLE `benefit_category` (
                                ON DELETE CASCADE ON UPDATE CASCADE,
                             CONSTRAINT `FK_category_TO_benefit_category` FOREIGN KEY (`category_id`)
                                REFERENCES `category` (`category_id`)
-                               ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -122,11 +117,9 @@ CREATE TABLE `benefit_grade_discount` (
                                  `min_payment` BIGINT DEFAULT 0,
                                  PRIMARY KEY (`benefit_grade_id`),
                                  CONSTRAINT `FK_grade_TO_benefit_grade_discount` FOREIGN KEY (`grade_id`)
-                                     REFERENCES `grade` (`grade_id`)
-                                     ON DELETE CASCADE ON UPDATE CASCADE,
+                                     REFERENCES `grade` (`grade_id`),
                                  CONSTRAINT `FK_benefit_TO_benefit_grade_discount` FOREIGN KEY (`benefit_id`)
                                      REFERENCES `benefit` (`benefit_id`)
-                                     ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -139,6 +132,5 @@ CREATE TABLE `user_card_month_amount` (
                                           PRIMARY KEY (`user_card_month_amount_id`),
                                           CONSTRAINT `FK_user_card_TO_user_card_month_amount` FOREIGN KEY (`user_card_id`)
                                               REFERENCES `user_card` (`user_card_id`)
-                                              ON DELETE CASCADE ON UPDATE CASCADE
 );
 COMMIT;
