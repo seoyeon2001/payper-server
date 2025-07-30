@@ -85,6 +85,7 @@ CREATE TABLE `benefit` (
 CREATE TABLE `category` (
                             `category_id` INT NOT NULL AUTO_INCREMENT,
                             `category_name` VARCHAR(10) NOT NULL,
+                            `category_image_url` VARCHAR(255) NULL,
                             `pre_category_id` INT NULL,
                             PRIMARY KEY (`category_id`),
                             CONSTRAINT `FK_category_TO_category` FOREIGN KEY (`pre_category_id`)

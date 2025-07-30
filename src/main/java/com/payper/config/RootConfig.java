@@ -29,7 +29,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         "com.payper.config",
         "com.payper.partner.service",
         "com.payper.codef.service",
-        "com.payper.user.service"
+        "com.payper.user.service",
+        "com.payper.card.service"
 })
 @MapperScan(value = "com.payper", annotationClass = Mapper.class)
 @Log4j2

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.payper.card.mapper.CardMapper">
+
+    <!-- 등급 -->
+    <resultMap id="GradeResponseMap" type="GradeResponse">
+        <id property="id" column="grade_id"/>
+        <result property="start" column="start"/>
+        <result property="end" column="end"/>
+        <result property="totalDiscount" column="total_discount"/>
+    </resultMap>
+
+    <!-- 혜택별 등급 할인 -->
+    <resultMap id="BenefitGradeResponseMap" type="BenefitGradeResponse">
+        <id property="id" column="benefit_grade_id"/>
+        <result property="type" column="type"/>
+        <result property="amount" column="amount"/>
+        <result property="limitCount" column="limit_count"/>
+        <result property="limitAmount" column="limit_amount"/>
+
+        <association property="grade" javaType="GradeResponse" resultMap="GradeResponseMap"/>
+    </resultMap>
+
+    <!-- 카테고리 -->
+    <resultMap id="CategoryResponseMap" type="CategoryResponse">
+        <id property="id" column="category_id"/>
+        <result property="name" column="category_name"/>
+        <result property="imageUrl" column="category_image_url"/>
+    </resultMap>
+
+    <!-- 혜택 -->
+    <resultMap id="BenefitResponseMap" type="BenefitResponse">
+        <id property="id" column="benefit_id"/>
+        <result property="title" column="benefit_title"/>
+        <result property="summary" column="benefit_summary"/>
+        <result property="description" column="benefit_description"/>
+        <result property="iconUrl" column="benefit_icon_url"/>
+        <result property="minPayment" column="min_payment"/>
+        <collection property="benefitGradeList" resultMap="BenefitGradeResponseMap"/>
+        <collection property="categoryList" resultMap="CategoryResponseMap"/>
+    </resultMap>
+
+    <!-- 카드 -->
+    <resultMap id="CardResponseMap" type="CardResponse">
+        <id property="id" column="card_id"/>
+        <result property="name" column="card_name"/>
+        <result property="type" column="card_type"/>
+        <result property="imageUrl" column="card_image_url"/>
+        <result property="companyName" column="company_name"/>
+        <result property="annualFee" column="annual_fee"/>
+        <result property="cardIssueUrl" column="card_issue_url"/>
+
+        <collection property="benefitList" resultMap="BenefitResponseMap"/>
+        <collection property="gradeList" resultMap="GradeResponseMap"/>
+    </resultMap>
+
+    <!-- 카드 전체 조회 -->
+    <select id="selectAllCards" resultMap="CardResponseMap">
+        SELECT
+            c.card_id, c.card_name, c.card_type, c.card_image_url, c.company_name,
+            c.annual_fee, c.card_issue_url,
+            b.benefit_id, b.benefit_title, b.benefit_summary, b.benefit_description, b.benefit_icon_url,
+            bgd.benefit_grade_id, bgd.grade_id, bgd.type, bgd.amount, bgd.limit_count, bgd.limit_amount, bgd.min_payment,
+            g.grade_id AS grade_id, g.start, g.end, g.total_discount,
+            bc.category_id, cat.category_name, cat.category_id AS category_id, cat.pre_category_id, cat.category_image_url AS category_image_url
+        FROM card c
+                 LEFT JOIN benefit b ON c.card_id = b.card_id
+                 LEFT JOIN benefit_grade_discount bgd ON b.benefit_id = bgd.benefit_id
+                 LEFT JOIN grade g ON c.card_id = g.card_id AND bgd.grade_id = g.grade_id
+                 LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
+                 LEFT JOIN category cat ON bc.category_id = cat.category_id
+        ORDER BY c.card_id, b.benefit_id;
+    </select>
+
+</mapper>

@@ -8,5 +8,9 @@
     </settings>
 
     <typeAliases>
+        <package name="com.payper.card.dto"/>
+        <package name="com.payper.benefit.dto"/>
+        <package name="com.payper.category.dto"/>
     </typeAliases>
+
 </configuration>
