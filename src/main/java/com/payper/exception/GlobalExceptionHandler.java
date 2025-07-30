@@ -10,7 +10,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 사용 방법
-     * throw new TemplateException(HttpStatus.CONFLICT,"이미 connected id가 존재합니다.");
+     * throw new TemplateException();
      */
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e, HttpServletRequest request) {

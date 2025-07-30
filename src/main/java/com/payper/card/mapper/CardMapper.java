@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface CardMapper {
     List<CardResponse> selectAllCards();
+    CardResponse selectCardById(int cardId);
+    int findById(int cardId);
 }

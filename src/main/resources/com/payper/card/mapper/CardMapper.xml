@@ -75,4 +75,25 @@
         ORDER BY c.card_id, b.benefit_id;
     </select>
 
+    <!-- 카드 조회 -->
+    <select id="selectCardById" resultMap="CardResponseMap">
+        SELECT
+            c.card_id, c.card_name, c.card_type, c.card_image_url, c.company_name,
+            c.annual_fee, c.card_issue_url,
+            b.benefit_id, b.benefit_title, b.benefit_summary, b.benefit_description, b.benefit_icon_url,
+            bgd.benefit_grade_id, bgd.grade_id, bgd.type, bgd.amount, bgd.limit_count, bgd.limit_amount, bgd.min_payment,
+            g.grade_id AS grade_id, g.start, g.end, g.total_discount,
+            bc.category_id, cat.category_name, cat.category_id AS category_id, cat.pre_category_id, cat.category_image_url AS category_image_url
+        FROM card c
+                 LEFT JOIN benefit b ON c.card_id = b.card_id
+                 LEFT JOIN benefit_grade_discount bgd ON b.benefit_id = bgd.benefit_id
+                 LEFT JOIN grade g ON c.card_id = g.card_id AND bgd.grade_id = g.grade_id
+                 LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
+                 LEFT JOIN category cat ON bc.category_id = cat.category_id
+        WHERE c.card_id = #{cardId};
+    </select>
+
+    <select id="findById" resultType="Integer">
+        SELECT count(*) from card where card_id = #{cardId};
+    </select>
 </mapper>

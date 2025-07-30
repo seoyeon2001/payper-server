@@ -17,4 +17,12 @@ public class CardService {
     public List<CardResponse> getAllCards() {
         return cardMapper.selectAllCards();
     }
+
+    public CardResponse getCardById(int cardId) {
+        return cardMapper.selectCardById(cardId);
+    }
+
+    public boolean existsById(int cardId) {
+        return cardMapper.findById(cardId) == 1;
+    }
 }
