@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -21,4 +22,9 @@ public class Benefit {
     private String benefitIconUrl;
     private List<BenefitCategory> benefitCategoryList;
     private List<BenefitGradeDiscount> benefitGradeDiscountList;
+
+    private Boolean isDeleted;
+    private Date createdAt;
+    private Date deletedAt;
+    private Date lastModifiedAt;
 }

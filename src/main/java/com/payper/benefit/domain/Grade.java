@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -18,4 +19,9 @@ public class Grade {
     private Long end; // 종료 금액 nullable
     private Long totalDiscount; // 등급별 최대 할인 금액 nullable
     private List<BenefitGradeDiscount> benefitGradeDiscountList;
+
+    private Boolean isDeleted;
+    private Date createdAt;
+    private Date deletedAt;
+    private Date lastModifiedAt;
 }

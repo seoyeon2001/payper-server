@@ -13,5 +13,8 @@ import lombok.NoArgsConstructor;
 public class BenefitGradeResponse {
 	private Integer id;
 	private GradeResponse grade;
-	private DiscountResponse discount;
+	private String type;
+	private Long amount;
+	private Long limitCount;
+	private Long limitAmount;
 }

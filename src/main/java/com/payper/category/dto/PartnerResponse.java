@@ -18,4 +18,3 @@ public class PartnerResponse {
     private PositionResponse position;
     private List<CardResponse> cardList;
 }
-

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,4 +20,9 @@ public class BenefitGradeDiscount {
     private Long minPayment; // 혜택 적용 최소 금액 default 0 nullable
     private Long limitCount; // 최대 할인 횟수 nullable
     private Long limitAmount; // 최대 할인 금액 nullable
+
+    private Boolean isDeleted;
+    private Date createdAt;
+    private Date deletedAt;
+    private Date lastModifiedAt;
 }

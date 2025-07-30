@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -18,4 +19,9 @@ public class User {
     private String userName; // 사용자 이름
     private String connectedId; // codef connected id
     private List<UserCard> userCardList; // 사용자가 소유한 카드 목록 리스트
+
+    private Boolean isDeleted;
+    private Date createdAt;
+    private Date deletedAt;
+    private Date lastModifiedAt;
 }

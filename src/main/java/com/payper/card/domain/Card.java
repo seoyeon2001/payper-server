@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -24,4 +25,10 @@ public class Card {
     private List<UserCard> userCardList; // 카드를 가진 사용자 목록
     private List<Grade> gradeList; // 카드의 실적 리스트
     private List<Benefit> benefitList; // 카드의 혜택 리스트
+    private String AnnualFee; // 연회비
+
+    private Boolean isDeleted;
+    private Date createdAt;
+    private Date deletedAt;
+    private Date lastModifiedAt;
 }

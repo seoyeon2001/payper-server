@@ -19,9 +19,8 @@ public class BenefitResponse {
 	private String summary;
 	private String description;
 	private String iconUrl;
-	private LimitResponse limit;
+//	private LimitResponse limit;
 	private List<BenefitGradeResponse> benefitGradeList;
 	private List<CategoryResponse> categoryList;
-	private List<PartnerResponse> partnerList;
 	private Long minPayment;
 }

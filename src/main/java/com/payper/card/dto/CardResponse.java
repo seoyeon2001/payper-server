@@ -17,9 +17,9 @@ public class CardResponse {
 	private String name;
 	private String type;
 	private String imageUrl;
-	private CardCompanyResponse company;
+	private String companyName;
 	private List<BenefitResponse> benefitList;
-	private AnnualCostResponse annualCost;
+	private String AnnualFee;
 	private List<GradeResponse> gradeList;
 	private String cardIssueUrl;
 }
