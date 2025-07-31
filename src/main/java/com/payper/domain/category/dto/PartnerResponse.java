@@ -15,6 +15,16 @@ import java.util.List;
 public class PartnerResponse {
     private Integer id;
     private String name;
-    private PositionResponse position;
+    private Position position;
     private List<CardResponse> cardList;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Position {
+        private String x;
+        private String y;
+        private Integer distance;
+    }
 }
