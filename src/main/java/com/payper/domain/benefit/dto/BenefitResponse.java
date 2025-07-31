@@ -2,6 +2,7 @@ package com.payper.domain.benefit.dto;
 
 import java.util.List;
 
+import com.payper.domain.benefit.domain.Benefit;
 import com.payper.domain.category.dto.CategoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +23,5 @@ public class BenefitResponse {
 	private List<BenefitGradeResponse> benefitGradeList;
 	private List<CategoryResponse> categoryList;
 	private Long minPayment;
+
 }
