@@ -16,7 +16,8 @@ public class UserCard {
     private Integer userCardId; // userCard id
     private Integer userId; // user id
     private Integer cardId; // card id
-    private List<UserCardMonthAmount> userCardMonthAmountList; // 사용자의 월별 카드 사용량 리스트
+
+    private List<UserCardMonthTransaction> userCardMonthAmountList; // 사용자의 월별 카드 사용량 리스트
 
     private Boolean isDeleted;
     private Date createdAt;

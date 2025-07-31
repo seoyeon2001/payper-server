@@ -6,20 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Grade {
-    private Integer gradeId;
-    private Integer cardId;
-    private Long start; // 시작 금액 default 0
-    private Long end; // 종료 금액 nullable
-    private Long totalDiscount; // 등급별 최대 할인 금액 nullable
-
-    private List<BenefitGradeDiscount> benefitGradeDiscountList;
+public class BenefitPartner {
+    private Integer benefitPartnerId;
+    private Integer benefitId;
+    private Integer partnerId;
 
     private Boolean isDeleted;
     private Date createdAt;

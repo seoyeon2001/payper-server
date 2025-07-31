@@ -20,7 +20,9 @@ public class Benefit {
     private String benefitSummary; // 혜택 간단 설명
     private String benefitDescription; // 혜택 확인 사항
     private String benefitIconUrl;
+
     private List<BenefitCategory> benefitCategoryList;
+    private List<BenefitPartner> benefitPartnerList;
     private List<BenefitGradeDiscount> benefitGradeDiscountList;
 
     private Boolean isDeleted;

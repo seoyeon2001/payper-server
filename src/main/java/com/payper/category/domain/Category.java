@@ -3,6 +3,7 @@ package com.payper.category.domain;
 import java.util.Date;
 import java.util.List;
 
+import com.payper.partner.domain.Partner;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,10 +15,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Category {
     private Integer categoryId;
+    private Integer parentId;
     private String categoryName;
-    private Integer preCategoryId; // 상위 카테고리 Id nullable
     private String categoryImageUrl; // nullable
+
+    private Category parentCategory;
     private List<BenefitCategory> benefitCategoryList;
+    private List<Partner> partnerList;
 
     private Boolean isDeleted;
     private Date createdAt;

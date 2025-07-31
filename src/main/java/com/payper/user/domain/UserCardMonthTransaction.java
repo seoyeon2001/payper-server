@@ -11,11 +11,14 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserCardMonthAmount {
-    private Integer userCardMonthAmountId;
+public class UserCardMonthTransaction {
+    private Integer userCardTransactionId;
     private Integer userCardId;
-    private String month; // ex.202507
-    private Long totalAmount; // 누적 금액
+    private Long amount;
+    private Date approveAt;
+
+    //private String month; // ex.202507
+    //private Long totalAmount; // 누적 금액
 
     private Boolean isDeleted;
     private Date createdAt;

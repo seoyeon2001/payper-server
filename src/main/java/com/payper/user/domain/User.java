@@ -18,9 +18,11 @@ public class User {
     private String oauthId; // 소셜 id
     private String nickname; // 사용자 이름
     private String connectedId; // codef connected id
+
     private List<UserCard> userCardList; // 사용자가 소유한 카드 목록 리스트
 
-    private List<UserAuth> authList;
+    private RoleType role;
+    private List<UserAuth> authList;//없어질 예정
 
     private Boolean isDeleted;
     private Date createdAt;
