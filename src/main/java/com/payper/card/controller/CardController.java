@@ -1,9 +1,11 @@
 package com.payper.card.controller;
 
 import com.payper.card.dto.CardResponse;
+import com.payper.card.dto.RegisterCardMeRequest;
 import com.payper.card.exception.CardNotFoundException;
 import com.payper.card.service.CardService;
 import com.payper.security.domain.CustomUser;
+import com.payper.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CardController {
     private final CardService cardService;
+    private final UserService userService;
 
     @GetMapping("")
     public ResponseEntity<Map<String, List<CardResponse>>> getAllCards() {
@@ -52,13 +55,21 @@ public class CardController {
         return ResponseEntity.ok(Map.of("cards", cards));
     }
 
-
     @GetMapping("/me")
-    public ResponseEntity<Map<String, List<CardResponse>>> getAllCardsByMe(@AuthenticationPrincipal CustomUser customuser) {
-        int userId = customuser.getUser().getUserId();
+    public ResponseEntity<Map<String, List<CardResponse>>> getAllCardsByMe(@AuthenticationPrincipal CustomUser customUser) {
+        Integer userId = userService.getUserId(customUser);
         log.info("내 카드 리스트 조회 - userId: {}", userId);
 
-        List<CardResponse> cards = cardService.getCardsByUserId(userId);
+        List<CardResponse> cards = cardService.getAllCardsByMe(userId);
         return ResponseEntity.ok(Map.of("cards", cards));
+    }
+
+    @PostMapping("/me")
+    public ResponseEntity<Void> registerCardMe(@RequestBody RegisterCardMeRequest request, @AuthenticationPrincipal CustomUser customUser) {
+        Integer userId = userService.getUserId(customUser);
+        log.info("내 카드로 등록 - userId : {}, cardId : {} ", userId, request.getCardId());
+
+        cardService.registerCardMe(request, userId);
+        return ResponseEntity.ok().build();
     }
 }

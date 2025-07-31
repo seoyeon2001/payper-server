@@ -128,4 +128,9 @@
         ORDER BY c.card_id, b.benefit_id;
     </select>
 
+    <insert id="registerCardMe">
+        insert into user_card(user_id, card_id)
+        values (#{userId}, #{cardId})
+    </insert>
+
 </mapper>

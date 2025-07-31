@@ -1,7 +1,9 @@
 package com.payper.card.service;
 
 import com.payper.card.dto.CardResponse;
+import com.payper.card.dto.RegisterCardMeRequest;
 import com.payper.card.mapper.CardMapper;
+import com.payper.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -36,8 +38,13 @@ public class CardService {
         return cardMapper.searchWithConditions(name, type, category, cardCompany);
     }
 
-    public List<CardResponse> getCardsByUserId(int userId){
+    public List<CardResponse> getAllCardsByMe(Integer userId){
         return cardMapper.selectCardsByUserID(userId);
     }
 
+    public void registerCardMe(RegisterCardMeRequest request, Integer userId) {
+        cardMapper.registerCardMe(request.getCardId(), userId);
+    }
+
+    
 }

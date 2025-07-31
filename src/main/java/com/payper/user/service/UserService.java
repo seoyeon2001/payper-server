@@ -1,5 +1,6 @@
 package com.payper.user.service;
 
+import com.payper.security.domain.CustomUser;
 import com.payper.user.domain.User;
 import com.payper.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,13 @@ public class UserService {
 
     private final UserMapper userMapper;
 
+    // 이거 없애야함 - 서연이 할거임
     public User getUserById(Integer userId) {
         return userMapper.get(userId);
+    }
+
+    public Integer getUserId(CustomUser customUser) {
+        return customUser.getUser().getUserId();
     }
 
     @Transactional

@@ -20,4 +20,6 @@ public interface CardMapper {
     );
 
     List<CardResponse> selectCardsByUserID(int userId);
+
+    void registerCardMe(@Param("cardId") Integer cardId, @Param("userId") Integer userId);
 }
