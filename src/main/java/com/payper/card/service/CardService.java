@@ -25,4 +25,15 @@ public class CardService {
     public boolean existsById(int cardId) {
         return cardMapper.findById(cardId) == 1;
     }
+
+    public List<CardResponse> searchCards(String name, String type, List<String> category, List<String> cardCompany) {
+        if (name == null && type == null && category == null && cardCompany == null) {
+            // 전체 카드 조회
+            return cardMapper.selectAllCards();
+        }
+
+        // 파라미터에 맞는 조건으로 검색
+        return cardMapper.searchWithConditions(name, type, category, cardCompany);
+    }
+
 }

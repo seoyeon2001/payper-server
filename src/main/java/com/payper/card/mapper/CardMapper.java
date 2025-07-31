@@ -2,6 +2,7 @@ package com.payper.card.mapper;
 
 import com.payper.card.dto.CardResponse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -10,4 +11,12 @@ public interface CardMapper {
     List<CardResponse> selectAllCards();
     CardResponse selectCardById(int cardId);
     int findById(int cardId);
+
+    List<CardResponse> searchWithConditions(
+            @Param("name") String name,
+            @Param("type") String type,
+            @Param("category") List<String> category,
+            @Param("cardCompany") List<String> cardCompany
+    );
+
 }

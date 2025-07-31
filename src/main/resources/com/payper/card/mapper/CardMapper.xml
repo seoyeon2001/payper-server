@@ -96,4 +96,49 @@
     <select id="findById" resultType="Integer">
         SELECT count(*) from card where card_id = #{cardId};
     </select>
+
+    <!-- 카드 검색 -->
+    <!-- String name, String type, List<String> category, List<String> cardCompany -->
+    <select id="searchWithConditions" resultMap="CardResponseMap">
+        SELECT
+            c.card_id, c.card_name, c.card_type, c.card_image_url, c.company_name,
+            c.annual_fee, c.card_issue_url,
+            b.benefit_id, b.benefit_title, b.benefit_summary, b.benefit_description, b.benefit_icon_url,
+            bgd.benefit_grade_id, bgd.grade_id, bgd.type, bgd.amount, bgd.limit_count, bgd.limit_amount, bgd.min_payment,
+            g.grade_id AS grade_id, g.start, g.end, g.total_discount,
+            bc.category_id, cat.category_name, cat.category_id AS category_id, cat.pre_category_id, cat.category_image_url AS category_image_url
+        FROM card c
+                 LEFT JOIN benefit b ON c.card_id = b.card_id
+                 LEFT JOIN benefit_grade_discount bgd ON b.benefit_id = bgd.benefit_id
+                 LEFT JOIN grade g ON c.card_id = g.card_id AND bgd.grade_id = g.grade_id
+                 LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
+                 LEFT JOIN category cat ON bc.category_id = cat.category_id
+        WHERE 1 = 1
+--           카드 이름으로 검색 - 포함 여부
+            <if test="name != null and name != ''">
+                AND c.card_name LIKE CONCAT('%', #{name}, '%')
+            </if>
+
+--           카드 종류로 검색(신용 또는 체크)
+            <if test="type != null and type != ''">
+                AND c.card_type = #{type}
+            </if>
+
+--           카테고리로 검색 - 다중 값 가능
+            <if test="category != null and category.size() > 0">
+                AND cat.category_name IN
+                <foreach item="cat" collection="category" open="(" separator="," close=")">
+                    #{cat}
+                </foreach>
+            </if>
+
+--           카드사 이름으로 검색 - 다중 값 가능
+            <if test="cardCompany != null and cardCompany.size() > 0">
+                AND c.company_name IN
+                <foreach item="c" collection="cardCompany" open="(" separator="," close=")">
+                    #{c}
+                </foreach>
+            </if>
+        ORDER BY c.card_id, b.benefit_id;
+    </select>
 </mapper>

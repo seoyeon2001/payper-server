@@ -6,10 +6,7 @@ import com.payper.card.service.CardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -36,5 +33,17 @@ public class CardController {
         if(!cardService.existsById(cardId)) throw new CardNotFoundException();
         CardResponse card = cardService.getCardById(cardId);
         return ResponseEntity.ok(card);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, List<CardResponse>>> searchCards(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) List<String> category,
+            @RequestParam(required = false) List<String> cardCompany
+    ) {
+        List<CardResponse> cards = cardService.searchCards(name, type, category, cardCompany);
+        log.info("검색 카드 조회");
+        return ResponseEntity.ok(Map.of("cards", cards));
     }
 }
