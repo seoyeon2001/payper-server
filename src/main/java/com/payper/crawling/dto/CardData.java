@@ -11,4 +11,5 @@ public class CardData {
     public String imageUrl;
     public String issueUrl;
     public List<Benefit> benefits;
+    public String annualFee;
 }

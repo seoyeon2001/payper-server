@@ -19,6 +19,7 @@ public class CardJsonExtractor {
         data.cardType = MatchCardType(root.path("cate").asText(""));
         data.imageUrl = root.path("card_img").path("url").asText("");
         data.issueUrl = root.path("request_pc").asText(null);
+        data.annualFee = root.path("annual_fee_basic").asText("");
 
         data.benefits = new ArrayList<>();
         JsonNode keyBenefits = root.path("key_benefit");
