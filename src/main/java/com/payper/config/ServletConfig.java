@@ -11,7 +11,8 @@ import org.springframework.web.servlet.config.annotation.*;
         "com.payper.exception",
         "com.payper.partner.controller",
         "com.payper.codef.controller",
-        "com.payper.card.controller"
+        "com.payper.card.controller",
+        "com.payper.security.controller"
 })
 public class ServletConfig implements WebMvcConfigurer {
     @Override

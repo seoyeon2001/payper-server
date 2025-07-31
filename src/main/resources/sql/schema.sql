@@ -27,7 +27,7 @@ CREATE TABLE `user` (
                         `user_id` INT NOT NULL AUTO_INCREMENT,
                         `oauth_provider` VARCHAR(255) NOT NULL,
                         `oauth_id` VARCHAR(255) NOT NULL,
-                        `user_name` VARCHAR(10) NOT NULL,
+                        `nickname` VARCHAR(10) NOT NULL,
                         `connected_id` VARCHAR(255) NULL,
                         PRIMARY KEY (`user_id`)
 );

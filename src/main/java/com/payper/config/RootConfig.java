@@ -16,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
@@ -30,7 +31,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         "com.payper.partner.service",
         "com.payper.codef.service",
         "com.payper.user.service",
-        "com.payper.card.service"
+        "com.payper.card.service",
+        "com.payper.security"
 })
 @MapperScan(value = "com.payper", annotationClass = Mapper.class)
 @Log4j2

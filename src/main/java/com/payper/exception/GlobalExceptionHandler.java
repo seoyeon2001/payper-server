@@ -1,11 +1,14 @@
 package com.payper.exception;
 
 import javax.servlet.http.HttpServletRequest;
+
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestControllerAdvice
+@Log4j2
 public class GlobalExceptionHandler {
 
     /**
@@ -19,6 +22,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleServerError(Exception e, HttpServletRequest request) {
+        log.error("===== 서버 내부 오류 발생 =====");
+        log.error("Exception Type: {}", e.getClass().getSimpleName());
+        log.error("Exception Message: {}", e.getMessage());
+        log.error("Full Stack Trace: ", e);
         return ErrorResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.", request.getRequestURI());
     }
 }
