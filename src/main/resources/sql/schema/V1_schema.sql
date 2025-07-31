@@ -94,33 +94,33 @@ CREATE TABLE `category` (
 
 -- 혜택_카테고리
 CREATE TABLE `benefit_category` (
-                           `benefit_category_id` INT NOT NULL AUTO_INCREMENT,
-                           `benefit_id` INT NOT NULL,
-                           `category_id` INT NOT NULL,
-                           PRIMARY KEY (`benefit_category_id`),
-                           CONSTRAINT `FK_benefit_TO_benefit_category` FOREIGN KEY (`benefit_id`)
-                               REFERENCES `benefit` (`benefit_id`)
-                               ON DELETE CASCADE ON UPDATE CASCADE,
-                            CONSTRAINT `FK_category_TO_benefit_category` FOREIGN KEY (`category_id`)
-                               REFERENCES `category` (`category_id`)
+                                    `benefit_category_id` INT NOT NULL AUTO_INCREMENT,
+                                    `benefit_id` INT NOT NULL,
+                                    `category_id` INT NOT NULL,
+                                    PRIMARY KEY (`benefit_category_id`),
+                                    CONSTRAINT `FK_benefit_TO_benefit_category` FOREIGN KEY (`benefit_id`)
+                                        REFERENCES `benefit` (`benefit_id`)
+                                        ON DELETE CASCADE ON UPDATE CASCADE,
+                                    CONSTRAINT `FK_category_TO_benefit_category` FOREIGN KEY (`category_id`)
+                                        REFERENCES `category` (`category_id`)
 );
 
 
 -- 혜택별 실적별 할인
 CREATE TABLE `benefit_grade_discount` (
-                                 `benefit_grade_id` INT NOT NULL AUTO_INCREMENT,
-                                 `grade_id` INT NOT NULL,
-                                 `benefit_id` INT NOT NULL,
-                                 `type` ENUM('RATE', 'FIXED_AMOUNT') NOT NULL,
-                                 `amount` BIGINT NOT NULL,
-                                 `limit_count` BIGINT NULL,
-                                 `limit_amount` BIGINT NULL,
-                                 `min_payment` BIGINT DEFAULT 0,
-                                 PRIMARY KEY (`benefit_grade_id`),
-                                 CONSTRAINT `FK_grade_TO_benefit_grade_discount` FOREIGN KEY (`grade_id`)
-                                     REFERENCES `grade` (`grade_id`),
-                                 CONSTRAINT `FK_benefit_TO_benefit_grade_discount` FOREIGN KEY (`benefit_id`)
-                                     REFERENCES `benefit` (`benefit_id`)
+                                          `benefit_grade_id` INT NOT NULL AUTO_INCREMENT,
+                                          `grade_id` INT NOT NULL,
+                                          `benefit_id` INT NOT NULL,
+                                          `type` ENUM('RATE', 'FIXED_AMOUNT') NOT NULL,
+                                          `amount` BIGINT NOT NULL,
+                                          `limit_count` BIGINT NULL,
+                                          `limit_amount` BIGINT NULL,
+                                          `min_payment` BIGINT DEFAULT 0,
+                                          PRIMARY KEY (`benefit_grade_id`),
+                                          CONSTRAINT `FK_grade_TO_benefit_grade_discount` FOREIGN KEY (`grade_id`)
+                                              REFERENCES `grade` (`grade_id`),
+                                          CONSTRAINT `FK_benefit_TO_benefit_grade_discount` FOREIGN KEY (`benefit_id`)
+                                              REFERENCES `benefit` (`benefit_id`)
 );
 
 
