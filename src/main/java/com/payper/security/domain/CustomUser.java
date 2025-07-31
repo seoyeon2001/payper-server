@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -19,7 +21,12 @@ public class CustomUser extends org.springframework.security.core.userdetails.Us
     }
 
     public CustomUser(User domainUser) {
-        super(domainUser.getUserId().toString(), commonPassword, domainUser.getAuthList());
+        super(
+                domainUser.getUserId().toString(),
+                commonPassword,
+                Optional.ofNullable(domainUser.getAuthList()).orElse(Collections.emptyList())
+        );
+
         this.user = domainUser;
     }
 }

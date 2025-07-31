@@ -10,3 +10,7 @@ INSERT INTO `user_card` (user_id, card_id)
 VALUES (@user_id, 1);
 
 COMMIT;
+
+
+INSERT INTO `user_card` (user_id, card_id)
+VALUES (2, 1);

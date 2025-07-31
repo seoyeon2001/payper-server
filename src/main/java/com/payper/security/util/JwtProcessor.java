@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Component
 public class JwtProcessor {
-    static private final long TOKEN_VALID_MILISECOND = 5 * 60 * 60 * 1000;
+    static private final long TOKEN_VALID_MILISECOND = 60 * 60 * 60 * 1000;
 
     //개발시 키
     final private String secretKey = "abcdefghijklmnopqrstuvxyzabcdefghijklmnopqrstuvxyzabcdefghijklmnopqrstuvxyzabcdefghijklmnopqrstuvxyz";

@@ -36,4 +36,8 @@ public class CardService {
         return cardMapper.searchWithConditions(name, type, category, cardCompany);
     }
 
+    public List<CardResponse> getCardsByUserId(int userId){
+        return cardMapper.selectCardsByUserID(userId);
+    }
+
 }

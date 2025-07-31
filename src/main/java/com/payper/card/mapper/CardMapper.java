@@ -19,4 +19,5 @@ public interface CardMapper {
             @Param("cardCompany") List<String> cardCompany
     );
 
+    List<CardResponse> selectCardsByUserID(int userId);
 }

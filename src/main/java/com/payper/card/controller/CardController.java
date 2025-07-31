@@ -3,9 +3,14 @@ package com.payper.card.controller;
 import com.payper.card.dto.CardResponse;
 import com.payper.card.exception.CardNotFoundException;
 import com.payper.card.service.CardService;
+import com.payper.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +49,16 @@ public class CardController {
     ) {
         List<CardResponse> cards = cardService.searchCards(name, type, category, cardCompany);
         log.info("검색 카드 조회");
+        return ResponseEntity.ok(Map.of("cards", cards));
+    }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, List<CardResponse>>> getAllCardsByMe(@AuthenticationPrincipal CustomUser customuser) {
+        int userId = customuser.getUser().getUserId();
+        log.info("내 카드 리스트 조회 - userId: {}", userId);
+
+        List<CardResponse> cards = cardService.getCardsByUserId(userId);
         return ResponseEntity.ok(Map.of("cards", cards));
     }
 }
