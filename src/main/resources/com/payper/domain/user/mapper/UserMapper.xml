@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.payper.user.mapper.UserMapper">
+
+    <select id="findByOauthProviderAndOauthId" resultType="com.payper.domain.user.domain.User">
+        SELECT * from user where oauth_provider = #{ oauthProvider } and oauth_id = #{ oauthId }
+    </select>
+
+    <select id="get" resultType="com.payper.domain.user.domain.User">
+        SELECT * from user where user_id=#{userId}
+    </select>
+
+    <update id="updateConnectedId">
+        UPDATE user SET connected_id = #{connectedId} WHERE user_id = #{userId}
+    </update>
+
+    <insert id="createUser">
+        <selectKey resultType="Integer" keyProperty="user.userId" keyColumn="user_id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+
+        INSERT INTO user (user_id,oauth_provider,oauth_id,nickname,connected_id)
+        values (null,#{user.oauthProvider},#{user.oauthId},#{user.nickname},#{user.connectedId})
+    </insert>
+
+</mapper>
