@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.payper.user.mapper.UserMapper">
+<mapper namespace="com.payper.domain.user.UserMapper">
 
     <select id="findByOauthProviderAndOauthId" resultType="com.payper.domain.user.domain.User">
         SELECT * from user where oauth_provider = #{ oauthProvider } and oauth_id = #{ oauthId }

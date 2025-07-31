@@ -2,9 +2,12 @@ package com.payper.domain.card;
 
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
+import com.payper.domain.card.exception.CardNotFoundException;
+import com.payper.domain.card.exception.MyCardDeletionFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,11 +22,15 @@ public class CardService {
     }
 
     public CardResponse getCardById(int cardId) {
+        existsById(cardId);
         return cardMapper.selectCardById(cardId);
     }
 
-    public boolean existsById(int cardId) {
-        return cardMapper.findById(cardId) == 1;
+    public void existsById(int cardId) {
+        if(cardMapper.findById(cardId)!=1){
+            log.error("카드 Not Found - cardId: {}", cardId);
+            throw new CardNotFoundException();
+        }
     }
 
     public List<CardResponse> searchCards(String name, String type, List<String> category, List<String> cardCompany) {
@@ -44,5 +51,15 @@ public class CardService {
         cardMapper.registerCardMe(request.getCardId(), userId);
     }
 
+    @Transactional
+    public void deleteCardMe(int userId, int cardId) {
+        existsById(cardId);
+
+        int updateCount = cardMapper.softDeleteCard(userId, cardId);
+        if (updateCount != 1) {
+            log.error("내 카드 삭제 실패 - userId: {}, cardId: {}", userId, cardId);
+           throw new MyCardDeletionFailedException();
+        }
+    }
     
 }
