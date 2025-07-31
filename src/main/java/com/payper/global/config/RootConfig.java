@@ -27,11 +27,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @ComponentScan(basePackages = {
         "com.payper.global.config",
-        "com.payper.domain.partner.service",
-        "com.payper.external.codef.service",
-        "com.payper.domain.user.service",
-        "com.payper.domain.card.service",
-        "com.payper.global.security"
+        "com.payper.global.security",
+        "com.payper.domain.partner",
+        "com.payper.domain.user",
+        "com.payper.domain.card",
+        "com.payper.external.codef",
 })
 @MapperScan(value = "com.payper", annotationClass = Mapper.class)
 @Log4j2
