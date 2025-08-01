@@ -12,7 +12,8 @@ import java.util.Date;
 
 @Component
 public class JwtProcessor {
-    static private final long TOKEN_VALID_MILISECOND = 7L * 24 * 60 * 60 * 1000;
+    private static final long ACCESS_TOKEN_MAX_AGE = 7L * 24 * 60 * 60 * 1000;
+    private static final long REFRESH_TOKEN_MAX_AGE = 30L * 24 * 60 * 60 * 1000; // 30일
 
     //개발시 키
     final private String secretKey = "abcdefghijklmnopqrstuvxyzabcdefghijklmnopqrstuvxyzabcdefghijklmnopqrstuvxyzabcdefghijklmnopqrstuvxyz";
@@ -21,24 +22,30 @@ public class JwtProcessor {
     //운영시 키
     //private Key key=Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
+    public String generateAccessToken(Integer userId) {
+        return generateJwtToken(userId, ACCESS_TOKEN_MAX_AGE);
+    }
+
+    public String generateRefreshToken(Integer userId) {
+        return generateJwtToken(userId, REFRESH_TOKEN_MAX_AGE);
+    }
+
     public String generateJwtToken(String subject) {
         return Jwts.builder()
                 .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(
-                        new Date().getTime() + TOKEN_VALID_MILISECOND)
+                        new Date().getTime() + ACCESS_TOKEN_MAX_AGE)
                 )
                 .signWith(key)
                 .compact();
     }
 
-    public String generateJwtToken(Integer subject) {
+    public String generateJwtToken(Integer subject, long maxAge) {
         return Jwts.builder()
                 .setSubject(subject.toString())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(
-                        new Date().getTime() + TOKEN_VALID_MILISECOND)
-                )
+                .setExpiration(new Date(System.currentTimeMillis() + maxAge))
                 .signWith(key)
                 .compact();
     }
@@ -62,5 +69,9 @@ public class JwtProcessor {
                 .parseClaimsJws(token);
 
         return true;
+    }
+
+    public int getRefreshTokenMaxAgeInSeconds() {
+        return (int) (REFRESH_TOKEN_MAX_AGE / 1000);
     }
 }

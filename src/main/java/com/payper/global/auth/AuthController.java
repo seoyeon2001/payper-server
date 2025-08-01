@@ -2,6 +2,7 @@ package com.payper.global.auth;
 
 import com.payper.global.auth.dto.KakaoLoginRequest;
 import com.payper.global.auth.dto.LoginResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,9 @@ public class AuthController {
 
     // TODO: kakao login
     @PostMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> loginKakao(@RequestBody KakaoLoginRequest request) {
+    public ResponseEntity<LoginResponse> loginKakao(@RequestBody KakaoLoginRequest request, HttpServletResponse response) {
         log.error(request.getCode());
-        return ResponseEntity.ok(authService.login(request.getCode()));
+        return ResponseEntity.ok(authService.login(request.getCode(), response));
     }
 
 

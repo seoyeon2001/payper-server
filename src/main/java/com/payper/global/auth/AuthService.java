@@ -7,6 +7,8 @@ import com.payper.global.security.util.OAuthProvider;
 import com.payper.global.security.util.JwtProcessor;
 import com.payper.domain.user.UserMapper;
 import com.payper.domain.user.domain.User;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +48,7 @@ public class AuthService {
     @Value("${kakao.user.info.url}")
     private String kakaoUserInfoUrl;
 
-    public LoginResponse login(String code) {// 우리 서비스의 로그인 응답 객체 반환
+    public LoginResponse login(String code, HttpServletResponse response) {// 우리 서비스의 로그인 응답 객체 반환
         String kakaoAccessToken = getReturnAccessToken(code);
 
         Map<String, Object> kakaoUserInfo = getMemberInfo(kakaoAccessToken);
@@ -75,12 +77,22 @@ public class AuthService {
 
         //log.error(user.toString());
 
-        String payperJwtToken = jwtProcessor.generateJwtToken(user.getUserId());
+        String accessToken = jwtProcessor.generateAccessToken(user.getUserId());
+        String refreshToken = jwtProcessor.generateRefreshToken(user.getUserId());
+        storeRefreshTokenInCookie(response, refreshToken);
 
         LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setAccessToken(payperJwtToken);
+        loginResponse.setAccessToken(accessToken);
 
         return loginResponse;
+    }
+
+    private void storeRefreshTokenInCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setMaxAge(jwtProcessor.getRefreshTokenMaxAgeInSeconds());
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
     }
 
     //코드로 카카오auth 서버에서 억세스토큰과 리프레시토큰 얻기.
