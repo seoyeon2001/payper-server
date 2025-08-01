@@ -125,6 +125,7 @@
         <include refid="cardJoinClause" />
         INNER JOIN user_card uc ON c.card_id = uc.card_id
         WHERE uc.user_id = #{userId}
+        AND uc.is_deleted = false
         ORDER BY c.card_id, b.benefit_id;
     </select>
 
