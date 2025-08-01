@@ -44,4 +44,9 @@ public class UserService {
         }
         return userInfo;
     }
+
+    @Transactional
+    public void deleteUser(Integer userId) {
+        userMapper.softDeleteUser(userId);
+    }
 }

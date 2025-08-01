@@ -20,4 +20,6 @@ public interface UserMapper {
     createUser(@Param("user") User user); //insert
 
     UserResponse getUserInfo(Integer userId);
+
+    void softDeleteUser(Integer userId);
 }

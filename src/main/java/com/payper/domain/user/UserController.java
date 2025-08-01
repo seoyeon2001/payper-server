@@ -24,4 +24,9 @@ public class UserController {
         return ResponseEntity.ok(userInfo);
     }
 
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMe(@AuthenticationPrincipal CustomUser customUser) {
+        userService.deleteUser(userService.getUserId(customUser));
+        return ResponseEntity.ok().build();
+    }
 }

@@ -16,6 +16,10 @@
         UPDATE user SET connected_id = #{connectedId} WHERE user_id = #{userId}
     </update>
 
+    <update id="softDeleteUser">
+        UPDATE user SET is_deleted = true WHERE user_id = #{userId}
+    </update>
+
     <insert id="createUser">
         <selectKey resultType="Integer" keyProperty="user.userId" keyColumn="user_id" order="AFTER">
             SELECT LAST_INSERT_ID()
@@ -29,6 +33,7 @@
         SELECT user_id as id, nickname
         FROM user
         WHERE user_id = #{userId}
+        AND is_deleted = false
     </select>
 
 </mapper>
