@@ -9,11 +9,50 @@
         WHERE category_id = #{categoryId}
           AND is_deleted = false;
     </select>
+
     <select id="findByPartnerName" resultType="PartnerIdNameDto">
         SELECT *
         FROM partner
         WHERE partner_name = #{partnerName}
           AND is_deleted = false;
+    </select>
+
+    <resultMap id="SearchPartnersResponseMap" type="SearchPartnersResponse">
+        <id property="id" column="partner_id"/>
+        <result property="name" column="partner_name"/>
+        <result property="partnerImageUrl" column="partner_image_url"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="preCategoryId" column="pre_category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="categoryImageUrl" column="category_image_url"/>
+    </resultMap>
+
+    <!-- 파트너 리스트 조회에서 사용하는 SQL문 -->
+    <sql id="partnerJoinClause">
+        SELECT
+            p.partner_id, p.partner_name, p.partner_image_url,
+            c.category_id, c.pre_category_id, c.category_name, c.category_image_url
+        FROM partner p
+                 LEFT JOIN category c ON p.category_id = c.category_id
+    </sql>
+
+    <!-- 파트너 검색 -->
+    <select id="searchWithConditions" resultMap="SearchPartnersResponseMap">
+        <include refid="partnerJoinClause" />
+        WHERE p.is_deleted = false
+        -- 파트너 이름으로 검색 - 포함 여부
+        <if test="name != null and name != ''">
+            AND p.partner_name LIKE CONCAT('%', #{name}, '%')
+        </if>
+
+        -- 카테고리로 검색 - 다중 값 가능
+        <if test="category != null and category.size() > 0">
+            AND c.category_name IN
+            <foreach item="categoryItem" collection="category" open="(" separator="," close=")">
+                #{categoryItem}
+            </foreach>
+        </if>
+        ORDER BY p.partner_id;
     </select>
 
 </mapper>

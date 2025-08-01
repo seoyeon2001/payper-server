@@ -1,12 +1,7 @@
 package com.payper.domain.partner;
 
 import com.payper.domain.category.CategoryMapper;
-import com.payper.domain.category.domain.Category;
-import com.payper.domain.partner.domain.Partner;
-import com.payper.domain.partner.dto.PartnerIdNameDto;
-import com.payper.domain.partner.dto.PartnerKeywordSearchRequest;
-import com.payper.domain.partner.dto.PartnerKeywordSearchResponse;
-import com.payper.domain.partner.dto.PartnerResponse;
+import com.payper.domain.partner.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -118,5 +113,9 @@ public class PartnerService {
             result.add(responseItem);
         }
         return result;
+    }
+
+    public List<SearchPartnersResponse> searchPartners(String name, List<String> category) {
+        return partnerMapper.searchWithConditions(name, category);
     }
 }

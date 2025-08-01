@@ -129,6 +129,7 @@ CREATE TABLE `partner` (
                            `partner_id` INT NOT NULL AUTO_INCREMENT,
                            `category_id` INT NOT NULL,
                            `partner_name` VARCHAR(50) UNIQUE,
+                           `partner_image_url` VARCHAR(255),
                            `is_deleted` BOOLEAN DEFAULT FALSE,
                            `created_at` DATETIME NULL,
                            `deleted_at` DATETIME NULL,
