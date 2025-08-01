@@ -1,11 +1,14 @@
 package com.payper.domain.partner.domain;
 
+import com.payper.domain.benefit.domain.BenefitPartner;
+import com.payper.domain.partner.dto.PartnerResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,6 +19,8 @@ public class Partner {
     private Integer categoryId;
     private String partnerName;
     private String partnerImageUrl;
+
+    List<BenefitPartner> benefitPartnerList;
 
     private Boolean isDeleted;
     private Date createdAt;

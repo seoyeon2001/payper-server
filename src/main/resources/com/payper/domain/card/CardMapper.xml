@@ -13,7 +13,7 @@
     </resultMap>
 
     <!-- 혜택별 등급 할인 -->
-    <resultMap id="BenefitGradeResponseMap" type="BenefitGradeResponse">
+    <resultMap id="BenefitGradeResponseMap" type="BenefitGradeDiscountResponse">
         <id property="id" column="benefit_grade_id"/>
         <result property="type" column="type"/>
         <result property="amount" column="amount"/>

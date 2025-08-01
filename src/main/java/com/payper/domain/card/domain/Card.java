@@ -17,12 +17,12 @@ import java.util.List;
 @Builder
 public class Card {
     private Integer cardId;
-    private String companyName; // 카드사
+    private Integer companyId;
     private String cardName;
     private CardType cardType; // enum(credit, check)
     private String cardImageUrl; // 카드 사진 URL
     private String cardIssueUrl; // 카드 상세 URL
-    private String AnnualFee; // 연회비
+    private String annualFee; // 연회비
 
     private List<UserCard> userCardList; // 카드를 가진 사용자 목록
     private List<Grade> gradeList; // 카드의 실적 리스트
