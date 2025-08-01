@@ -1,7 +1,7 @@
 package com.payper.global.security.service;
 
+import com.payper.domain.user.UserMapper;
 import com.payper.global.security.domain.CustomUser;
-import com.payper.global.security.mapper.UserDetailsMapper;
 import com.payper.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserDetailsMapper userDetailsMapper;
+    private final UserMapper userMapper;
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        User user=userDetailsMapper.get(userId);
+        User user= userMapper.get(Integer.parseInt(userId));
 
         if(user==null){
             throw new UsernameNotFoundException(userId);
