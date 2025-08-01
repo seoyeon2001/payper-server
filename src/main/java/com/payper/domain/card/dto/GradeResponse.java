@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 public class GradeResponse {
 	private Integer id;
 	private Long start;
-	private Long end;
 	private Long totalDiscount;
 }
