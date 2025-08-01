@@ -30,7 +30,7 @@ public class CardController {
     }
 
     @GetMapping("/{cardId}")
-    public ResponseEntity<CardResponse> getCardById(@PathVariable int cardId) {
+    public ResponseEntity<CardResponse> getCardById(@PathVariable(name = "cardId") Integer cardId) {
         log.info("시중카드 조회 - cardId : {}", cardId);
         CardResponse card = cardService.getCardById(cardId);
         return ResponseEntity.ok(card);
@@ -67,7 +67,7 @@ public class CardController {
     }
 
     @DeleteMapping("/me/{cardId}")
-    public ResponseEntity<Void> deleteCardMe(@AuthenticationPrincipal CustomUser customUser, @PathVariable Integer cardId) {
+    public ResponseEntity<Void> deleteCardMe(@AuthenticationPrincipal CustomUser customUser, @PathVariable(name = "cardId") Integer cardId) {
         Integer userId = userService.getUserId(customUser);
         log.info("내 카드 삭제 - userId : {}, cardId : {} ", userId, cardId);
 
