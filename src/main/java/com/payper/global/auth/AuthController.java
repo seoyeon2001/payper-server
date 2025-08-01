@@ -2,6 +2,7 @@ package com.payper.global.auth;
 
 import com.payper.global.auth.dto.KakaoLoginRequest;
 import com.payper.global.auth.dto.LoginResponse;
+import com.payper.global.auth.dto.TokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +16,15 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
-    // TODO: kakao login
     @PostMapping("/login/kakao")
     public ResponseEntity<LoginResponse> loginKakao(@RequestBody KakaoLoginRequest request, HttpServletResponse response) {
         log.error(request.getCode());
         return ResponseEntity.ok(authService.login(request.getCode(), response));
+    }
+
+    @GetMapping("/tokens")
+    public ResponseEntity<TokenResponse> reissueTokens(@CookieValue(name = "refreshToken", required = false) String refreshToken, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.reissueTokens(refreshToken, response));
     }
 
 
@@ -28,7 +33,4 @@ public class AuthController {
     public ResponseEntity<> logoutKakao() {
         return null;
     }*/
-
-    // TODO: token reissue
-
 }

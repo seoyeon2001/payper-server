@@ -3,6 +3,8 @@ package com.payper.global.auth;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.payper.global.auth.dto.LoginResponse;
+import com.payper.global.auth.dto.TokenResponse;
+import com.payper.global.auth.exception.InvalidRefreshTokenException;
 import com.payper.global.security.util.OAuthProvider;
 import com.payper.global.security.util.JwtProcessor;
 import com.payper.domain.user.UserMapper;
@@ -201,5 +203,19 @@ public class AuthService {
                     response.getStatusCode(), response.getBody());
             throw new RuntimeException("obtain kakao user info failed: " + response.getStatusCode());
         }
+    }
+
+    public TokenResponse reissueTokens(String oldRefreshToken, HttpServletResponse response) {
+        if (oldRefreshToken != null && !jwtProcessor.validateJwtToken(oldRefreshToken)) {
+            throw new InvalidRefreshTokenException(oldRefreshToken); // TODO: 핸들러 작성
+        }
+
+        Integer userId = jwtProcessor.getUserId(oldRefreshToken);
+        String newAccessToken = jwtProcessor.generateAccessToken(userId);
+        String newRefreshToken = jwtProcessor.generateRefreshToken(userId);
+
+        storeRefreshTokenInCookie(response, newRefreshToken);
+
+        return new TokenResponse(newAccessToken);
     }
 }
