@@ -43,8 +43,8 @@ public class CardController {
             @RequestParam(required = false) List<String> category,
             @RequestParam(required = false) List<String> cardCompany
     ) {
-        List<CardResponse> cards = cardService.searchCards(name, type, category, cardCompany);
         log.info("검색 카드 조회");
+        List<CardResponse> cards = cardService.searchCards(name, type, category, cardCompany);
         return ResponseEntity.ok(Map.of("cards", cards));
     }
 

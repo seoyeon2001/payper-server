@@ -19,8 +19,8 @@
         <result property="amount" column="amount"/>
         <result property="limitCount" column="limit_count"/>
         <result property="limitAmount" column="limit_amount"/>
-
-        <association property="grade" javaType="GradeResponse" resultMap="GradeResponseMap"/>
+        <result property="minPayment" column="min_payment" />
+        <collection property="gradeResponse" javaType="GradeResponse" resultMap="GradeResponseMap"/>
     </resultMap>
 
     <!-- 카테고리 -->
@@ -37,9 +37,14 @@
         <result property="summary" column="benefit_summary"/>
         <result property="description" column="benefit_description"/>
         <result property="iconUrl" column="benefit_icon_url"/>
-        <result property="minPayment" column="min_payment"/>
-        <collection property="benefitGradeList" resultMap="BenefitGradeResponseMap"/>
-        <collection property="categoryList" resultMap="CategoryResponseMap"/>
+        <collection property="benefitGradeDiscountResponseList" resultMap="BenefitGradeResponseMap"/>
+        <collection property="categoryResponseList" resultMap="CategoryResponseMap"/>
+    </resultMap>
+
+    <!-- 카드사 -->
+    <resultMap id="CardCompanyResponseMap" type="CardCompanyResponse">
+        <id property="id" column="company_id"/>
+        <result property="name" column="company_name"/>
     </resultMap>
 
     <!-- 카드 -->
@@ -48,22 +53,22 @@
         <result property="name" column="card_name"/>
         <result property="type" column="card_type"/>
         <result property="imageUrl" column="card_image_url"/>
-        <result property="companyName" column="company_name"/>
-        <result property="annualFee" column="annual_fee"/>
+        <result property="annualCost" column="annual_fee"/>
         <result property="cardIssueUrl" column="card_issue_url"/>
-
-        <collection property="benefitList" resultMap="BenefitResponseMap"/>
-        <collection property="gradeList" resultMap="GradeResponseMap"/>
+        <association property="company" javaType="CardCompanyResponse" resultMap="CardCompanyResponseMap"/>
+        <collection property="benefitResponseList" resultMap="BenefitResponseMap"/>
+        <collection property="gradeResponseList" resultMap="GradeResponseMap"/>
     </resultMap>
 
+    <!-- 카드 리스트 조회에서 사용하는 SQL문 -->
     <sql id="cardJoinClause">
         SELECT
-            c.card_id, c.card_name, c.card_type, c.card_image_url, cc.company_name,
-            c.annual_fee, c.card_issue_url,
+            c.card_id, c.card_name, c.card_type, c.card_image_url, c.annual_fee, c.card_issue_url,
+            cc.company_id, cc.company_name,
             b.benefit_id, b.benefit_title, b.benefit_summary, b.benefit_description, b.benefit_icon_url,
-            bgd.benefit_grade_id, bgd.grade_id, bgd.type, bgd.amount, bgd.limit_count, bgd.limit_amount, bgd.min_payment,
-            g.grade_id AS grade_id, g.start, g.total_discount,
-            bc.category_id, cat.category_name, cat.category_id AS category_id, cat.pre_category_id, cat.category_image_url AS category_image_url
+            bgd.benefit_grade_id, bgd.type, bgd.amount, bgd.limit_count, bgd.limit_amount, bgd.min_payment,
+            g.grade_id, g.start, g.total_discount,
+            cat.category_id, cat.category_name, cat.category_image_url
         FROM card c
                  LEFT JOIN card_company cc ON c.company_id = cc.company_id
                  LEFT JOIN benefit b ON c.card_id = b.card_id
@@ -72,6 +77,7 @@
                  LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
                  LEFT JOIN category cat ON bc.category_id = cat.category_id
     </sql>
+
     <!-- 카드 전체 조회 -->
     <select id="selectAllCards" resultMap="CardResponseMap">
         <include refid="cardJoinClause" />
@@ -106,21 +112,22 @@
 --           카테고리로 검색 - 다중 값 가능
             <if test="category != null and category.size() > 0">
                 AND cat.category_name IN
-                <foreach item="cat" collection="category" open="(" separator="," close=")">
-                    #{cat}
+                <foreach item="categoryItem" collection="category" open="(" separator="," close=")">
+                    #{categoryItem}
                 </foreach>
             </if>
 
 --           카드사 이름으로 검색 - 다중 값 가능
             <if test="cardCompany != null and cardCompany.size() > 0">
-                AND c.company_name IN
-                <foreach item="c" collection="cardCompany" open="(" separator="," close=")">
-                    #{c}
+                AND cc.company_name IN
+                <foreach item="cardCompanyItem" collection="cardCompany" open="(" separator="," close=")">
+                    #{cardCompanyItem}
                 </foreach>
             </if>
         ORDER BY c.card_id, b.benefit_id;
     </select>
 
+    <!-- 내 카드 리스트 조회 -->
     <select id="selectCardsByUserID" resultMap="CardResponseMap">
         <include refid="cardJoinClause" />
         INNER JOIN user_card uc ON c.card_id = uc.card_id
@@ -129,11 +136,13 @@
         ORDER BY c.card_id, b.benefit_id;
     </select>
 
+    <!-- 내 카드로 등록 -->
     <insert id="registerCardMe">
         insert into user_card(user_id, card_id)
         values (#{userId}, #{cardId})
     </insert>
 
+    <!-- 내 카드 삭제 -->
     <update id="softDeleteCard">
         UPDATE user_card
         SET deleted_at = NOW(), is_deleted = true
