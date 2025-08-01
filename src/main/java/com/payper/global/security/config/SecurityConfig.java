@@ -31,7 +31,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @Slf4j
 @RequiredArgsConstructor
 @ComponentScan(basePackages = {
-        "com.payper.global.security"
+        "com.payper.global.security",
+        "com.payper.domain"
 })
 //@MapperScan(basePackages={“userdetails 갖고 올때 사용할 매퍼 경로”})
 public class SecurityConfig {
