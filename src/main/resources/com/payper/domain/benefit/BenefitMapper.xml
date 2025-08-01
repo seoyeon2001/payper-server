@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.payper.domain.benefit.BenefitMapper">
+    <select id="findAllByCardId" resultMap="BenefitResponseMap">
+        SELECT
+            b.benefit_id,
+            b.benefit_title,
+            b.benefit_summary,
+            b.benefit_description,
+            b.benefit_icon_url
+        FROM benefit b
+        WHERE b.card_id = #{cardId}
+        AND b.is_deleted = false
+        ORDER BY b.benefit_id
+    </select>
+
+    <insert id="createBenefit">
+        INSERT INTO benefit (
+                             card_id,
+                             benefit_title,
+                             benefit_summary,
+                             benefit_description,
+                             benefit_icon_url,
+                             is_deleted,
+                             created_at,
+                             deleted_at,
+                             last_modified_at
+        )
+        VALUES (
+                #{cardId},
+                #{title},
+                #{summary},
+                #{description},
+                #{iconUrl},
+                false,
+                NOW(),
+                null,
+                NOW()
+        )
+    </insert>
+
+    <resultMap id="BenefitResponseMap" type="com.payper.domain.benefit.dto.BenefitResponse">
+        <id property="id" column="benefit_id"/>
+        <result property="title" column="benefit_summary"/>
+        <result property="summary" column="benefit_description"/>
+        <result property="description" column="benefit_description"/>
+        <result property="iconUrl" column="benefit_icon_url"/>
+    </resultMap>
+</mapper>
+
