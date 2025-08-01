@@ -1,5 +1,7 @@
 package com.payper.domain.user;
 
+import com.payper.domain.user.dto.UserResponse;
+import com.payper.domain.user.exception.NoSuchUserException;
 import com.payper.global.security.domain.CustomUser;
 import com.payper.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,13 @@ public class UserService {
     }
 
     public Integer getUserId(CustomUser customUser) {
-        return customUser.getUser().getUserId();
+        Integer userId = customUser.getUser().getUserId();
+
+        if (userId == null) {
+            throw new NoSuchUserException();
+        }
+
+        return userId;
     }
 
     @Transactional
@@ -27,5 +35,13 @@ public class UserService {
         if (updated == 0) {
             throw new IllegalStateException("ConnectedId 업데이트 실패");
         }
+    }
+
+    public UserResponse getMyInfo(Integer userId) {
+        UserResponse userInfo = userMapper.getUserInfo(userId);
+        if (userInfo == null) {
+            throw new NoSuchUserException();
+        }
+        return userInfo;
     }
 }

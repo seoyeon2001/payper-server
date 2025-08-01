@@ -1,6 +1,7 @@
 package com.payper.domain.user;
 
 import com.payper.domain.user.domain.User;
+import com.payper.domain.user.dto.UserResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,4 +18,6 @@ public interface UserMapper {
 
     public int
     createUser(@Param("user") User user); //insert
+
+    UserResponse getUserInfo(Integer userId);
 }

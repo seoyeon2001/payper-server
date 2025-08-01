@@ -1,36 +1,27 @@
 package com.payper.domain.user;
 
+import com.payper.domain.user.dto.UserResponse;
 import com.payper.global.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
+    private final UserService userService;
 
-    @GetMapping("")
-    public ResponseEntity<?> getMyInfo(@AuthenticationPrincipal CustomUser customuser) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getMyInfo(@AuthenticationPrincipal CustomUser customUser) {
+        Integer userId = userService.getUserId(customUser);
+        log.info("유저 정보 조회 - userId : {} ", userId);
 
-        log.info("전체 SecurityContext 상태: {}", SecurityContextHolder.getContext());
-
-        log.info("현재 SecurityContext 인증 객체: {}", auth);
-        log.info("현재 Principal: {}", auth != null ? auth.getPrincipal() : "null");
-
-        if (customuser == null) {
-            log.warn("@AuthenticationPrincipal customuser는 null임");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
-        }
-        return ResponseEntity.ok().build();
+        UserResponse userInfo = userService.getMyInfo(userId);
+        return ResponseEntity.ok(userInfo);
     }
+
 }

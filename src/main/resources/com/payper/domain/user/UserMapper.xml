@@ -25,4 +25,10 @@
         values (null,#{user.oauthProvider},#{user.oauthId},#{user.nickname},#{user.connectedId})
     </insert>
 
+    <select id="getUserInfo" resultType="UserResponse">
+        SELECT user_id as id, nickname
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
+
 </mapper>
