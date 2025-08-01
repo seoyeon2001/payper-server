@@ -78,17 +78,17 @@ public class SecurityConfig {
                 // 모든 요청은 인증된 사용자만 접근 가능
                 //.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/favicon.ico",
-                                "/error",
-                                "/test/**",
-                                "/docs/**",
-                                "/api/auth/**",
-                                "/ws/**"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(
+//                                "/favicon.ico",
+//                                "/error",
+//                                "/test/**",
+//                                "/docs/**",
+//                                "/api/auth/**",
+//                                "/ws/**"
+//                        ).permitAll()
+//                        .anyRequest().authenticated()
+//                )
 
                 // 세션 관리 설정
                 .sessionManagement(sessionManagement ->

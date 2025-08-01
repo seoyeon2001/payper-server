@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.payper.domain.category.CategoryMapper">
+    <select id="findIdByCategoryName" resultType="Integer">
+        select category_id from category
+                           where lower(category_name) = LOWER(#{categoryName})
+                             and is_deleted = false;
+    </select>
+</mapper>
