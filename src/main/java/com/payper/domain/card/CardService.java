@@ -2,6 +2,7 @@ package com.payper.domain.card;
 
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
+import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.domain.card.exception.CardNotFoundException;
 import com.payper.domain.card.exception.MyCardDeletionFailedException;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,32 @@ public class CardService {
 
     public void registerCardMe(RegisterCardMeRequest request, Integer userId) {
         cardMapper.registerCardMe(request.getCardId(), userId);
+    }
+
+    @Transactional
+    public int registerCard(RegisterCardRequest request){
+        int result=0;
+
+        boolean isExists=cardMapper.existsCardCompany(request.getCompanyName());
+
+        try{
+            if(!isExists){
+                if(cardMapper.registerCardCompany(request.getCompanyName())!=1){
+                    throw new RuntimeException("card company register failed");
+                }
+            }
+
+            int cardCompanyId=cardMapper.getCardCompanyId(request.getCompanyName());
+            result=cardMapper.registerCard(request, cardCompanyId);
+            if(result!=1){
+                throw new RuntimeException("card register failed");
+            }
+        }
+        catch(Exception e){
+            throw new RuntimeException(e);//롤백을 위한 예외 변환
+        }
+
+        return result;
     }
 
     @Transactional

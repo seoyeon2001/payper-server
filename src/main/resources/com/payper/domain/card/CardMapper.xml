@@ -142,6 +142,27 @@
         values (#{userId}, #{cardId})
     </insert>
 
+    <select id="existsCardCompany" resultType="boolean">
+        select EXISTS(
+            select 1 from card_company where company_name=#{cardCompanyName}
+        )
+    </select>
+
+    <select id="getCardCompanyId" resultType="int">
+        select company_id from card_company where company_name=#{cardCompanyName}
+    </select>
+
+    <insert id="registerCardCompany">
+        INSERT INTO card_company(company_name)
+        VALUES(#{cardCompanyName})
+    </insert>
+
+    <insert id="registerCard">
+        INSERT INTO card (card_name, card_type, card_image_url, card_issue_url, company_id)
+        VALUES (#{card.cardName},#{card.cardType},#{card.cardImageUrl},#{card.cardIssueUrl},#{cardCompanyId})
+    </insert>
+
+
     <!-- 내 카드 삭제 -->
     <update id="softDeleteCard">
         UPDATE user_card

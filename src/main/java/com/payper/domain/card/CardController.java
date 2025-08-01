@@ -2,10 +2,14 @@ package com.payper.domain.card;
 
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
+import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.domain.user.UserService;
+import com.payper.global.exception.ErrorResponse;
 import com.payper.global.security.domain.CustomUser;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +31,18 @@ public class CardController {
 
         List<CardResponse> cards = cardService.getAllCards();
         return ResponseEntity.ok(Map.of("cards", cards));
+    }
+
+    @PostMapping("")
+    public ResponseEntity registerCard(@RequestBody RegisterCardRequest request){
+        if(cardService.registerCard(request)!=1){
+            return ResponseEntity.ok().build();
+        }
+        else{
+            return ErrorResponse.build(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "card register failed",
+                    "CardController/registerCard");
+        }
     }
 
     @GetMapping("/{cardId}")
