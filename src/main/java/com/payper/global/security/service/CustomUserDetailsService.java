@@ -4,13 +4,13 @@ import com.payper.global.security.domain.CustomUser;
 import com.payper.global.security.mapper.UserDetailsMapper;
 import com.payper.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-@Log4j2
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {

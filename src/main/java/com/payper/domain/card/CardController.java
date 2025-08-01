@@ -2,11 +2,10 @@ package com.payper.domain.card;
 
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
-import com.payper.domain.card.exception.CardNotFoundException;
-import com.payper.global.security.domain.CustomUser;
 import com.payper.domain.user.UserService;
+import com.payper.global.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@Log4j2
+@Slf4j
 @RequestMapping("/api/cards")
 @RequiredArgsConstructor
 public class CardController {

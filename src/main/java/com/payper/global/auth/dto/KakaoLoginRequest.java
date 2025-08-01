@@ -1,10 +1,10 @@
 package com.payper.global.auth.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.springframework.security.authentication.BadCredentialsException;
 
-import javax.servlet.http.HttpServletRequest;
 
 @Data
 public class KakaoLoginRequest {

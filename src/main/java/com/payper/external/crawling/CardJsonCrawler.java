@@ -3,14 +3,14 @@ package com.payper.external.crawling;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import static com.payper.external.crawling.CardJsonExtractor.parseCardJson;
 
-@Log4j2
+@Slf4j
 public class CardJsonCrawler {
     public static void main(String[] args){
         ObjectMapper mapper = new ObjectMapper();

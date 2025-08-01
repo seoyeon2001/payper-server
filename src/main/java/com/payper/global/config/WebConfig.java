@@ -1,10 +1,10 @@
 package com.payper.global.config;
 
 import com.payper.global.security.config.SecurityConfig;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.ServletRegistration;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.ServletRegistration;
 
 public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
     final String LOCATION = "업로드 절대 경로";

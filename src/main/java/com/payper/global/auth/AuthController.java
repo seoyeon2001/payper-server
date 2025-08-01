@@ -3,14 +3,14 @@ package com.payper.global.auth;
 import com.payper.global.auth.dto.KakaoLoginRequest;
 import com.payper.global.auth.dto.LoginResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class AuthController {
     private final AuthService authService;
 

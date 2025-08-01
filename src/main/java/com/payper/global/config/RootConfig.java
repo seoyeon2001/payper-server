@@ -3,7 +3,7 @@ package com.payper.global.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         "com.payper.external.codef",
 })
 @MapperScan(value = "com.payper", annotationClass = Mapper.class)
-@Log4j2
+@Slf4j
 @EnableTransactionManagement
 public class RootConfig {
   @Value("${jdbc.driver}")

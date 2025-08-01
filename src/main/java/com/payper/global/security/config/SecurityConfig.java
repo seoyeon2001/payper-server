@@ -5,7 +5,7 @@ import com.payper.global.security.filter.JwtAuthenticationFilter;
 import com.payper.global.security.handler.CustomAccessDeniedHandler;
 import com.payper.global.security.handler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -24,10 +24,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 @ComponentScan(basePackages = {
         "com.payper.global.security"
@@ -77,7 +78,7 @@ public class SecurityConfig {
                 //.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
 
                 .authorizeHttpRequests(auth -> auth
-                        .antMatchers(
+                        .requestMatchers(
                                 "/favicon.ico",
                                 "/error",
                                 "/test/**",
@@ -104,9 +105,14 @@ public class SecurityConfig {
     }
 
     @Bean
+    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+        return new HandlerMappingIntrospector();
+    }
+
+    @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return (web)->{
-            web.ignoring().antMatchers("/assets/**", "/api/auth/**");
+            web.ignoring().requestMatchers("/assets/**", "/api/auth/**");
         };
     }
 

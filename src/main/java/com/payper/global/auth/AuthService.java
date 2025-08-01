@@ -8,7 +8,7 @@ import com.payper.global.security.util.JwtProcessor;
 import com.payper.domain.user.UserMapper;
 import com.payper.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.*;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Service
 @PropertySource("classpath:application-kakao.properties")
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class AuthService {

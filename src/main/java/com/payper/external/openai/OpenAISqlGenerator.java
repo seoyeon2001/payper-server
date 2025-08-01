@@ -1,7 +1,7 @@
 package com.payper.external.openai;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -9,7 +9,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-@Log4j2
+@Slf4j
 public class OpenAISqlGenerator {
     private static final String API_KEY = GptConfig.getApiKey();
     private static final String API_URL = GptConfig.getApiUrl();
