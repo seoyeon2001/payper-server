@@ -27,10 +27,9 @@ public class AuthController {
         return ResponseEntity.ok(authService.reissueTokens(refreshToken, response));
     }
 
-
-    // TODO: logout
-    /*@GetMapping("/logout")
-    public ResponseEntity<> logoutKakao() {
-        return null;
-    }*/
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logOut(HttpServletResponse response) {
+        authService.logOut(response);
+        return ResponseEntity.ok().build();
+    }
 }

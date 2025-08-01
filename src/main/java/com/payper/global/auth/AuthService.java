@@ -89,14 +89,6 @@ public class AuthService {
         return loginResponse;
     }
 
-    private void storeRefreshTokenInCookie(HttpServletResponse response, String refreshToken) {
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setMaxAge(jwtProcessor.getRefreshTokenMaxAgeInSeconds());
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
-    }
-
     //코드로 카카오auth 서버에서 억세스토큰과 리프레시토큰 얻기.
     //카카오 auth accessToken은 여기서만 쓰인다.
     //카카오 auth accessToken 카카오 계정 고유 ID를 얻기 위함이 크다!
@@ -204,7 +196,6 @@ public class AuthService {
             throw new RuntimeException("obtain kakao user info failed: " + response.getStatusCode());
         }
     }
-
     public TokenResponse reissueTokens(String oldRefreshToken, HttpServletResponse response) {
         if (oldRefreshToken != null && !jwtProcessor.validateJwtToken(oldRefreshToken)) {
             throw new InvalidRefreshTokenException(oldRefreshToken); // TODO: 핸들러 작성
@@ -217,5 +208,21 @@ public class AuthService {
         storeRefreshTokenInCookie(response, newRefreshToken);
 
         return new TokenResponse(newAccessToken);
+    }
+
+    public void logOut(HttpServletResponse response) {
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+    }
+
+    private void storeRefreshTokenInCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setMaxAge(jwtProcessor.getRefreshTokenMaxAgeInSeconds());
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
     }
 }
