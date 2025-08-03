@@ -27,7 +27,11 @@ public class CardJsonExtractor {
             for (JsonNode keyBenefit : keyBenefits) {
                 if(keyBenefit.path("cate").path("idx").asInt() == 28 ||
                                 keyBenefit.path("cate").path("name").asText("").equals("유의사항")
-                ) continue;
+                ) {
+                    data.gradeDescription = keyBenefit.path("info").asText("");
+                    continue;
+                }
+                
                 Benefit benefit = new Benefit();
                 benefit.title = keyBenefit.path("title").asText("");
                 benefit.summary = keyBenefit.path("comment").asText("");

@@ -21,7 +21,7 @@ public class CardBenefitCleaner {
             Pattern.compile("전월 이용실적[^\\d]*(\\d{1,3}(?:,\\d{3})*|\\d+(?:천|만)?)(?:원)?");
 
 
-    public static CleanedResult clean(String title, String summary, String descriptionHtml) {
+    public static CleanedResult cleanBenefit(String title, String summary, String descriptionHtml) {
         String description = Jsoup.parse(descriptionHtml).text();
 
         List<String> categories = new ArrayList<>(extractBrands(title + " " + summary + " " + description));
@@ -41,7 +41,6 @@ public class CardBenefitCleaner {
 
         Grade grade = Grade.builder()
                 .start(extractLong(START_PATTERN, description))
-                .end(null)
                 .totalDiscount(null)
                 .build();
 
@@ -138,7 +137,6 @@ public class CardBenefitCleaner {
     @Builder
     public static class Grade {
         private Long start;
-        private Long end;
         private Long totalDiscount;
     }
 

@@ -8,6 +8,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.payper.external.crawling.CardBenefitCleaner.cleanBenefit;
+import static com.payper.external.crawling.CardGradeCleaner.cleanGrade;
 import static com.payper.external.crawling.CardJsonExtractor.parseCardJson;
 
 @Slf4j
@@ -42,17 +44,18 @@ public class CardJsonCrawler {
                 for (int i = 0; i < data.getBenefits().size(); i++) {
                     Benefit benefit = data.getBenefits().get(i);
 
-                    CardBenefitCleaner.CleanedResult cleaned = CardBenefitCleaner.clean(
+                    CardBenefitCleaner.CleanedResult cleaned = cleanBenefit(
                             benefit.getTitle(),
                             benefit.getSummary(),
                             benefit.getDescription()
                     );
-                    CardBenefitCleaner.Discount d = cleaned.getDiscount();
-                    log.info("{} 할인 정보 - type: {}, amount: {}, minPayment: {}, limitAmount: {}, limitCount: {}",
-                            i+1, d.getType(), d.getAmount(), d.getMinPayment(), d.getLimitAmount(), d.getLimitCount());
-                    CardBenefitCleaner.Grade g = cleaned.getGrade();
-                    log.info("{} 실적 정보 - start: {}, end: {}, totaldiscount: {}",
-                            i+1, g.getStart(), g.getEnd(), g.getTotalDiscount());
+
+                    CardGradeCleaner.CleanedGradeResult cleanedGrade = cleanGrade(
+                            data.getGradeDescription()
+                    );
+
+                    log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(cleaned));
+                    log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(cleanedGrade));
 
 
 //                    String result = OpenAISqlGenerator.generateSql(
