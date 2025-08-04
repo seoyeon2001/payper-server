@@ -13,11 +13,11 @@
     </select>
 
     <update id="updateConnectedId">
-        UPDATE user SET connected_id = #{connectedId} WHERE user_id = #{userId}
+        UPDATE user SET connected_id = #{connectedId},last_modified_at=NOW() WHERE user_id = #{userId}
     </update>
 
     <update id="softDeleteUser">
-        UPDATE user SET is_deleted = true WHERE user_id = #{userId}
+        UPDATE user SET is_deleted = true, SET deleted_at=NOW(),last_modified_at=NOW() WHERE user_id = #{userId}
     </update>
 
     <insert id="createUser">
@@ -25,8 +25,8 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
 
-        INSERT INTO user (user_id,oauth_provider,oauth_id,nickname,connected_id)
-        values (null,#{user.oauthProvider},#{user.oauthId},#{user.nickname},#{user.connectedId})
+        INSERT INTO user (user_id,oauth_provider,oauth_id,nickname,connected_id,created_at,is_deleted,last_modified_at)
+        values (null,#{user.oauthProvider},#{user.oauthId},#{user.nickname},#{user.connectedId},NOW(),FALSE,NOW())
     </insert>
 
     <select id="getUserInfo" resultType="UserResponse">

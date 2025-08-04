@@ -28,7 +28,7 @@ public class BenefitService {
     }
 
     public void updateBenefit(Integer cardId, Integer benefitId, UpdateBenefitRequest request) {
-        if (!cardMapper.existsById(cardId)) {
+        if (!cardMapper.existsByCardId(cardId)) {
             throw new CardNotFoundException();
         }
         if (benefitMapper.updateBenefit(benefitId, request) != 1) {

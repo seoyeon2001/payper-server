@@ -14,5 +14,4 @@ public class UpdateCardRequest {
     private String cardImageUrl;
     private String cardIssueUrl;
     private Long annualFee;
-    private Boolean isDeleted;
 }

@@ -24,7 +24,7 @@ public class AuthController {
 
     @PostMapping("/login/kakao")
     public ResponseEntity<LoginResponse> loginKakao(@RequestBody KakaoLoginRequest request, HttpServletResponse response) {
-        log.error(request.getCode());
+
         return ResponseEntity.ok(authService.login(request.getCode(), response));
     }
 

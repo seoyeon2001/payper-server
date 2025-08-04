@@ -166,7 +166,7 @@
         WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = false
     </update>
 
-    <select id="existsById" resultType="boolean">
+    <select id="existsByCardId" resultType="boolean">
         SELECT EXISTS (
             SELECT 1
             FROM card
@@ -192,6 +192,14 @@
         )
     </select>
 
+    <select id="existedByCardId" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM card
+            WHERE card_id = #{cardId}
+        )
+    </select>
+
     <select id="existsUserCard" resultType="boolean">
         SELECT EXISTS (
             SELECT 1
@@ -214,8 +222,7 @@
             card_type = #{card.cardType},
             card_image_url = #{card.cardImageUrl},
             card_issue_url = #{card.cardIssueUrl},
-            company_id = #{cardCompanyId},
-            is_deleted = #{card.isDeleted}
+            company_id = #{cardCompanyId}
         WHERE card_id=#{cardId}
     </update>
 

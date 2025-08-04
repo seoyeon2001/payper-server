@@ -23,14 +23,14 @@ public class CardService {
     }
 
     public CardResponse getCardById(int cardId) {
-        existsCardById(cardId);
+        existsByCardId(cardId);
         return cardMapper.selectCardById(cardId);
     }
 
 
-    // 존재하는 카드인지 확인하기 위함(삭제 여부 체크 안함) - 단순 검증용이므로 void
-    private void existsCardById(Integer cardId) {
-        if(!cardMapper.existsById(cardId)) {
+    // 존재하고 삭제되지 않은 카드인지 확인하기 위함 - 단순 검증용이므로 void
+    private void existsByCardId(Integer cardId) {
+        if(!cardMapper.existsByCardId(cardId)) {
             log.error("카드 Not Found - cardId: {}", cardId);
             throw new CardNotFoundException();
         }
@@ -51,7 +51,7 @@ public class CardService {
     }
 
     public void registerCardMe(RegisterCardMeRequest request, Integer userId) {
-        existsCardById(request.getCardId()); // 존재하는 card인지 확인
+        existedByCardId(request.getCardId()); // 존재하는 card인지 확인
         checkDuplicateUserCard(userId, request.getCardId()); // 이미 사용자 카드로 등록되어 있는지 확인
 
         if(cardMapper.isPreviouslyDeletedUserCard(userId, request.getCardId())) { // 등록 이력이 있는지 확인
@@ -94,13 +94,22 @@ public class CardService {
         }
     }
 
+    //등록되었는지 확인. 삭제여부 확인X.
+    private void existedByCardId(Integer cardId){
+        if(!cardMapper.existedByCardId(cardId)){
+            log.error("Existed Card Not Found - cardId: {}", cardId);
+
+            throw new CardExistedNotFoundException();
+        }
+    }
+
     @Transactional
     public void updateCard(UpdateCardRequest request, int cardId){
         String cardCompanyName=request.getCompanyName();
 
         existsByCardCompanyName(cardCompanyName);
 
-        existsCardById(cardId);
+        existsByCardId(cardId);
 
         int cardCompanyId=cardMapper.getCardCompanyId(cardCompanyName);
 
@@ -113,7 +122,7 @@ public class CardService {
 
     @Transactional
     public void deleteCardMe(int userId, int cardId) {
-        existsCardById(cardId);
+        existedByCardId(cardId);
 
         // 삭제 여부 확인
         if (cardMapper.isPreviouslyDeletedUserCard(userId, cardId)) {
@@ -130,7 +139,7 @@ public class CardService {
 
     @Transactional
     public void deleteCard(int cardId) {
-        existsCardById(cardId);
+        existsByCardId(cardId);
 
         int result= cardMapper.softDeleteCard(cardId);
 

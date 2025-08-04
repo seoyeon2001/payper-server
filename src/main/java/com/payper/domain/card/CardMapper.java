@@ -38,13 +38,15 @@ public interface CardMapper {
 
     boolean isPreviouslyDeletedUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
-    boolean existsById(Integer cardId);
+    boolean existedByCardId(Integer cardId);
+
+    boolean existsByCardId(Integer cardId);
 
     boolean existsUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
     int softDeleteMyCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
-    int softDeleteCard(  @Param("cardId") Integer cardId  );
+    int softDeleteCard(Integer cardId);
 
     List<CardResponse> findByPartnerId(@Param("userId") Integer userId,
                                        @Param("partnerId") Integer partnerId);
