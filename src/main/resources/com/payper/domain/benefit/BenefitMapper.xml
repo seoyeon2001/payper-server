@@ -53,6 +53,13 @@
         WHERE benefit_id = #{benefitId}
     </update>
 
+    <update id="softDeleteBenefit">
+        UPDATE benefit
+        SET is_deleted = true, deleted_at = NOW(), last_modified_at = NOW()
+        WHERE card_id = #{cardId} AND benefit_id = #{benefitId} AND is_deleted = false
+    </update>
+
+
     <resultMap id="BenefitResponseMap" type="BenefitResponse">
         <id property="id" column="benefit_id"/>
         <result property="title" column="benefit_summary"/>

@@ -15,4 +15,7 @@ public interface BenefitMapper {
     void createBenefit(@Param("cardId") int cardId, @Param("request") CreateBenefitRequest request);
 
     int updateBenefit(@Param("benefitId") int benefitId, @Param("request") UpdateBenefitRequest request);
+
+    int softDeleteBenefit(@Param("cardId") Integer cardId, @Param("benefitId") Integer benefitId);
+
 }

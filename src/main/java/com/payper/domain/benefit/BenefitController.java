@@ -33,4 +33,11 @@ public class BenefitController {
         benefitService.updateBenefit(cardId, benefitId, request);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{benefitId}")
+    public ResponseEntity<Void> deleteBenefit(
+            @PathVariable(name = "cardId") Integer cardId, @PathVariable(name = "benefitId") Integer benefitId) {
+        benefitService.deleteBenefit(cardId, benefitId);
+        return ResponseEntity.ok().build();
+    }
 }
