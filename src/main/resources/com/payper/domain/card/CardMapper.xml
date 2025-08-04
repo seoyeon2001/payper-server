@@ -90,10 +90,6 @@
         WHERE c.card_id = #{cardId};
     </select>
 
-    <select id="findById" resultType="Integer">
-        SELECT count(*) from card where card_id = #{cardId};
-    </select>
-
     <!-- 카드 검색 -->
     <!-- String name, String type, List<String> category, List<String> cardCompany -->
     <select id="searchWithConditions" resultMap="CardResponseMap">
@@ -166,9 +162,43 @@
     <!-- 내 카드 삭제 -->
     <update id="softDeleteMyCard">
         UPDATE user_card
-        SET deleted_at = NOW(), is_deleted = true
-        WHERE user_id = #{userId} AND card_id = #{cardId}
+        SET is_deleted = true, deleted_at = NOW(), last_modified_at = NOW()
+        WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = false
     </update>
+
+    <select id="existsCard" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM card
+            WHERE card_id = #{cardId}
+        )
+    </select>
+
+    <!-- 카드 재등록 - 복원 -->
+    <update id="restoreUserCard">
+        UPDATE user_card
+        SET is_deleted = false, deleted_at = NULL, last_modified_at = NOW()
+        WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = true
+    </update>
+
+    <!-- 삭제 이력이 있는 카드인가 -->
+    <select id="isPreviouslyDeletedUserCard" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM user_card
+            WHERE user_id = #{userId}
+              AND card_id = #{cardId}
+              AND is_deleted = true
+        )
+    </select>
+
+    <select id="existsUserCard" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM user_card
+            WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = false
+        )
+    </select>
 
     <update id="softDeleteCard">
         UPDATE card

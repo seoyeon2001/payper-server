@@ -6,6 +6,7 @@ import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.domain.card.exception.CardCompanyNotFoundException;
 import com.payper.domain.card.exception.CardDeletionFailedException;
 import com.payper.domain.card.exception.CardNotFoundException;
+import com.payper.domain.card.exception.DuplicateUserCardException;
 import com.payper.domain.card.exception.CardRegisterationFailedException;
 import com.payper.domain.card.exception.MyCardDeletionFailedException;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +27,14 @@ public class CardService {
     }
 
     public CardResponse getCardById(int cardId) {
-        existsById(cardId);
+        existsCardById(cardId);
         return cardMapper.selectCardById(cardId);
     }
 
-    public void existsById(int cardId) {
-        if(cardMapper.findById(cardId)!=1){
+
+    // 존재하는 카드인지 확인하기 위함(삭제 여부 체크 안함) - 단순 검증용이므로 void
+    private void existsCardById(Integer cardId) {
+        if(!cardMapper.existsCard(cardId)) {
             log.error("카드 Not Found - cardId: {}", cardId);
             throw new CardNotFoundException();
         }
@@ -52,7 +55,22 @@ public class CardService {
     }
 
     public void registerCardMe(RegisterCardMeRequest request, Integer userId) {
-        cardMapper.registerCardMe(request.getCardId(), userId);
+        existsCardById(request.getCardId()); // 존재하는 card인지 확인
+        checkDuplicateUserCard(userId, request.getCardId()); // 이미 사용자 카드로 등록되어 있는지 확인
+
+        if(cardMapper.isPreviouslyDeletedUserCard(userId, request.getCardId())) { // 등록 이력이 있는지 확인
+            cardMapper.restoreUserCard(userId, request.getCardId());
+        } else {
+            cardMapper.registerCardMe(userId, request.getCardId());
+        }
+    }
+
+    // 이미 등록된 카드인지 확인하기 위함 - 단순 검증용이므로 void
+    private void checkDuplicateUserCard(Integer userId, Integer cardId) {
+        if (cardMapper.existsUserCard(userId, cardId)) {
+            log.error("이미 등록된 카드 - userId: {}, cardId: {}", userId, cardId);
+            throw new DuplicateUserCardException(userId, cardId);
+        }
     }
 
     private void existsByCardCompanyName(String cardCompanyName) {
@@ -80,18 +98,18 @@ public class CardService {
 
     @Transactional
     public void deleteCardMe(int userId, int cardId) {
-        existsById(cardId);
+        existsCardById(cardId);
 
         int updateCount = cardMapper.softDeleteMyCard(userId, cardId);
         if (updateCount != 1) {
             log.error("내 카드 삭제 실패 - userId: {}, cardId: {}", userId, cardId);
-           throw new MyCardDeletionFailedException();
+            throw new MyCardDeletionFailedException();
         }
     }
 
     @Transactional
     public void deleteCard(int cardId) {
-        existsById(cardId);
+        existsCardById(cardId);
 
         int result= cardMapper.softDeleteCard(cardId);
 

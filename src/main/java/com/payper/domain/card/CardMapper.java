@@ -11,7 +11,6 @@ import java.util.List;
 public interface CardMapper {
     List<CardResponse> selectAllCards();
     CardResponse selectCardById(int cardId);
-    int findById(int cardId);
 
     List<CardResponse> searchWithConditions(
             @Param("name") String name,
@@ -22,7 +21,7 @@ public interface CardMapper {
 
     List<CardResponse> selectCardsByUserID(int userId);
 
-    void registerCardMe(@Param("cardId") Integer cardId, @Param("userId") Integer userId);
+    void registerCardMe(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
     boolean existsCardCompany(@Param("cardCompanyName") String cardCompanyName);
 
@@ -31,6 +30,14 @@ public interface CardMapper {
     int registerCardCompany(@Param("cardCompanyName")String cardCompanyName);
 
     int registerCard(@Param("card") RegisterCardRequest card,@Param("cardCompanyId")int cardCompanyId);
+
+    int restoreUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
+
+    boolean isPreviouslyDeletedUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
+
+    boolean existsCard(Integer cardId);
+
+    boolean existsUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
     int softDeleteMyCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
