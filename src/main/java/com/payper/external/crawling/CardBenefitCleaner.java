@@ -12,13 +12,32 @@ import java.util.regex.Pattern;
 
 public class CardBenefitCleaner {
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CleanedResult {
+        private List<String> categories;
+        private Discount discount;
+    }
+
+    @Data
+    @Builder
+    public static class Discount {
+        private String type;
+        private Long amount;
+        private Long minPayment;
+        private Long limitAmount;
+        private Long limitCount;
+        private Long gradeStart;
+    }
+
     private static final Pattern PERCENT_PATTERN = Pattern.compile("(\\d+)%");
     private static final Pattern AMOUNT_PATTERN = Pattern.compile("(\\d{1,3}(,\\d{3})+|\\d+)(?=원)");
     private static final Pattern MIN_PAYMENT_PATTERN = Pattern.compile("건당\\s*([\\d,]+(?:천|만)?)(?:원)?\\s*이상");;
     private static final Pattern LIMIT_AMOUNT_PATTERN = Pattern.compile("월 할인한도[^\\d]*(\\d{1,3}(,\\d{3})*|\\d+천)원");
     private static final Pattern LIMIT_COUNT_PATTERN = Pattern.compile("월 할인횟수[\\s:]*([0-9]+)회");
-    private static final Pattern START_PATTERN =
-            Pattern.compile("전월 이용실적[^\\d]*(\\d{1,3}(?:,\\d{3})*|\\d+(?:천|만)?)(?:원)?");
+    private static final Pattern GRADE_START_PATTERN =
+            Pattern.compile("전월 이용실적[^\\d]*(\\d{1,3}(?:,\\d{3})*|\\d+(?:천|만)?)(만원|천원)?");
 
 
     public static CleanedResult cleanBenefit(String title, String summary, String descriptionHtml) {
@@ -27,7 +46,7 @@ public class CardBenefitCleaner {
         List<String> categories = new ArrayList<>(extractBrands(title + " " + summary + " " + description));
 
         Long minPayment = description.contains("건당 이용조건 없음")
-                ? null
+                ? 0L
                 : extractLong(MIN_PAYMENT_PATTERN, description);
 
         Discount discount = Discount.builder()
@@ -36,15 +55,10 @@ public class CardBenefitCleaner {
                 .minPayment(minPayment)
                 .limitAmount(extractLong(LIMIT_AMOUNT_PATTERN, description))
                 .limitCount(extractLong(LIMIT_COUNT_PATTERN, description))
+                .gradeStart(extractLong(GRADE_START_PATTERN, description))
                 .build();
-
-
-        Grade grade = Grade.builder()
-                .start(extractLong(START_PATTERN, description))
-                .totalDiscount(null)
-                .build();
-
-        return new CleanedResult(categories, discount, grade);
+      
+        return new CleanedResult(categories, discount);
     }
 
     private static String getDiscountType(String description) {
@@ -69,11 +83,11 @@ public class CardBenefitCleaner {
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
             String matchedStr = matcher.group(1);
-            return parseAmount(matchedStr);
+            String unit = matcher.groupCount() >= 2 ? matcher.group(2) : "";
+            return parseAmount(matchedStr + (unit != null ? unit : ""));
         }
-        return null;
+        return 0L;
     }
-
 
 
     private static Long parseAmount(String str) {
@@ -88,10 +102,6 @@ public class CardBenefitCleaner {
                 return Long.parseLong(str.replace("만", "")) * 10000;
             } else if (str.matches("\\d+")) {
                 return Long.parseLong(str);
-            } else if (str.matches("\\d+천원")) {
-                return Long.parseLong(str.replace("천원", "")) * 1000;
-            } else if (str.matches("\\d+만원")) {
-                return Long.parseLong(str.replace("만원", "")) * 10000;
             }
         } catch (NumberFormatException e) {
             System.err.println("parseAmount 오류: " + str);
@@ -99,8 +109,6 @@ public class CardBenefitCleaner {
 
         return null;
     }
-
-
 
 
     // 예시 키워드 기반 파트너 추출
@@ -117,35 +125,5 @@ public class CardBenefitCleaner {
             }
         }
         return found;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Discount {
-        private String type;
-        private Long amount;
-        private Long minPayment;
-        private Long limitAmount;
-        private Long limitCount;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Grade {
-        private Long start;
-        private Long totalDiscount;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CleanedResult {
-        private List<String> categories;
-        private Discount discount;
-        private Grade grade;
     }
 }
