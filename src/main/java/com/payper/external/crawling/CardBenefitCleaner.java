@@ -1,15 +1,22 @@
 package com.payper.external.crawling;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.payper.external.openai.OpenAIExtractPartner;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class CardBenefitCleaner {
 
     @Data
@@ -40,10 +47,10 @@ public class CardBenefitCleaner {
             Pattern.compile("전월 이용실적[^\\d]*(\\d{1,3}(?:,\\d{3})*|\\d+(?:천|만)?)(만원|천원)?");
 
 
-    public static CleanedResult cleanBenefit(String title, String summary, String descriptionHtml) {
+    public static CleanedResult cleanBenefit(String summary, String descriptionHtml) {
         String description = Jsoup.parse(descriptionHtml).text();
 
-        List<String> categories = new ArrayList<>(extractBrands(title + " " + summary + " " + description));
+        List<String> partnerTargetText = OpenAIExtractPartner.extractPartners(summary);
 
         Long minPayment = description.contains("건당 이용조건 없음")
                 ? 0L
@@ -58,7 +65,7 @@ public class CardBenefitCleaner {
                 .gradeStart(extractLong(GRADE_START_PATTERN, description))
                 .build();
       
-        return new CleanedResult(categories, discount);
+        return new CleanedResult(partnerTargetText, discount);
     }
 
     private static String getDiscountType(String description) {
@@ -111,17 +118,14 @@ public class CardBenefitCleaner {
     }
 
 
-    // 예시 키워드 기반 파트너 추출
-    private static final List<String> BRAND_KEYWORDS = Arrays.asList(
-            "스타벅스", "커피빈", "넷플릭스", "유튜브", "배달의민족", "요기요",
-            "BHC", "교촌", "맥도날드", "버거킹", "카카오", "쿠팡", "11번가"
-    );
-
     private static Set<String> extractBrands(String text) {
         Set<String> found = new LinkedHashSet<>();
-        for (String brand : BRAND_KEYWORDS) {
-            if (text.contains(brand)) {
-                found.add(brand);
+        // 1. 쉼표로 분리된 브랜드 후보 먼저 직접 추가
+        String[] tokens = text.split("[,/]");
+        for (String token : tokens) {
+            String trimmed = token.trim();
+            if (!trimmed.isEmpty()) {
+                found.add(trimmed);
             }
         }
         return found;

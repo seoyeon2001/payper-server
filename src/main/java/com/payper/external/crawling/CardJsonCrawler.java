@@ -20,7 +20,8 @@ public class CardJsonCrawler {
 
         String baseUrl = "https://api.card-gorilla.com:8080/v1/cards/";
 
-        for (int cardId = 2422; cardId <= 2422; cardId++) { //test용
+        int startId = 2749;
+        for (int cardId = startId; cardId <= startId; cardId++) { //test용
             String url = baseUrl + cardId;
 
             try {
@@ -45,7 +46,6 @@ public class CardJsonCrawler {
                     Benefit benefit = data.getBenefits().get(i);
 
                     CardBenefitCleaner.CleanedResult cleaned = cleanBenefit(
-                            benefit.getTitle(),
                             benefit.getSummary(),
                             benefit.getDescription()
                     );
