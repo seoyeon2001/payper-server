@@ -95,31 +95,31 @@
     <select id="searchWithConditions" resultMap="CardResponseMap">
         <include refid="cardJoinClause" />
         WHERE 1 = 1
---           카드 이름으로 검색 - 포함 여부
-            <if test="name != null and name != ''">
-                AND c.card_name LIKE CONCAT('%', #{name}, '%')
-            </if>
+        --           카드 이름으로 검색 - 포함 여부
+        <if test="name != null and name != ''">
+            AND c.card_name LIKE CONCAT('%', #{name}, '%')
+        </if>
 
---           카드 종류로 검색(신용 또는 체크)
-            <if test="type != null and type != ''">
-                AND c.card_type = #{type}
-            </if>
+        --           카드 종류로 검색(신용 또는 체크)
+        <if test="type != null and type != ''">
+            AND c.card_type = #{type}
+        </if>
 
---           카테고리로 검색 - 다중 값 가능
-            <if test="category != null and category.size() > 0">
-                AND cat.category_name IN
-                <foreach item="categoryItem" collection="category" open="(" separator="," close=")">
-                    #{categoryItem}
-                </foreach>
-            </if>
+        --           카테고리로 검색 - 다중 값 가능
+        <if test="category != null and category.size() > 0">
+            AND cat.category_name IN
+            <foreach item="categoryItem" collection="category" open="(" separator="," close=")">
+                #{categoryItem}
+            </foreach>
+        </if>
 
---           카드사 이름으로 검색 - 다중 값 가능
-            <if test="cardCompany != null and cardCompany.size() > 0">
-                AND cc.company_name IN
-                <foreach item="cardCompanyItem" collection="cardCompany" open="(" separator="," close=")">
-                    #{cardCompanyItem}
-                </foreach>
-            </if>
+        --           카드사 이름으로 검색 - 다중 값 가능
+        <if test="cardCompany != null and cardCompany.size() > 0">
+            AND cc.company_name IN
+            <foreach item="cardCompanyItem" collection="cardCompany" open="(" separator="," close=")">
+                #{cardCompanyItem}
+            </foreach>
+        </if>
         ORDER BY c.card_id, b.benefit_id;
     </select>
 
@@ -155,7 +155,7 @@
 
     <insert id="registerCard">
         INSERT INTO card (annual_fee, card_name, card_type, card_image_url, card_issue_url, company_id, created_at, is_deleted, last_modified_at)
-        VALUES (#{card.annualFee}, #{card.cardName},#{card.cardType},#{card.cardImageUrl},#{card.cardIssueUrl},#{cardCompanyId},NOW(),FASLE,NOW())
+        VALUES (#{card.annualFee}, #{card.cardName},#{card.cardType},#{card.cardImageUrl},#{card.cardIssueUrl},#{cardCompanyId},NOW(),FALSE,NOW())
     </insert>
 
 
@@ -214,8 +214,9 @@
             card_type = #{card.cardType},
             card_image_url = #{card.cardImageUrl},
             card_issue_url = #{card.cardIssueUrl},
-            company_id = #{cardCompanyId}
-        WHERE card_id=#{cardId} AND is_deleted = FALSE
+            company_id = #{cardCompanyId},
+            is_deleted = #{card.isDeleted}
+        WHERE card_id=#{cardId}
     </update>
 
     <!-- 가맹점에 맞는 내 카드 리스트 조회 -->
