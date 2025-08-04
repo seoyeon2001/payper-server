@@ -201,9 +201,11 @@
     </select>
 
     <update id="softDeleteCard">
+
         UPDATE card
         SET deleted_at = NOW(), is_deleted = true
         WHERE card_id = #{cardId}
+
     </update>
 
     <!-- 가맹점에 맞는 내 카드 리스트 조회 -->
@@ -216,6 +218,5 @@
         AND bp.partner_id = #{partnerId}
         ORDER BY c.card_id, b.benefit_id;
     </select>
-
 </mapper>
 

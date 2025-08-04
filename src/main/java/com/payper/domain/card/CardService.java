@@ -114,7 +114,9 @@ public class CardService {
         int result= cardMapper.softDeleteCard(cardId);
 
         if(result!=1){
+
             log.error("카드 삭제 실패 -  cardId: {}", cardId);
+
             throw new CardDeletionFailedException();
         }
     }

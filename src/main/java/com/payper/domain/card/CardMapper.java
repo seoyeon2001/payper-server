@@ -41,7 +41,7 @@ public interface CardMapper {
 
     int softDeleteMyCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
-    int softDeleteCard(@Param("cardId") Integer cardId);
+    int softDeleteCard(  @Param("cardId") Integer cardId  );
 
     List<CardResponse> findByPartnerId(@Param("userId") Integer userId,
                                        @Param("partnerId") Integer partnerId);
