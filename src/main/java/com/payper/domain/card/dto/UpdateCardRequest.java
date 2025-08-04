@@ -13,4 +13,5 @@ public class UpdateCardRequest {
     private String cardType;
     private String cardImageUrl;
     private String cardIssueUrl;
+    private Long annualFee;
 }

@@ -134,8 +134,8 @@
 
     <!-- 내 카드로 등록 -->
     <insert id="registerCardMe">
-        insert into user_card(user_id, card_id)
-        values (#{userId}, #{cardId})
+        insert into user_card(user_id, card_id, created_at, is_deleted, last_modified_at)
+        values (#{userId}, #{cardId},NOW(),FALSE ,NOW())
     </insert>
 
     <select id="existsCardCompany" resultType="boolean">
@@ -149,13 +149,13 @@
     </select>
 
     <insert id="registerCardCompany">
-        INSERT INTO card_company(company_name)
-        VALUES(#{cardCompanyName})
+        INSERT INTO card_company(company_name,created_at, is_deleted, last_modified_at)
+        VALUES(#{cardCompanyName},NOW(),FALSE, NOW())
     </insert>
 
     <insert id="registerCard">
-        INSERT INTO card (card_name, card_type, card_image_url, card_issue_url, company_id)
-        VALUES (#{card.cardName},#{card.cardType},#{card.cardImageUrl},#{card.cardIssueUrl},#{cardCompanyId})
+        INSERT INTO card (annual_fee, card_name, card_type, card_image_url, card_issue_url, company_id, created_at, is_deleted, last_modified_at)
+        VALUES (#{card.annualFee}, #{card.cardName},#{card.cardType},#{card.cardImageUrl},#{card.cardIssueUrl},#{cardCompanyId},NOW(),FASLE,NOW())
     </insert>
 
 
@@ -170,7 +170,7 @@
         SELECT EXISTS (
             SELECT 1
             FROM card
-            WHERE card_id = #{cardId}
+            WHERE card_id = #{cardId} AND is_deleted = false
         )
     </select>
 
@@ -201,22 +201,21 @@
     </select>
 
     <update id="softDeleteCard">
-
         UPDATE card
-        SET deleted_at = NOW(), is_deleted = true
-        WHERE card_id = #{cardId}
-
+        SET deleted_at = NOW(), is_deleted = true, last_modified_at=NOW()
+        WHERE card_id = #{cardId} AND is_deleted = FALSE
     </update>
 
     <update id="updateCard">
         UPDATE card
         SET last_modified_at = NOW(),
+            annual_fee= #{card.annualFee},
             card_name = #{card.cardName},
             card_type = #{card.cardType},
             card_image_url = #{card.cardImageUrl},
             card_issue_url = #{card.cardIssueUrl},
             company_id = #{cardCompanyId}
-        WHERE card_id=#{cardId}
+        WHERE card_id=#{cardId} AND is_deleted = FALSE
     </update>
 
     <!-- 가맹점에 맞는 내 카드 리스트 조회 -->
