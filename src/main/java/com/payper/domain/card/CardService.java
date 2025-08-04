@@ -3,12 +3,7 @@ package com.payper.domain.card;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
 import com.payper.domain.card.dto.RegisterCardRequest;
-import com.payper.domain.card.exception.CardCompanyNotFoundException;
-import com.payper.domain.card.exception.CardDeletionFailedException;
-import com.payper.domain.card.exception.CardNotFoundException;
-import com.payper.domain.card.exception.DuplicateUserCardException;
-import com.payper.domain.card.exception.CardRegisterationFailedException;
-import com.payper.domain.card.exception.MyCardDeletionFailedException;
+import com.payper.domain.card.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -99,6 +94,12 @@ public class CardService {
     @Transactional
     public void deleteCardMe(int userId, int cardId) {
         existsCardById(cardId);
+
+        // 삭제 여부 확인
+        if (cardMapper.isPreviouslyDeletedUserCard(userId, cardId)) {
+            log.error("이미 삭제된 카드입니다 - userId: {}, cardId: {}", userId, cardId);
+            throw new AlreadyDeletedUserCardException();
+        }
 
         int updateCount = cardMapper.softDeleteMyCard(userId, cardId);
         if (updateCount != 1) {
