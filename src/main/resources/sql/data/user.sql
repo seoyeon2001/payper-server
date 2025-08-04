@@ -7,7 +7,7 @@ SET @user_id = LAST_INSERT_ID();
 
 -- 사용자 카드
 INSERT INTO `user_card` (user_id, card_id)
-VALUES (@user_id, 1);
+VALUES (1, 1);
 
 COMMIT;
 

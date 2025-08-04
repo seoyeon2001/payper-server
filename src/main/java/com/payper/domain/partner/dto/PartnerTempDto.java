@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PartnerIdNameDto {
+public class PartnerTempDto {
     private Integer partnerId;
     private String partnerName;
+    private String partnerImageUrl;
 }

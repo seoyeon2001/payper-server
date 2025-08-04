@@ -8,4 +8,12 @@
                            where lower(category_name) = LOWER(#{categoryName})
                              and is_deleted = false;
     </select>
+
+    <select id="findNameByPartnerId" resultType="String">
+        SELECT c.category_name
+        FROM partner p
+                 JOIN category c ON p.category_id = c.category_id
+        WHERE p.partner_id = #{partnerId};
+
+    </select>
 </mapper>

@@ -45,22 +45,28 @@ public class PartnerService {
         List<PartnerResponse> result = new ArrayList<>();
 
         // DB에서 keyword로 가맹점 후보 조회
-        List<PartnerIdNameDto> matchedPartners = findPartnersByQuery(keyword);
+        List<PartnerTempDto> matchedPartners = findPartnersByQuery(keyword);
 
         // PartnerResponse 값 채우기
         for (PartnerKeywordSearchResponse.Document document : response.getDocuments()) {
-            String categoryName = document.getCategoryName();
+            String docCategoryName = document.getCategoryName();
 
             // category_name에 keyword가 포함되지 않으면 건너뜀
-            if (categoryName == null ||
-                    !categoryName.toLowerCase().contains(keyword.toLowerCase()))  {
+            if (docCategoryName == null ||
+                    !docCategoryName.toLowerCase().contains(keyword.toLowerCase()))  {
                 continue;
             }
 
             // DB와 map api 응답객체의 가맹점 match
-            PartnerIdNameDto matchedPartner = matchPartnerFromPlaceName(document.getPlaceName(), matchedPartners);
+            PartnerTempDto matchedPartner = matchPartnerFromPlaceName(document.getPlaceName(), matchedPartners);
             Integer partnerId = matchedPartner != null ? matchedPartner.getPartnerId() : null;
             String partnerName = matchedPartner != null ? matchedPartner.getPartnerName() : null;
+            String partnerImageUrl = matchedPartner != null ? matchedPartner.getPartnerImageUrl() : null;
+
+            String categoryName =
+                    partnerId != null ?
+                            categoryMapper.findNameByPartnerId(partnerId) :
+                            null;
 
             //responseItem 생성
             PartnerResponse.Position position = PartnerResponse.buildPosition(document);
@@ -73,6 +79,8 @@ public class PartnerService {
             PartnerResponse responseItem = PartnerResponse.buildPartner(
                     partnerId,
                     partnerName,
+                    partnerImageUrl,
+                    categoryName,
                     position,
                     myCards
                     );
@@ -103,23 +111,23 @@ public class PartnerService {
         return response.getBody();
     }
 
-    private List<PartnerIdNameDto> findPartnersByQuery(String keyword) {
+    private List<PartnerTempDto> findPartnersByQuery(String keyword) {
         // 1. query가 카테고리 이름과 일치하는지 확인
         Integer categoryId = categoryMapper.findIdByCategoryName(keyword);
         if (categoryId != null) {
             return partnerMapper.findAllByCategoryId(categoryId);
         }
         // 2. query가 가맹점 이름으로 조회
-        PartnerIdNameDto partnerIdNameDto = partnerMapper.findByPartnerName(keyword);
-        if (partnerIdNameDto != null) {
-            return List.of(partnerIdNameDto);
+        PartnerTempDto PartnerTempDto = partnerMapper.findByPartnerName(keyword);
+        if (PartnerTempDto != null) {
+            return List.of(PartnerTempDto);
         }
 
         return Collections.emptyList();
     }
 
-    private PartnerIdNameDto matchPartnerFromPlaceName(String placeName, List<PartnerIdNameDto> candidates){
-        for (PartnerIdNameDto partner : candidates) {
+    private PartnerTempDto matchPartnerFromPlaceName(String placeName, List<PartnerTempDto> candidates){
+        for (PartnerTempDto partner : candidates) {
             if (placeName.contains(partner.getPartnerName())) {
                 return partner;
             }

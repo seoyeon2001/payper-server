@@ -19,6 +19,8 @@ import java.util.List;
 public class PartnerResponse {
     private Integer id;
     private String name;
+    private String imageUrl;
+    private String categoryName;
     private Position position;
     private List<CardResponse> myCards;
 
@@ -55,11 +57,15 @@ public class PartnerResponse {
 
     public static PartnerResponse buildPartner(Integer id,
                                         String name,
+                                        String imageUrl,
+                                        String categoryName,
                                         PartnerResponse.Position position,
                                         List<CardResponse> cards){
         return PartnerResponse.builder()
                 .id(id)
                 .name(name)
+                .imageUrl(imageUrl)
+                .categoryName(categoryName)
                 .position(position)
                 .myCards(cards)
                 .build();
