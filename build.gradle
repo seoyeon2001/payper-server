@@ -29,7 +29,6 @@ configurations {
   mybatisGenerator
 }
 
-
 dependencies {
   // 스프링
   implementation 'org.springframework:spring-core'
