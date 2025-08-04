@@ -20,7 +20,7 @@ public class PartnerResponse {
     private Integer id;
     private String name;
     private Position position;
-    private List<CardResponse> cardResponseList;
+    private List<CardResponse> myCards;
 
     @Data
     @NoArgsConstructor
@@ -30,27 +30,51 @@ public class PartnerResponse {
         private String x;
         private String y;
         private Integer distance;
-        private String place_name;
-        private String road_address_name;
-        private String place_url;
+        private String placeName;
+        private String roadAddressName;
+        private String placeUrl;
     }
 
-    public static PartnerResponse toDTO(final Partner partner,
-                                             final List<CardResponse> cardResponseList,
-                                             final Position position) {
-        if (partner == null) {
-            throw new CustomIllegalArgumentException("partner");
-        }
+//    public static PartnerResponse toDTO(final Partner partner,
+//                                             final List<CardResponse> myCards,
+//                                             final Position position) {
+//        if (partner == null) {
+//            throw new CustomIllegalArgumentException("partner");
+//        }
+//
+//        return PartnerResponse.builder()
+//                .id(partner.getPartnerId())
+//                .name(partner.getPartnerName())
+//                .position(position)
+//                .myCards(
+//                        myCards != null
+//                        ? myCards : Collections.emptyList()
+//                )
+//                .build();
+//    }
 
+    public static PartnerResponse buildPartner(Integer id,
+                                        String name,
+                                        PartnerResponse.Position position,
+                                        List<CardResponse> cards){
         return PartnerResponse.builder()
-                .id(partner.getPartnerId())
-                .name(partner.getPartnerName())
+                .id(id)
+                .name(name)
                 .position(position)
-                .cardResponseList(
-                        cardResponseList != null
-                        ? cardResponseList : Collections.emptyList()
-                )
+                .myCards(cards)
                 .build();
     }
+
+    public static PartnerResponse.Position buildPosition(PartnerKeywordSearchResponse.Document doc) {
+        return Position.builder()
+                .x(doc.getX())
+                .y(doc.getY())
+                .distance(Integer.parseInt(doc.getDistance()))
+                .placeName(doc.getPlaceName())
+                .roadAddressName(doc.getRoadAddressName())
+                .placeUrl(doc.getPlaceUrl())
+                .build();
+    }
+
 
 }

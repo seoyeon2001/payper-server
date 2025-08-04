@@ -33,13 +33,13 @@ public class CardJsonCrawler {
                 String body = response.body().string();
 
                 if (!response.isSuccessful()) {
-                    log.info("ID {} 요청 실패 : {}", cardId, response.code());
+                   log.info("ID {} 요청 실패 : {}", cardId, response.code());
                     continue;
                 }
 
                 CardData data = parseCardJson(body);
-                log.info("ID {} 유효", cardId);
-                log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data));
+               log.info("ID {} 유효", cardId);
+                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data));
 
                 for (int i = 0; i < data.getBenefits().size(); i++) {
                     Benefit benefit = data.getBenefits().get(i);
@@ -66,10 +66,10 @@ public class CardJsonCrawler {
 //                            cleaned.getDiscount()
 //                    );
 
-//                    log.info("✅ 카드 [{}] - 혜택[{}] 결과:\n{}", data.getCardName(), i + 1, result);
+//                   log.info(" 카드 [{}] - 혜택[{}] 결과:\n{} \n", data.getCardName(), i + 1, result);
                 }
             } catch (Exception e) {
-                log.info("ID {} 예외 발생 : {}", cardId, e.getMessage());
+               log.info("ID {} 예외 발생 : {}", cardId, e.getMessage());
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.payper.domain.partner.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import java.util.List;
 
@@ -9,10 +10,19 @@ public class PartnerKeywordSearchResponse {
 
     @Getter
     public static class Document {
-        private String category_name;
-        private String place_name;
-        private String road_address_name;
-        private String place_url;
+
+        @JsonProperty("category_name")
+        private String categoryName;
+
+        @JsonProperty("place_name")
+        private String placeName;
+
+        @JsonProperty("road_address_name")
+        private String roadAddressName;
+
+        @JsonProperty("place_url")
+        private String placeUrl;
+
         private String x;
         private String y;
         private String distance;
