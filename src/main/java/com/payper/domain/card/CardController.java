@@ -4,12 +4,9 @@ import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
 import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.domain.user.UserService;
-import com.payper.global.exception.ErrorResponse;
 import com.payper.global.security.domain.CustomUser;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -34,15 +31,12 @@ public class CardController {
     }
 
     @PostMapping("")
-    public ResponseEntity registerCard(@RequestBody RegisterCardRequest request){
-        if(cardService.registerCard(request)!=1){
-            return ResponseEntity.ok().build();
-        }
-        else{
-            return ErrorResponse.build(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "card register failed",
-                    "CardController/registerCard");
-        }
+    public ResponseEntity<Void> registerCard(@RequestBody RegisterCardRequest request){
+        cardService.registerCard(request);
+
+        log.info("카드 등록 - card : {} ", request.getCardName());
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{cardId}")
@@ -88,6 +82,14 @@ public class CardController {
         log.info("내 카드 삭제 - userId : {}, cardId : {} ", userId, cardId);
 
         cardService.deleteCardMe(userId, cardId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{cardId}")
+    public ResponseEntity<Void> deleteCard(@PathVariable(name = "cardId") Integer cardId) {
+        cardService.deleteCard(cardId);
+        log.info("카드 삭제 - cardId : {} ", cardId);
+
         return ResponseEntity.ok().build();
     }
 }

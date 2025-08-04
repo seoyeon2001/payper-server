@@ -3,7 +3,10 @@ package com.payper.domain.card;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
 import com.payper.domain.card.dto.RegisterCardRequest;
+import com.payper.domain.card.exception.CardCompanyNotFoundException;
+import com.payper.domain.card.exception.CardDeletionFailedException;
 import com.payper.domain.card.exception.CardNotFoundException;
+import com.payper.domain.card.exception.CardRegisterationFailedException;
 import com.payper.domain.card.exception.MyCardDeletionFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,41 +55,49 @@ public class CardService {
         cardMapper.registerCardMe(request.getCardId(), userId);
     }
 
+    private void existsByCardCompanyName(String cardCompanyName) {
+        if(!cardMapper.existsCardCompany(cardCompanyName)){
+            log.error("카드사 Not Found - cardCompanyName: {}", cardCompanyName);
+            throw new CardCompanyNotFoundException();
+        }
+    }
+
     @Transactional
-    public int registerCard(RegisterCardRequest request){
-        int result=0;
+    public void registerCard(RegisterCardRequest request){
+        String cardCompanyName=request.getCompanyName();
 
-        boolean isExists=cardMapper.existsCardCompany(request.getCompanyName());
+        existsByCardCompanyName(cardCompanyName);
 
-        try{
-            if(!isExists){
-                if(cardMapper.registerCardCompany(request.getCompanyName())!=1){
-                    throw new RuntimeException("card company register failed");
-                }
-            }
+        int cardCompanyId=cardMapper.getCardCompanyId(cardCompanyName);
 
-            int cardCompanyId=cardMapper.getCardCompanyId(request.getCompanyName());
-            result=cardMapper.registerCard(request, cardCompanyId);
-            if(result!=1){
-                throw new RuntimeException("card register failed");
-            }
+        int result=cardMapper.registerCard(request,cardCompanyId);
+
+        if(result!=1){
+            log.error("카드 등록 실패 - companyName: {}, cardName: {}", cardCompanyName, request.getCardName());
+            throw new CardRegisterationFailedException();
         }
-        catch(Exception e){
-            throw new RuntimeException(e);//롤백을 위한 예외 변환
-        }
-
-        return result;
     }
 
     @Transactional
     public void deleteCardMe(int userId, int cardId) {
         existsById(cardId);
 
-        int updateCount = cardMapper.softDeleteCard(userId, cardId);
+        int updateCount = cardMapper.softDeleteMyCard(userId, cardId);
         if (updateCount != 1) {
             log.error("내 카드 삭제 실패 - userId: {}, cardId: {}", userId, cardId);
            throw new MyCardDeletionFailedException();
         }
     }
-    
+
+    @Transactional
+    public void deleteCard(int cardId) {
+        existsById(cardId);
+
+        int result= cardMapper.softDeleteCard(cardId);
+
+        if(result!=1){
+            log.error("카드 삭제 실패 -  cardId: {}", cardId);
+            throw new CardDeletionFailedException();
+        }
+    }
 }
