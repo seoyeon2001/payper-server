@@ -1,5 +1,6 @@
 package com.payper.domain.partner;
 
+import com.payper.domain.partner.dto.PartnerDetailResponse;
 import com.payper.domain.partner.dto.PartnerTempDto;
 import com.payper.domain.partner.dto.SearchPartnersResponse;
 import org.apache.ibatis.annotations.Mapper;
@@ -15,4 +16,5 @@ public interface PartnerMapper {
             @Param("name") String name,
             @Param("category") List<String> category
     );
+    PartnerTempDto findPartnerDetailById(Integer partnerId);
 }

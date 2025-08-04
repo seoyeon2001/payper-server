@@ -55,4 +55,18 @@
         ORDER BY p.partner_id;
     </select>
 
+    <select id="findPartnerDetailById" resultType="PartnerTempDto">
+        SELECT
+            p.partner_id,
+            p.partner_name,
+            p.partner_image_url,
+            c.category_name
+        FROM
+            partner p
+                JOIN
+            category c ON p.category_id = c.category_id
+        WHERE
+            p.partner_id = #{partnerId};
+    </select>
+
 </mapper>

@@ -1,18 +1,13 @@
 package com.payper.domain.partner;
 
-import com.payper.domain.partner.dto.PartnerKeywordSearchRequest;
-import com.payper.domain.partner.dto.PartnerResponse;
-import com.payper.domain.partner.dto.SearchPartnersResponse;
+import com.payper.domain.partner.dto.*;
 import com.payper.domain.user.UserService;
 import com.payper.global.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -32,6 +27,16 @@ public class PartnerController {
         Integer userId = userService.getUserId(customUser);
         List<PartnerResponse> partners = partnerService.findPlacesWithMe(request, userId);
         return ResponseEntity.ok(Map.of("partners", partners));
+    }
+
+    @GetMapping("/{partnerId}")
+    public ResponseEntity<PartnerDetailResponse> findPartnerById(
+            @AuthenticationPrincipal CustomUser customUser,
+            @PathVariable Integer partnerId) {
+        Integer userId = userService.getUserId(customUser);
+        log.info("파트너 상세 조회 : partnerId - {}, userId - {}", partnerId, userId);
+        PartnerDetailResponse partner = partnerService.findPartnerById(partnerId, userId);
+        return ResponseEntity.ok(partner);
     }
 
     @GetMapping("/search")

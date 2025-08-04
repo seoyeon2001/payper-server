@@ -71,10 +71,7 @@ public class PartnerService {
             //responseItem 생성
             PartnerResponse.Position position = PartnerResponse.buildPosition(document);
 
-            List<CardResponse> myCards =
-                    partnerId != null ?
-                            cardMapper.findByPartnerId(userId, partnerId) :
-                            Collections.emptyList();
+            List<CardResponse> myCards = findMyCardsByPartnerId(partnerId, userId);
 
             PartnerResponse responseItem = PartnerResponse.buildPartner(
                     partnerId,
@@ -135,7 +132,28 @@ public class PartnerService {
         return null;
     }
 
+    private List<CardResponse> findMyCardsByPartnerId(Integer partnerId, Integer userId) {
+        return partnerId != null ?
+                cardMapper.findByPartnerId(userId, partnerId) :
+                Collections.emptyList();
+    }
+
     public List<SearchPartnersResponse> searchPartners(String name, List<String> category) {
         return partnerMapper.searchWithConditions(name, category);
+    }
+
+    public PartnerDetailResponse findPartnerById(Integer partnerId, Integer userId) {
+        List<CardResponse> myCards = findMyCardsByPartnerId(partnerId, userId);
+        PartnerTempDto partnerTempDto = partnerMapper.findPartnerDetailById(partnerId);
+
+        PartnerDetailResponse responseItem = PartnerDetailResponse.build(
+                partnerId,
+                partnerTempDto.getPartnerName(),
+                partnerTempDto.getPartnerImageUrl(),
+                partnerTempDto.getCategoryName(),
+                myCards
+        );
+
+        return responseItem;
     }
 }

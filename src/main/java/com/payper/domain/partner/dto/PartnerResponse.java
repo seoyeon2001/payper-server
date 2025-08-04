@@ -1,15 +1,11 @@
 package com.payper.domain.partner.dto;
 
-import com.payper.domain.card.domain.Card;
 import com.payper.domain.card.dto.CardResponse;
-import com.payper.domain.partner.domain.Partner;
-import com.payper.global.exception.CustomIllegalArgumentException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
 
 @Data
