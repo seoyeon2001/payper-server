@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@PropertySource("classpath:application-kakao.properties")
 @Slf4j
 @RequiredArgsConstructor
 @Component
