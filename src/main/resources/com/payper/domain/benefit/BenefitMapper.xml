@@ -31,10 +31,10 @@
         )
         VALUES (
                 #{cardId},
-                #{title},
-                #{summary},
-                #{description},
-                #{iconUrl},
+                #{request.title},
+                #{request.summary},
+                #{request.description},
+                #{request.iconUrl},
                 false,
                 NOW(),
                 null,
@@ -42,7 +42,18 @@
         )
     </insert>
 
-    <resultMap id="BenefitResponseMap" type="com.payper.domain.benefit.dto.BenefitResponse">
+    <update id="updateBenefit">
+        UPDATE benefit
+        SET
+            benefit_title = #{request.title},
+            benefit_summary = #{request.summary},
+            benefit_description = #{request.description},
+            benefit_icon_url = #{request.iconUrl},
+            last_modified_at = NOW()
+        WHERE benefit_id = #{benefitId}
+    </update>
+
+    <resultMap id="BenefitResponseMap" type="BenefitResponse">
         <id property="id" column="benefit_id"/>
         <result property="title" column="benefit_summary"/>
         <result property="summary" column="benefit_description"/>

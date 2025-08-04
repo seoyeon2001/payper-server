@@ -166,7 +166,7 @@
         WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = false
     </update>
 
-    <select id="existsCard" resultType="boolean">
+    <select id="existsById" resultType="boolean">
         SELECT EXISTS (
             SELECT 1
             FROM card

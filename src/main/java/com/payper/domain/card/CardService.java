@@ -29,7 +29,7 @@ public class CardService {
 
     // 존재하는 카드인지 확인하기 위함(삭제 여부 체크 안함) - 단순 검증용이므로 void
     private void existsCardById(Integer cardId) {
-        if(!cardMapper.existsCard(cardId)) {
+        if(!cardMapper.existsById(cardId)) {
             log.error("카드 Not Found - cardId: {}", cardId);
             throw new CardNotFoundException();
         }

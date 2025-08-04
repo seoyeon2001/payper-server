@@ -1,4 +1,4 @@
-package com.payper.domain.benefit.dto;
+package com.payper.domain.benefit.dto.response;
 
 import com.payper.domain.benefit.domain.Grade;
 import com.payper.global.exception.CustomIllegalArgumentException;

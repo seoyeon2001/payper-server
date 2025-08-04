@@ -1,4 +1,4 @@
-package com.payper.domain.benefit.dto;
+package com.payper.domain.benefit.dto.response;
 
 import com.payper.domain.benefit.domain.BenefitGradeDiscount;
 import com.payper.domain.benefit.domain.DiscountType;

@@ -35,7 +35,7 @@ public interface CardMapper {
 
     boolean isPreviouslyDeletedUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
-    boolean existsCard(Integer cardId);
+    boolean existsById(Integer cardId);
 
     boolean existsUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 

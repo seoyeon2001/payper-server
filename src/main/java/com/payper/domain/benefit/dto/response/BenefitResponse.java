@@ -1,4 +1,4 @@
-package com.payper.domain.benefit.dto;
+package com.payper.domain.benefit.dto.response;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,8 +1,10 @@
 package com.payper.domain.benefit;
 
-import com.payper.domain.benefit.dto.BenefitResponse;
-import com.payper.domain.benefit.dto.CreateBenefitRequest;
+import com.payper.domain.benefit.dto.request.UpdateBenefitRequest;
+import com.payper.domain.benefit.dto.response.BenefitResponse;
+import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -10,5 +12,7 @@ import java.util.List;
 public interface BenefitMapper {
     List<BenefitResponse> findAllByCardId(int cardId);
 
-    void createBenefit(CreateBenefitRequest request);
+    void createBenefit(@Param("cardId") int cardId, @Param("request") CreateBenefitRequest request);
+
+    int updateBenefit(@Param("benefitId") int benefitId, @Param("request") UpdateBenefitRequest request);
 }

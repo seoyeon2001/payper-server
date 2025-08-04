@@ -1,4 +1,4 @@
-package com.payper.domain.benefit.dto;
+package com.payper.domain.benefit.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

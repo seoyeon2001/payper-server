@@ -1,7 +1,8 @@
 package com.payper.domain.benefit;
 
-import com.payper.domain.benefit.dto.BenefitsResponse;
-import com.payper.domain.benefit.dto.CreateBenefitRequest;
+import com.payper.domain.benefit.dto.response.BenefitsResponse;
+import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
+import com.payper.domain.benefit.dto.request.UpdateBenefitRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,16 @@ public class BenefitController {
 
     @PostMapping
     public ResponseEntity<Void> createBenefit(@PathVariable(name = "cardId") Integer cardId, @RequestBody CreateBenefitRequest request) {
-        request.setCardId(cardId);
-        benefitService.createBenefit(request);
+        benefitService.createBenefit(cardId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{benefitId}")
+    public ResponseEntity<Void> updateBenefit(
+            @PathVariable(name = "cardId") Integer cardId,
+            @PathVariable(name = "benefitId") Integer benefitId,
+            @RequestBody UpdateBenefitRequest request) {
+        benefitService.updateBenefit(cardId, benefitId, request);
         return ResponseEntity.ok().build();
     }
 }
