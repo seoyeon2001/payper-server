@@ -18,11 +18,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
 
 @Configuration
-@PropertySource({
-        "classpath:/application.properties",
-        "classpath:/application-db.properties",
-        "classpath:/application-kakao.properties",
-        "classpath:/application-codef.properties"
+@PropertySources({
+        @PropertySource("classpath:/application.properties"),
+        @PropertySource(value = "classpath:/application-db.properties", ignoreResourceNotFound = true),
+        @PropertySource(value = "classpath:/application-kakao.properties", ignoreResourceNotFound = true),
+        @PropertySource(value = "classpath:/application-codef.properties", ignoreResourceNotFound = true)
 })
 @ComponentScan(
         basePackages = "com.payper",
