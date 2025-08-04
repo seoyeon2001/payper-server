@@ -4,14 +4,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
+@Component
+@RequiredArgsConstructor
 public class CardJsonExtractor {
 
+    // TODO: restcontroller 구현 후 해당 주석 풀어줘야 함
+//    private final ObjectMapper objectMapper;
+
+    // TODO: restcontroller 구현 후 메서드의 static을 삭제해야 함
     public static CardData parseCardJson(String json) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(json);
+
+        ObjectMapper objectMapper = new ObjectMapper(); // TODO: restcontroller 구현 후 해당 코드 삭제해야 함
+        JsonNode root = objectMapper.readTree(json);
 
         CardData data = new CardData();
         data.cardName = root.path("name").asText("");

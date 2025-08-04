@@ -21,6 +21,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtProcessor jwtProcessor;
+    private final JsonResponse jsonResponse;
 
     private LoginResponse makeAuthResult(CustomUser user) {//얻은 UserDetails가 들어올 예정
         String userId = user.getUsername( );
@@ -37,6 +38,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         CustomUser user = (CustomUser) authentication.getPrincipal( ); // 인증 결과 Principal
         LoginResponse result = makeAuthResult(user); // 인증 성공 결과를 JSON으로 직접 응답
-        JsonResponse.send(response, result); //토큰, 사용자 기본정보 json담아 보내
+        jsonResponse.send(response, result); //토큰, 사용자 기본정보 json담아 보내
     }
 }

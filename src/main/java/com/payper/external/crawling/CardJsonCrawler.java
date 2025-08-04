@@ -3,6 +3,7 @@ package com.payper.external.crawling;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -13,7 +14,13 @@ import static com.payper.external.crawling.CardGradeCleaner.cleanGrade;
 import static com.payper.external.crawling.CardJsonExtractor.parseCardJson;
 
 @Slf4j
+@RequiredArgsConstructor
 public class CardJsonCrawler {
+    // TODO: restcontroller 구현 후 해당 주석 풀어줘야 함
+//    private final ObjectMapper objectMapper;
+//    private final OkHttpClient client;
+//    private final CardJsonExtractor cardJsonExtractor;
+
     public static void main(String[] args){
         ObjectMapper mapper = new ObjectMapper();
         OkHttpClient client = new OkHttpClient();
@@ -38,7 +45,11 @@ public class CardJsonCrawler {
                     continue;
                 }
 
+                // TODO: restcontroller 구현 후 해당 코드 삭제 해야 함
                 CardData data = parseCardJson(body);
+
+                // TODO: restcontroller 구현 후 해당 주석 풀어줘야 함
+//                CardData data = cardJsonExtractor.parseCardJson(body);
                log.info("ID {} 유효", cardId);
                 System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data));
 
@@ -57,16 +68,6 @@ public class CardJsonCrawler {
                     log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(cleaned));
                     log.info(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(cleanedGrade));
 
-
-//                    String result = OpenAISqlGenerator.generateSql(
-//                            benefit.getTitle(),
-//                            benefit.getSummary(),
-//                            benefit.getDescription(),
-//                            cleaned.getCategories(),
-//                            cleaned.getDiscount()
-//                    );
-
-//                   log.info(" 카드 [{}] - 혜택[{}] 결과:\n{} \n", data.getCardName(), i + 1, result);
                 }
             } catch (Exception e) {
                log.info("ID {} 예외 발생 : {}", cardId, e.getMessage());

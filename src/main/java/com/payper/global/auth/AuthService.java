@@ -35,6 +35,8 @@ public class AuthService {
     private final JwtProcessor jwtProcessor;
     private final UserMapper userMapper;
 
+    private final RestTemplate restTemplate;
+
     @Value("${kakao.client.id}")
     private String kakaoClientId; //appkey
 
@@ -98,8 +100,6 @@ public class AuthService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        RestTemplate restTemplate = new RestTemplate();
-
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoClientId);
@@ -154,8 +154,6 @@ public class AuthService {
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
         //HttpEntity<String> request = new HttpEntity<>(headers);
-
-        RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 kakaoUserInfoUrl,

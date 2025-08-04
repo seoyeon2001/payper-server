@@ -27,7 +27,7 @@ public class PartnerService {
     @Value("${kakao.map.url}")
     private String apiUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     private final CategoryMapper categoryMapper;
     private final PartnerMapper partnerMapper;

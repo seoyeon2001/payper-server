@@ -29,6 +29,7 @@ import java.util.Map;
 public class CodefService {
     private final EasyCodef codef;
     private final UserService userService;
+    private final ObjectMapper objectMapper;
 
     public CodefStandardResponse<ConnectedIdResponse> createConnectedId(ConnectedIdRequest request, Integer userId) {
         User user = userService.getUserById(userId);
@@ -54,7 +55,7 @@ public class CodefService {
 
             // 2. CODEF API 호출 및 응답 파싱
             String resultJson = codef.createAccount(EasyCodefServiceType.DEMO, parameterMap);
-            HashMap<String, Object> responseMap = new ObjectMapper().readValue(resultJson, HashMap.class);
+            HashMap<String, Object> responseMap = objectMapper.readValue(resultJson, HashMap.class);
 
             HashMap<String, Object> resultMap = (HashMap<String, Object>) responseMap.get("result");
             HashMap<String, Object> dataMap = (HashMap<String, Object>) responseMap.get("data");
@@ -79,7 +80,7 @@ public class CodefService {
                     (String) resultMap.get("transactionId")
             );
 
-            ConnectedIdResponse response = new ObjectMapper().convertValue(dataMap, ConnectedIdResponse.class);
+            ConnectedIdResponse response = objectMapper.convertValue(dataMap, ConnectedIdResponse.class);
             return new CodefStandardResponse<>(result, response);
 
         } catch (Exception e) {
@@ -129,7 +130,7 @@ public class CodefService {
             String myCardListURL = "/v1/kr/card/p/account/card-list";
             String resultJson = codef.requestProduct(myCardListURL, EasyCodefServiceType.DEMO, parameterMap);
 
-            HashMap<String, Object> responseMap = new ObjectMapper().readValue(resultJson, HashMap.class);
+            HashMap<String, Object> responseMap = objectMapper.readValue(resultJson, HashMap.class);
             HashMap<String, Object> resultMap = (HashMap<String, Object>)responseMap.get("result");
             Object dataRaw = responseMap.get("data");
 
@@ -137,13 +138,13 @@ public class CodefService {
 
             if (dataRaw instanceof List) {
                 // 다건 응답
-                cardList = new ObjectMapper().convertValue(
+                cardList = objectMapper.convertValue(
                         dataRaw,
                         new TypeReference<List<CardInfo>>() {}
                 );
             } else if (dataRaw instanceof Map) {
                 // 단건 응답
-                CardInfo card = new ObjectMapper().convertValue(
+                CardInfo card = objectMapper.convertValue(
                         dataRaw,
                         CardInfo.class
                 );
