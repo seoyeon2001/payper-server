@@ -79,63 +79,55 @@ jobs:
           source: docker-compose.yml
           target: ~/payper-app/
 
-  # 3. EC2에서 컨테이너 재시작 및 환경변수 세팅
-  deploy:
-    name: Deploy on EC2 via SSH
-    needs: [build, upload-compose]  # build & upload-compose 완료 후 실행
+  # 3. .env 파일을 actions 내에서 생성 후 EC2에 업로드
+  upload-env:
+    name: Upload .env to EC2
+    needs: build # build 완료 후에 실행
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to EC2 and restart services
+      - name: Create .env file
+        run: |
+          echo "IMAGE_TAG=${{ needs.build.outputs.IMAGE_TAG }}" > .env
+          echo "DEMO_CLIENT_ID=${{ secrets.DEMO_CLIENT_ID }}" >> .env
+          echo "DEMO_CLIENT_SECRET=${{ secrets.DEMO_CLIENT_SECRET }}" >> .env
+          echo "PUBLIC_KEY=${{ secrets.PUBLIC_KEY }}" >> .env
+          echo "JDBC_DRIVER=${{ secrets.JDBC_DRIVER }}" >> .env
+          echo "JDBC_URL=${{ secrets.JDBC_URL }}" >> .env
+          echo "JDBC_USERNAME=${{ secrets.JDBC_USERNAME }}" >> .env
+          echo "JDBC_PASSWORD=${{ secrets.JDBC_PASSWORD }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          echo "OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}" >> .env
+          echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
+          echo "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" >> .env
+          echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env
+          echo "KAKAO_TOKEN_URL=${{ secrets.KAKAO_TOKEN_URL }}" >> .env
+          echo "KAKAO_USER_INFO_URL=${{ secrets.KAKAO_USER_INFO_URL }}" >> .env
+          echo "KAKAO_MAP_KEY=${{ secrets.KAKAO_MAP_KEY }}" >> .env
+          echo "KAKAO_MAP_URL=${{ secrets.KAKAO_MAP_URL }}" >> .env
+
+      - name: Upload .env to EC2
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: .env
+          target: ~/payper-app/
+
+  # 4. EC2에서 컨테이너 재시작
+  deploy:
+    name: Restart container on EC2
+    needs: [build, upload-compose, upload-env]  # build & upload-compose & upload-env 완료 후 실행
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and restart
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-
-          # EC2로 전달할 환경변수 목록 (모두 .env 파일로 사용됨)
-          envs: |
-            IMAGE_TAG=${{ needs.build.outputs.IMAGE_TAG }}
-            DEMO_CLIENT_ID=${{ secrets.DEMO_CLIENT_ID }}
-            DEMO_CLIENT_SECRET=${{ secrets.DEMO_CLIENT_SECRET }}
-            PUBLIC_KEY=${{ secrets.PUBLIC_KEY }}
-            JDBC_DRIVER=${{ secrets.JDBC_DRIVER }}
-            JDBC_URL=${{ secrets.JDBC_URL }}
-            JDBC_USERNAME=${{ secrets.JDBC_USERNAME }}
-            JDBC_PASSWORD=${{ secrets.JDBC_PASSWORD }}
-            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-            OPENAI_API_URL=${{ secrets.OPENAI_API_URL }}
-            KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
-            KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
-            KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}
-            KAKAO_TOKEN_URL=${{ secrets.KAKAO_TOKEN_URL }}
-            KAKAO_USER_INFO_URL=${{ secrets.KAKAO_USER_INFO_URL }}
-            KAKAO_MAP_KEY=${{ secrets.KAKAO_MAP_KEY }}
-            KAKAO_MAP_URL=${{ secrets.KAKAO_MAP_URL }}
-
-          # .env 파일 생성 및 컨테이너 재시작 (+ 사용하지 않는 리소스 정리)
           script: |
             cd ~/payper-app
-            
-            cat << 'EOF' > .env
-            IMAGE_TAG="$IMAGE_TAG"
-            DEMO_CLIENT_ID="$DEMO_CLIENT_ID"
-            DEMO_CLIENT_SECRET="$DEMO_CLIENT_SECRET"
-            PUBLIC_KEY="$PUBLIC_KEY"
-            JDBC_DRIVER="$JDBC_DRIVER"
-            JDBC_URL="$JDBC_URL"
-            JDBC_USERNAME="$JDBC_USERNAME"
-            JDBC_PASSWORD="$JDBC_PASSWORD"
-            OPENAI_API_KEY="$OPENAI_API_KEY"
-            OPENAI_API_URL="$OPENAI_API_URL"
-            KAKAO_CLIENT_ID="$KAKAO_CLIENT_ID"
-            KAKAO_CLIENT_SECRET="$KAKAO_CLIENT_SECRET"
-            KAKAO_REDIRECT_URI="$KAKAO_REDIRECT_URI"
-            KAKAO_TOKEN_URL="$KAKAO_TOKEN_URL"
-            KAKAO_USER_INFO_URL="$KAKAO_USER_INFO_URL"
-            KAKAO_MAP_KEY="$KAKAO_MAP_KEY"
-            KAKAO_MAP_URL="$KAKAO_MAP_URL"
-            EOF
-            
-            docker compose pull gyehyunbak/payper-server:$IMAGE_TAG
+            docker compose pull gyehyunbak/payper-server:${{ needs.build.outputs.IMAGE_TAG }}
             docker compose up -d --remove-orphans
             docker system prune -f --filter "label=compose-service"
