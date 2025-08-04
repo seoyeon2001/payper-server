@@ -3,6 +3,7 @@ package com.payper.domain.card;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
 import com.payper.domain.card.dto.RegisterCardRequest;
+import com.payper.domain.card.dto.UpdateCardRequest;
 import com.payper.domain.card.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +72,7 @@ public class CardService {
     private void existsByCardCompanyName(String cardCompanyName) {
         if(!cardMapper.existsCardCompany(cardCompanyName)){
             log.error("카드사 Not Found - cardCompanyName: {}", cardCompanyName);
+
             throw new CardCompanyNotFoundException();
         }
     }
@@ -87,7 +89,25 @@ public class CardService {
 
         if(result!=1){
             log.error("카드 등록 실패 - companyName: {}, cardName: {}", cardCompanyName, request.getCardName());
+
             throw new CardRegisterationFailedException();
+        }
+    }
+
+    @Transactional
+    public void updateCard(UpdateCardRequest request, int cardId){
+        String cardCompanyName=request.getCompanyName();
+
+        existsByCardCompanyName(cardCompanyName);
+
+        existsCardById(cardId);
+
+        int cardCompanyId=cardMapper.getCardCompanyId(cardCompanyName);
+
+        int result=cardMapper.updateCard(request,cardCompanyId,cardId);
+
+        if(result!=1){
+            throw new CardUpdateFailedException(cardId);
         }
     }
 

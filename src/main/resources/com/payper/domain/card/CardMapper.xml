@@ -208,6 +208,17 @@
 
     </update>
 
+    <update id="updateCard">
+        UPDATE card
+        SET last_modified_at = NOW(),
+            card_name = #{card.cardName},
+            card_type = #{card.cardType},
+            card_image_url = #{card.cardImageUrl},
+            card_issue_url = #{card.cardIssueUrl},
+            company_id = #{cardCompanyId}
+        WHERE card_id=#{cardId}
+    </update>
+
     <!-- 가맹점에 맞는 내 카드 리스트 조회 -->
     <select id="findByPartnerId" resultMap="CardResponseMap">
         <include refid="cardJoinClause" />

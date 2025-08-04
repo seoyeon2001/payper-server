@@ -3,6 +3,7 @@ package com.payper.domain.card;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
 import com.payper.domain.card.dto.RegisterCardRequest;
+import com.payper.domain.card.dto.UpdateCardRequest;
 import com.payper.domain.user.UserService;
 import com.payper.global.exception.ErrorResponse;
 import com.payper.global.security.domain.CustomUser;
@@ -47,6 +48,15 @@ public class CardController {
         log.info("시중카드 조회 - cardId : {}", cardId);
         CardResponse card = cardService.getCardById(cardId);
         return ResponseEntity.ok(card);
+    }
+
+    @PutMapping("/{cardId}")
+    public ResponseEntity<Void> updateCard(@RequestBody UpdateCardRequest request, @PathVariable(name = "cardId") Integer cardId){
+        cardService.updateCard(request,cardId);
+
+        log.info("카드 갱신 -card : {} ", request);
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/search")

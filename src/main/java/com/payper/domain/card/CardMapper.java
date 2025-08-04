@@ -2,6 +2,7 @@ package com.payper.domain.card;
 
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardRequest;
+import com.payper.domain.card.dto.UpdateCardRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,6 +31,8 @@ public interface CardMapper {
     int registerCardCompany(@Param("cardCompanyName")String cardCompanyName);
 
     int registerCard(@Param("card") RegisterCardRequest card,@Param("cardCompanyId")int cardCompanyId);
+
+    int updateCard(@Param("card") UpdateCardRequest card, @Param("cardCompanyId")int cardCompanyId, @Param("cardId")int cardId);
 
     int restoreUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
