@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(
+        origins = { "http://localhost:5173", "https://payper-client.vercel.app" },
+        allowCredentials = "true",
+        allowedHeaders = "*",
+        methods = { RequestMethod.GET, RequestMethod.POST }
+)
 public class AuthController {
     private final AuthService authService;
 
