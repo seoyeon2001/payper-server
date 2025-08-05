@@ -27,4 +27,17 @@
                    NOW()
                )
     </insert>
+
+    <insert id="registerBenefitCategory">
+        INSERT INTO benefit_category (
+            benefit_id,
+            category_id,
+            last_modified_at
+        )
+        VALUES (
+                    #{benefitId},
+                    #{categoryId},
+                    NOW()
+               )
+    </insert>
 </mapper>

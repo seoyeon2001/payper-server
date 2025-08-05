@@ -75,11 +75,11 @@ public class CardSaveService {
         benefitMapper.createBenefit(cardId, request);
         return request.getBenefitId();
     }
-//
-//    // 혜택_카테고리 등록
-//    private void saveBenefitCategory(Integer benefitId, Integer categoryId){
-//        categoryMapper.registerBenefitCategory(benefitId, categoryId);
-//    }
+
+    // 혜택_카테고리 등록
+    private void saveBenefitCategory(Integer benefitId, Integer categoryId){
+        categoryMapper.registerBenefitCategory(benefitId, categoryId);
+    }
 //
 //    // 혜택_가맹점 등록
 //    private void saveBenefitPartner(Integer benefitId, Integer partnerId){
@@ -113,8 +113,9 @@ public class CardSaveService {
             RegisterCategoryRequest categoryRequest = toRegisterCategoryRequest(benefit.getTitle());
             Integer categoryId = saveCategory(categoryRequest);
 
-//            Integer categoryId = saveCategory();
-//            saveBenefitCategory(benefitId, categoryId);
+            saveBenefitCategory(benefitId, categoryId);
+            System.out.println(benefitId);
+            System.out.println(categoryId);
 //
 //            for(benefit에서의 Partner들) {
 //                Integer partnerId = savePartner(, categoryId);
