@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BenefitGradeDiscountResponse {
 	private Integer id;
-	private GradeResponse gradeResponse;
+	private GradeResponse grade;
 	private DiscountType type;
 	private Long amount;
 	private Long limitCount;
@@ -23,7 +23,7 @@ public class BenefitGradeDiscountResponse {
 
 	public static BenefitGradeDiscountResponse toDTO(
 			final BenefitGradeDiscount benefitGradeDiscount,
-			final GradeResponse gradeResponse) {
+			final GradeResponse grade) {
 
 		if(benefitGradeDiscount == null) {
 			throw new CustomIllegalArgumentException("benefitGradeDiscount");
@@ -31,7 +31,7 @@ public class BenefitGradeDiscountResponse {
 
 		return BenefitGradeDiscountResponse.builder()
 				.id(benefitGradeDiscount.getBenefitGradeDiscountId())
-				.gradeResponse(gradeResponse)
+				.grade(grade)
 				.type(benefitGradeDiscount.getType())
 				.amount(benefitGradeDiscount.getAmount())
 				.limitCount(benefitGradeDiscount.getLimitCount())

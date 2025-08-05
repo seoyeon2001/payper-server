@@ -22,14 +22,14 @@ public class BenefitResponse {
 	private String description;
 	private String iconUrl;
 
-	private List<BenefitGradeDiscountResponse> benefitGradeDiscountResponseList;
-	private List<CategoryResponse> categoryResponseList;
+	private List<BenefitGradeDiscountResponse> benefitGrades;
+	private List<CategoryResponse> categories;
 
 	public static BenefitResponse toDTO(Benefit benefit,
-		List<BenefitGradeDiscountResponse> benefitGradeDiscountResponseList,
-		List<CategoryResponse> categoryResponseList) {
+		List<BenefitGradeDiscountResponse> benefitGrades,
+		List<CategoryResponse> categories) {
 
-		if(benefit==null){
+		if(benefit == null) {
 			throw new CustomIllegalArgumentException("benefit");
 		}
 
@@ -39,10 +39,8 @@ public class BenefitResponse {
 				.summary(benefit.getBenefitSummary())
 				.description(benefit.getBenefitDescription())
 				.iconUrl(benefit.getBenefitIconUrl())
-				.benefitGradeDiscountResponseList(benefitGradeDiscountResponseList!=null
-					?benefitGradeDiscountResponseList:Collections.emptyList())
-				.categoryResponseList(categoryResponseList!=null
-						?categoryResponseList: Collections.emptyList())
+				.benefitGrades(benefitGrades != null ? benefitGrades:Collections.emptyList())
+				.categories(categories != null ? categories: Collections.emptyList())
 				.build();
 	}
 }

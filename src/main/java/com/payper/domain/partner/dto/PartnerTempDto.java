@@ -1,6 +1,5 @@
 package com.payper.domain.partner.dto;
 
-import com.payper.domain.card.dto.CardResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

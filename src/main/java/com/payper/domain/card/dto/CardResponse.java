@@ -22,22 +22,22 @@ public class CardResponse {
 	private String name;
 	private CardType type;
 	private String imageUrl;
-	private CardCompanyResponse company;
 	private String annualCost;
 	private String cardIssueUrl;
+	private CardCompanyResponse company;
 
-	private List<BenefitResponse> benefitResponseList;
-	private List<GradeResponse> gradeResponseList;
+	private List<BenefitResponse> benefits;
+	private List<GradeResponse> grades;
 
 	public static CardResponse toDTO(Card card,
 		CardCompanyResponse cardCompanyResponse,
-		List<BenefitResponse> benefitResponseList,
-		List<GradeResponse> gradeResponseList) {
+		List<BenefitResponse> benefits,
+		List<GradeResponse> grades) {
 
-		if(card==null){
+		if(card == null) {
 			throw new CustomIllegalArgumentException("card");
 		}
-		else if(cardCompanyResponse==null){
+		else if(cardCompanyResponse == null) {
 			throw new CustomIllegalArgumentException("cardCompanyResponse");
 		}
 
@@ -46,17 +46,11 @@ public class CardResponse {
 				.name(card.getCardName())
 				.type(card.getCardType())
 				.imageUrl(card.getCardImageUrl())
-				.company(cardCompanyResponse)
-				.benefitResponseList(
-						benefitResponseList!=null
-						?benefitResponseList:Collections.emptyList()
-				)
 				.annualCost(card.getAnnualFee())
-				.gradeResponseList(
-						gradeResponseList!=null
-						?gradeResponseList:Collections.emptyList()
-				)
 				.cardIssueUrl(card.getCardIssueUrl())
+				.company(cardCompanyResponse)
+				.benefits(benefits != null ? benefits:Collections.emptyList())
+				.grades(grades != null ? grades:Collections.emptyList())
 				.build();
 	}
 }
