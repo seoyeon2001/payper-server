@@ -1,10 +1,12 @@
 package com.payper.external.crawling.service;
 
 import com.payper.domain.benefit.BenefitMapper;
+import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
 import com.payper.domain.card.CardMapper;
 import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.domain.category.CategoryMapper;
 import com.payper.domain.partner.PartnerMapper;
+import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
 import com.payper.external.crawling.dto.Grade;
 import lombok.RequiredArgsConstructor;
@@ -67,11 +69,11 @@ public class CardSaveService {
 //        return partnerId;
 //    }
 //
-//    // 혜택 등록
-//    private Integer saveBenefit(CreateBenefitRequest request, Integer cardId){
-//        Integer benefitId = benefitMapper.createBenefit(cardId, request);
-//        return benefitId;
-//    }
+    // 혜택 등록
+    private Integer saveBenefit(CreateBenefitRequest request, Integer cardId){
+        benefitMapper.createBenefit(cardId, request);
+        return request.getBenefitId();
+    }
 //
 //    // 혜택_카테고리 등록
 //    private void saveBenefitCategory(Integer benefitId, Integer categoryId){
@@ -102,11 +104,11 @@ public class CardSaveService {
 
         // 공통 실적등급
         saveGrade(cardData.getGrades(), cardId);
-//
-//        for(Benefit benefit : cardData.getBenefits()) {
-//
-//            Integer benefitId = saveBenefit(createBenefitRequest, cardId);
-//
+
+        for(Benefit benefit : cardData.getBenefits()) {
+            CreateBenefitRequest benefitRequest = toCreateBenefitRequest(benefit);
+            Integer benefitId = saveBenefit(benefitRequest, cardId);
+
 //            Integer categoryId = saveCategory();
 //            saveBenefitCategory(benefitId, categoryId);
 //
@@ -116,6 +118,6 @@ public class CardSaveService {
 //            }
 //
 //            saveBenefitGradeDiscount(request, benefitId, gradeId);
-//        }
+        }
     }
 }

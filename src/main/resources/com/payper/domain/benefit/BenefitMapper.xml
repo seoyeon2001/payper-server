@@ -17,7 +17,7 @@
         ORDER BY b.benefit_id
     </select>
 
-    <insert id="createBenefit">
+    <insert id="createBenefit" useGeneratedKeys="true" keyProperty="request.benefitId">
         INSERT INTO benefit (
                              card_id,
                              benefit_title,
