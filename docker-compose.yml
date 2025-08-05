@@ -22,7 +22,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
       - app
-    restart: unless-stopped
+    restart: always
     networks:
       - payper-network
 

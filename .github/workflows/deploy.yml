@@ -128,6 +128,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/payper-app
+            docker compose down --remove-orphans
             docker compose pull gyehyunbak/payper-server:${{ needs.build.outputs.IMAGE_TAG }}
             docker compose up -d --remove-orphans
             docker system prune -f --filter "label=compose-service"
