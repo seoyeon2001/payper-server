@@ -1,18 +1,19 @@
 package com.payper.external.crawling.service;
 
 import com.payper.domain.benefit.BenefitMapper;
-import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
 import com.payper.domain.card.CardMapper;
 import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.domain.category.CategoryMapper;
 import com.payper.domain.partner.PartnerMapper;
-import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
+import com.payper.external.crawling.dto.Grade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.payper.external.crawling.CardDataMatcher.toRegisterCardRequest;
+import java.util.List;
+
+import static com.payper.external.crawling.config.CardDataMatcher.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,11 +51,11 @@ public class CardSaveService {
 //        return categoryId;
 //    }
 //
-//    // 공통 실적등급 등록
-//    private Integer saveGrade(RegisterGradeRequest request, Integer cardId){
-//        Integer gradeId = benefitMapper.registerGrade(request, cardId);
-//        return gradeId;
-//    }
+    // 공통 실적등급 등록
+    private void saveGrade(List<Grade> grades, Integer cardId){
+        if(grades.isEmpty()) return;
+        benefitMapper.registerGrades(grades, cardId);
+    }
 //
 //    // 파트너 등록
 //    private Integer savePartner(RegisterCategoryRequest request, Integer categoryId){
@@ -99,9 +100,8 @@ public class CardSaveService {
         if(cardId != null) return;
         cardId = saveCard(cardRequest, companyId);
 
-//        for(Grade들) {
-//            Integer gradeId = saveGrade(registerGradeRequest, cardId);
-//        }
+        // 공통 실적등급
+        saveGrade(cardData.getGrades(), cardId);
 //
 //        for(Benefit benefit : cardData.getBenefits()) {
 //

@@ -1,4 +1,4 @@
-package com.payper.external.crawling;
+package com.payper.external.crawling.config;
 
 import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.external.crawling.dto.CardData;

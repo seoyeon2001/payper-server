@@ -31,7 +31,7 @@ public class CrawlingService {
     public List<CardData> crawlsCards() {
         List<CardData> result = new ArrayList<>();
 
-        int startId = 2749; //임시 test
+        int startId = 2423; //임시 test
         for (int id = startId; id <= startId; id++) {
             try {
                 String url = "https://api.card-gorilla.com:8080/v1/cards/" + id;

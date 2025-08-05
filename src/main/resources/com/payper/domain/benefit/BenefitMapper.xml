@@ -67,5 +67,13 @@
         <result property="description" column="benefit_description"/>
         <result property="iconUrl" column="benefit_icon_url"/>
     </resultMap>
+
+    <insert id="registerGrades" parameterType="map">
+        INSERT INTO grade (card_id, start, total_discount, last_modified_at)
+        VALUES
+        <foreach collection="grades" item="grade" separator=",">
+            (#{cardId}, #{grade.start}, #{grade.totalDiscount}, NOW())
+        </foreach>
+    </insert>
 </mapper>
 

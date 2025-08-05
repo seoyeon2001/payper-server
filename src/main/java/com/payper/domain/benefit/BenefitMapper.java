@@ -3,6 +3,7 @@ package com.payper.domain.benefit;
 import com.payper.domain.benefit.dto.request.UpdateBenefitRequest;
 import com.payper.domain.benefit.dto.response.BenefitResponse;
 import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
+import com.payper.external.crawling.dto.Grade;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,4 +19,5 @@ public interface BenefitMapper {
 
     int softDeleteBenefit(@Param("cardId") Integer cardId, @Param("benefitId") Integer benefitId);
 
+    void registerGrades(@Param("grades") List<Grade> grades, @Param("cardId") Integer cardId);
 }
