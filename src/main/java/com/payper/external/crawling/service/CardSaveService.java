@@ -5,6 +5,7 @@ import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
 import com.payper.domain.card.CardMapper;
 import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.domain.category.CategoryMapper;
+import com.payper.domain.category.dto.RegisterCategoryRequest;
 import com.payper.domain.partner.PartnerMapper;
 import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
@@ -43,16 +44,16 @@ public class CardSaveService {
         return request.getCardId();
     }
 
-//    // 공통 카테고리 등록
-//    private Integer saveCategory(RegisterCategoryRequest request) {
-//        Integer categoryId = categoryMapper.getCategoryId(request);
-//        if(categoryId == null) {
-//            categoryMapper.registerCategory(request);
-//            categoryId = request.getCategoryId();
-//        }
-//        return categoryId;
-//    }
-//
+    // 공통 카테고리 등록
+    private Integer saveCategory(RegisterCategoryRequest request) {
+        Integer categoryId = categoryMapper.findIdByCategoryName(request.getCategoryName());
+        if(categoryId == null) {
+            categoryMapper.registerCategory(request);
+            categoryId = request.getCategoryId();
+        }
+        return categoryId;
+    }
+
     // 공통 실적등급 등록
     private void saveGrade(List<Grade> grades, Integer cardId){
         if(grades.isEmpty()) return;
@@ -108,6 +109,9 @@ public class CardSaveService {
         for(Benefit benefit : cardData.getBenefits()) {
             CreateBenefitRequest benefitRequest = toCreateBenefitRequest(benefit);
             Integer benefitId = saveBenefit(benefitRequest, cardId);
+
+            RegisterCategoryRequest categoryRequest = toRegisterCategoryRequest(benefit.getTitle());
+            Integer categoryId = saveCategory(categoryRequest);
 
 //            Integer categoryId = saveCategory();
 //            saveBenefitCategory(benefitId, categoryId);

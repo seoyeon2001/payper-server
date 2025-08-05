@@ -16,4 +16,15 @@
         WHERE p.partner_id = #{partnerId};
 
     </select>
+
+    <insert id="registerCategory" useGeneratedKeys="true" keyProperty="request.categoryId">
+        INSERT INTO category (
+            category_name,
+            last_modified_at
+        )
+        VALUES (
+                   #{request.categoryName},
+                   NOW()
+               )
+    </insert>
 </mapper>
