@@ -1,23 +1,21 @@
-package com.payper.external.crawling;
+package com.payper.external.crawling.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.payper.external.openai.OpenAIExtractPartner;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.payper.external.crawling.dto.Discount;
+import com.payper.external.openai.OpenAIExtractPartnerService;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Service
+@RequiredArgsConstructor
 @Slf4j
-public class CardBenefitCleaner {
+public class CardBenefitCleanService {
+    private final OpenAIExtractPartnerService openAIExtractPartnerService;
 
     @Data
     @NoArgsConstructor
@@ -25,17 +23,6 @@ public class CardBenefitCleaner {
     public static class CleanedResult {
         private List<String> categories;
         private Discount discount;
-    }
-
-    @Data
-    @Builder
-    public static class Discount {
-        private String type;
-        private Long amount;
-        private Long minPayment;
-        private Long limitAmount;
-        private Long limitCount;
-        private Long gradeStart;
     }
 
     private static final Pattern PERCENT_PATTERN = Pattern.compile("(\\d+)%");
@@ -47,10 +34,10 @@ public class CardBenefitCleaner {
             Pattern.compile("전월 이용실적[^\\d]*(\\d{1,3}(?:,\\d{3})*|\\d+(?:천|만)?)(만원|천원)?");
 
 
-    public static CleanedResult cleanBenefit(String summary, String descriptionHtml) {
+    public CleanedResult cleanBenefit(String summary, String descriptionHtml) {
         String description = Jsoup.parse(descriptionHtml).text();
 
-        List<String> partnerTargetText = OpenAIExtractPartner.extractPartners(summary);
+        List<String> partnerTargetText = openAIExtractPartnerService.extractPartners(summary);
 
         Long minPayment = description.contains("건당 이용조건 없음")
                 ? 0L
@@ -68,13 +55,13 @@ public class CardBenefitCleaner {
         return new CleanedResult(partnerTargetText, discount);
     }
 
-    private static String getDiscountType(String description) {
+    private String getDiscountType(String description) {
         if (description.contains("%")) return "RATE";
         else if (description.contains("원")) return "AMOUNT";
         return null;
     }
 
-    private static Long extractPercentOrAmount(String description) {
+    private Long extractPercentOrAmount(String description) {
         Matcher percent = PERCENT_PATTERN.matcher(description);
         if (percent.find()) {
             return Long.parseLong(percent.group(1));
@@ -86,7 +73,7 @@ public class CardBenefitCleaner {
         return null;
     }
 
-    private static Long extractLong(Pattern pattern, String text) {
+    private Long extractLong(Pattern pattern, String text) {
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
             String matchedStr = matcher.group(1);
@@ -97,7 +84,7 @@ public class CardBenefitCleaner {
     }
 
 
-    private static Long parseAmount(String str) {
+    private Long parseAmount(String str) {
         if (str == null) return null;
 
         str = str.replaceAll(",", "").replaceAll(" ", "").replaceAll("원", "");
@@ -115,19 +102,5 @@ public class CardBenefitCleaner {
         }
 
         return null;
-    }
-
-
-    private static Set<String> extractBrands(String text) {
-        Set<String> found = new LinkedHashSet<>();
-        // 1. 쉼표로 분리된 브랜드 후보 먼저 직접 추가
-        String[] tokens = text.split("[,/]");
-        for (String token : tokens) {
-            String trimmed = token.trim();
-            if (!trimmed.isEmpty()) {
-                found.add(trimmed);
-            }
-        }
-        return found;
     }
 }

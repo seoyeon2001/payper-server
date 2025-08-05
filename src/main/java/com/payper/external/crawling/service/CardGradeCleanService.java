@@ -1,5 +1,6 @@
-package com.payper.external.crawling;
+package com.payper.external.crawling.service;
 
+import com.payper.external.crawling.dto.Grade;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,31 +9,19 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CardGradeCleaner {
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CleanedGradeResult {
-        private List<Grade> grades;
-    }
-
-    @Data
-    @Builder
-    public static class Grade {
-        private Long start;
-        private Long totalDiscount;
-    }
+@Service
+public class CardGradeCleanService {
 
     private static final Pattern GRADE_PATTERN = Pattern.compile("전월 이용실적\\s*(\\d+)만원 이상[:：]?\\s*(\\d+)만원?");
 
-    public static CleanedGradeResult cleanGrade(String gradeDescription) {
+    public List<Grade> cleanGrade(String gradeDescription) {
         List<Grade> grades = new ArrayList<>();
         Document doc = Jsoup.parse(gradeDescription);
         Elements tables = doc.select("table");
@@ -51,7 +40,7 @@ public class CardGradeCleaner {
             Elements headers = headerRow.select("td");
             Elements values = valueRow.select("td");
 
-            for (int i = 1; i < headers.size(); i++) {
+            for (Integer i = 1; i < headers.size(); i++) {
                 String headerText = headers.get(i).text();
                 String valueText = values.get(i).text();
 
@@ -83,7 +72,7 @@ public class CardGradeCleaner {
             }
         }
 
-        return new CleanedGradeResult(grades);
+        return grades;
     }
 
     private static Long parseWon(String text) {

@@ -6,18 +6,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@Service
 @Slf4j
-public class OpenAIExtractPartner {
+public class OpenAIExtractPartnerService {
     private static final String API_KEY = GptConfig.getApiKey();
     private static final String API_URL = GptConfig.getApiUrl();
 
-    public static List<String> extractPartners(String summary) {
+    public List<String> extractPartners(String summary) {
         OkHttpClient client = new OkHttpClient();
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);

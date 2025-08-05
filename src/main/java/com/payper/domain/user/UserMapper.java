@@ -11,9 +11,9 @@ public interface UserMapper {
 
     User get(@Param("userId") Integer userId);
 
-    int updateConnectedId(@Param("userId") Integer userId, @Param("connectedId") String connectedId);
+    Integer updateConnectedId(@Param("userId") Integer userId, @Param("connectedId") String connectedId);
 
-    int createUser(@Param("user") User user); //insert
+    Integer createUser(@Param("user") User user); //insert
 
     UserResponse getUserInfo(Integer userId);
 

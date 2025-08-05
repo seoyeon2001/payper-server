@@ -22,7 +22,7 @@ public class CardService {
         return cardMapper.selectAllCards();
     }
 
-    public CardResponse getCardById(int cardId) {
+    public CardResponse getCardById(Integer cardId) {
         existsByCardId(cardId);
         return cardMapper.selectCardById(cardId);
     }
@@ -83,9 +83,9 @@ public class CardService {
 
         existsByCardCompanyName(cardCompanyName);
 
-        int cardCompanyId=cardMapper.getCardCompanyId(cardCompanyName);
+        Integer cardCompanyId=cardMapper.getCardCompanyId(cardCompanyName);
 
-        int result=cardMapper.registerCard(request,cardCompanyId);
+        Integer result=cardMapper.registerCard(request,cardCompanyId);
 
         if(result!=1){
             log.error("카드 등록 실패 - companyName: {}, cardName: {}", cardCompanyName, request.getCardName());
@@ -104,16 +104,16 @@ public class CardService {
     }
 
     @Transactional
-    public void updateCard(UpdateCardRequest request, int cardId){
+    public void updateCard(UpdateCardRequest request, Integer cardId){
         String cardCompanyName=request.getCompanyName();
 
         existsByCardCompanyName(cardCompanyName);
 
         existsByCardId(cardId);
 
-        int cardCompanyId=cardMapper.getCardCompanyId(cardCompanyName);
+        Integer cardCompanyId=cardMapper.getCardCompanyId(cardCompanyName);
 
-        int result=cardMapper.updateCard(request,cardCompanyId,cardId);
+        Integer result=cardMapper.updateCard(request,cardCompanyId,cardId);
 
         if(result!=1){
             throw new CardUpdateFailedException(cardId);
@@ -121,7 +121,7 @@ public class CardService {
     }
 
     @Transactional
-    public void deleteCardMe(int userId, int cardId) {
+    public void deleteCardMe(Integer userId, Integer cardId) {
         existedByCardId(cardId);
 
         // 삭제 여부 확인
@@ -130,7 +130,7 @@ public class CardService {
             throw new AlreadyDeletedUserCardException();
         }
 
-        int updateCount = cardMapper.softDeleteMyCard(userId, cardId);
+        Integer updateCount = cardMapper.softDeleteMyCard(userId, cardId);
         if (updateCount != 1) {
             log.error("내 카드 삭제 실패 - userId: {}, cardId: {}", userId, cardId);
             throw new MyCardDeletionFailedException();
@@ -138,10 +138,10 @@ public class CardService {
     }
 
     @Transactional
-    public void deleteCard(int cardId) {
+    public void deleteCard(Integer cardId) {
         existsByCardId(cardId);
 
-        int result= cardMapper.softDeleteCard(cardId);
+        Integer result= cardMapper.softDeleteCard(cardId);
 
         if(result!=1){
 

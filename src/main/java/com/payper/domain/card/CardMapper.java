@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface CardMapper {
     List<CardResponse> selectAllCards();
-    CardResponse selectCardById(int cardId);
+    CardResponse selectCardById(Integer cardId);
 
     List<CardResponse> searchWithConditions(
             @Param("name") String name,
@@ -20,21 +20,23 @@ public interface CardMapper {
             @Param("cardCompany") List<String> cardCompany
     );
 
-    List<CardResponse> selectCardsByUserID(int userId);
+    List<CardResponse> selectCardsByUserID(Integer userId);
 
     void registerCardMe(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
     boolean existsCardCompany(@Param("cardCompanyName") String cardCompanyName);
 
-    int getCardCompanyId(@Param("cardCompanyName")String cardCompanyName);
+    Integer getCardId(String cardName);
 
-    int registerCardCompany(@Param("cardCompanyName")String cardCompanyName);
+    Integer getCardCompanyId(@Param("cardCompanyName")String cardCompanyName);
 
-    int registerCard(@Param("card") RegisterCardRequest card,@Param("cardCompanyId")int cardCompanyId);
+    Integer registerCardCompany(@Param("cardCompanyName")String cardCompanyName);
 
-    int updateCard(@Param("card") UpdateCardRequest card, @Param("cardCompanyId")int cardCompanyId, @Param("cardId")int cardId);
+    Integer registerCard(@Param("card") RegisterCardRequest card,@Param("cardCompanyId")Integer cardCompanyId);
 
-    int restoreUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
+    Integer updateCard(@Param("card") UpdateCardRequest card, @Param("cardCompanyId")Integer cardCompanyId, @Param("cardId")Integer cardId);
+
+    Integer restoreUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
     boolean isPreviouslyDeletedUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
@@ -44,9 +46,9 @@ public interface CardMapper {
 
     boolean existsUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
-    int softDeleteMyCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
+    Integer softDeleteMyCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
-    int softDeleteCard(Integer cardId);
+    Integer softDeleteCard(Integer cardId);
 
     List<CardResponse> findByPartnerId(@Param("userId") Integer userId,
                                        @Param("partnerId") Integer partnerId);

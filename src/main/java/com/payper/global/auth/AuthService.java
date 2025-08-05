@@ -71,7 +71,7 @@ public class AuthService {
                     .lastModifiedAt(new Date())
                     .build();
 
-            int createResult=userMapper.createUser(newUser);
+            Integer createResult=userMapper.createUser(newUser);
 
             //log.error("create user result:"+createResult);
 

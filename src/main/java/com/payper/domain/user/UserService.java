@@ -31,7 +31,7 @@ public class UserService {
 
     @Transactional
     public void updateConnectedId(Integer userId, String connectedId) {
-        int updated = userMapper.updateConnectedId(userId, connectedId);
+        Integer updated = userMapper.updateConnectedId(userId, connectedId);
         if (updated == 0) {
             throw new IllegalStateException("ConnectedId 업데이트 실패");
         }

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper
 public interface PartnerMapper {
-    List<PartnerTempDto> findAllByCategoryId(int categoryId);
+    List<PartnerTempDto> findAllByCategoryId(Integer categoryId);
     PartnerTempDto findByPartnerName(String partnerName);
     List<SearchPartnersResponse> searchWithConditions(
             @Param("name") String name,

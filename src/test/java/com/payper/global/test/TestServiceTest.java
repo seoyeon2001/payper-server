@@ -11,11 +11,11 @@ class TestServiceTest {
     @Test
     void sum() {
         // given
-        int a = 1;
-        int b = 2;
+        Integer a = 1;
+        Integer b = 2;
 
         // when
-        int sum = testService.sum(a, b);
+        Integer sum = testService.sum(a, b);
 
         // then
         assertThat(sum).isEqualTo(3);

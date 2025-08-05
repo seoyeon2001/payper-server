@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Discount {
-    public String type;
-    public Long amount;
-    public Long minPayment;
-    public Long limitCount;
-    public Long limitAmount;
-    public Long gradeStart;
+public class Grade {
+    private Long start;
+    private Long totalDiscount;
 }

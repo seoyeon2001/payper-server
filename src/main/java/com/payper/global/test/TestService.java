@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestService {
 
-    public int sum(int a, int b) {
+    public Integer sum(Integer a, Integer b) {
         return a + b;
     }
 }
