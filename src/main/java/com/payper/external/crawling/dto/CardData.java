@@ -1,5 +1,4 @@
 package com.payper.external.crawling.dto;
-import com.payper.external.crawling.service.CardGradeCleanService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

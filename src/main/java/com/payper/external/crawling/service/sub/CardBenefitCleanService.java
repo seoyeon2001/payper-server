@@ -1,7 +1,6 @@
-package com.payper.external.crawling.service;
+package com.payper.external.crawling.service.sub;
 
 import com.payper.external.crawling.dto.Discount;
-import com.payper.external.openai.OpenAIExtractPartnerService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;

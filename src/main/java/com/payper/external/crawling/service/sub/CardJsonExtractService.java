@@ -1,4 +1,4 @@
-package com.payper.external.crawling.service;
+package com.payper.external.crawling.service.sub;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

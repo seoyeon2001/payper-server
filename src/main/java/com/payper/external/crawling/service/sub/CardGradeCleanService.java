@@ -1,10 +1,6 @@
-package com.payper.external.crawling.service;
+package com.payper.external.crawling.service.sub;
 
 import com.payper.external.crawling.dto.Grade;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

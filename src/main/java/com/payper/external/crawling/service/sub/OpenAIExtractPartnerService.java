@@ -1,4 +1,4 @@
-package com.payper.external.openai;
+package com.payper.external.crawling.service.sub;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -16,8 +17,11 @@ import java.util.List;
 @Service
 @Slf4j
 public class OpenAIExtractPartnerService {
-    private static final String API_KEY = GptConfig.getApiKey();
-    private static final String API_URL = GptConfig.getApiUrl();
+    @Value("${openai.api.key}")
+    private String apiKey;
+
+    @Value("${openai.api.url}")
+    private String apiUrl;
 
     public List<String> extractPartners(String summary) {
         OkHttpClient client = new OkHttpClient();
@@ -50,8 +54,8 @@ public class OpenAIExtractPartnerService {
 
             RequestBody body = RequestBody.create(requestBody, MediaType.parse("application/json; charset=utf-8"));
             Request request = new Request.Builder()
-                    .url(API_URL)
-                    .header("Authorization", "Bearer " + API_KEY)
+                    .url(apiUrl)
+                    .header("Authorization", "Bearer " + apiKey)
                     .post(body)
                     .build();
 
