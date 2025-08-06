@@ -198,6 +198,10 @@ CREATE TABLE `benefit_partner` (
                                         `benefit_partner_id` INT NOT NULL AUTO_INCREMENT,
                                         `benefit_id`         INT NOT NULL,
                                         `partner_id`         INT NOT NULL,
+                                        `is_deleted` BOOLEAN DEFAULT FALSE,
+                                        `created_at` DATETIME NOT NULL DEFAULT NOW(),
+                                        `deleted_at` DATETIME NULL,
+                                        `last_modified_at` DATETIME NULL,
                                         PRIMARY KEY (`benefit_partner_id`),
                                         CONSTRAINT `FK_benefit_TO_benefit_partner` FOREIGN KEY (`benefit_id`)
                                             REFERENCES `benefit` (`benefit_id`),

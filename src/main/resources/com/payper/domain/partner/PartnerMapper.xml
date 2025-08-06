@@ -17,6 +17,13 @@
           AND is_deleted = false;
     </select>
 
+    <select id="findIdByPartnerName" resultType="Integer">
+        SELECT partner_id
+        FROM partner
+        WHERE partner_name = #{partnerName}
+          AND is_deleted = false;
+    </select>
+
     <resultMap id="SearchPartnersResponseMap" type="SearchPartnersResponse">
         <id property="id" column="partner_id"/>
         <result property="name" column="partner_name"/>
@@ -68,5 +75,31 @@
         WHERE
             p.partner_id = #{partnerId};
     </select>
+
+    <insert id="registerPartner" useGeneratedKeys="true" keyProperty="request.partnerId">
+        INSERT INTO partner (
+            partner_name,
+            category_id,
+            last_modified_at
+        )
+        VALUES (
+                   #{request.partnerName},
+                   #{categoryId},
+                   NOW()
+               )
+    </insert>
+
+    <insert id="registerBenefitPartner">
+        INSERT INTO benefit_partner (
+            benefit_id,
+            partner_id,
+            last_modified_at
+        )
+        VALUES (
+                   #{benefitId},
+                   #{partnerId},
+                   NOW()
+               )
+    </insert>
 
 </mapper>

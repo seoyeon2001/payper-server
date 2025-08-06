@@ -3,6 +3,7 @@ package com.payper.external.crawling.config;
 import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
 import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.domain.category.dto.RegisterCategoryRequest;
+import com.payper.domain.partner.dto.RegisterPartnerRequest;
 import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
 
@@ -30,6 +31,12 @@ public class CardDataMatcher {
     public static RegisterCategoryRequest toRegisterCategoryRequest(String categoryName) {
         return RegisterCategoryRequest.builder()
                 .categoryName(categoryName)
+                .build();
+    }
+
+    public static RegisterPartnerRequest toRegisterPartnerRequest(String partnerName) {
+        return RegisterPartnerRequest.builder()
+                .partnerName(partnerName)
                 .build();
     }
 }

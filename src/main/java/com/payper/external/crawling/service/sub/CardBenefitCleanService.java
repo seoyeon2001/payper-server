@@ -36,7 +36,7 @@ public class CardBenefitCleanService {
     public CleanedResult cleanBenefit(String summary, String descriptionHtml) {
         String description = Jsoup.parse(descriptionHtml).text();
 
-        //List<String> partnerTargetText = openAIExtractPartnerService.extractPartners(summary);
+        List<String> partnerTargetText = openAIExtractPartnerService.extractPartners(summary, description);
 
         Long gradeStart = description.contains("전월 이용실적 조건 없음")
                 ? 0L
@@ -55,7 +55,7 @@ public class CardBenefitCleanService {
                 .gradeStart(gradeStart)
                 .build();
       
-        return new CleanedResult(null, discount);
+        return new CleanedResult(partnerTargetText, discount);
     }
 
     private String getDiscountType(String summary) {
