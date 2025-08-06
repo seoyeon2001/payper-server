@@ -2,9 +2,11 @@ package com.payper.global.auth;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.payper.domain.user.dto.CreateUserRequest;
 import com.payper.global.auth.dto.LoginResponse;
 import com.payper.global.auth.dto.TokenResponse;
 import com.payper.global.auth.exception.InvalidRefreshTokenException;
+import com.payper.global.auth.exception.UserCreationFailedException;
 import com.payper.global.security.util.OAuthProvider;
 import com.payper.global.security.util.JwtProcessor;
 import com.payper.domain.user.UserMapper;
@@ -58,30 +60,26 @@ public class AuthService {
         String kakaoId = kakaoUserInfo.get("kakao_id").toString();
         String kakaoNickname = kakaoUserInfo.get("nickname").toString();
 
-        User user = userMapper.findByOauthProviderAndOauthId(OAuthProvider.KAKAO.name(), kakaoId);
+        Integer userId = userMapper.findByOauthProviderAndOauthId(OAuthProvider.KAKAO.name(), kakaoId);
 
-        if (user == null) {
-            User newUser = User.builder()
-                    .oauthProvider(OAuthProvider.KAKAO.name())
-                    .oauthId(kakaoId)
-                    .nickname(kakaoNickname)
-                    .isDeleted(false)
-                    .createdAt(new Date())
-                    .deletedAt(null)
-                    .lastModifiedAt(new Date())
-                    .build();
+        if(userId==null){
+            CreateUserRequest newUser=CreateUserRequest.toDTO(
+                    OAuthProvider.KAKAO.name(),kakaoId,kakaoNickname
+            );
 
-            Integer createResult=userMapper.createUser(newUser);
+            if(userMapper.createUser(newUser)!=1){
+                log.error("유저 생성 Failed "+kakaoNickname);
 
-            //log.error("create user result:"+createResult);
+                throw new UserCreationFailedException(kakaoNickname);
+            }
 
-            user = newUser;
+            userId = newUser.getUserId();
         }
 
-        //log.error(user.toString());
+        String accessToken = jwtProcessor.generateAccessToken(userId);
 
-        String accessToken = jwtProcessor.generateAccessToken(user.getUserId());
-        String refreshToken = jwtProcessor.generateRefreshToken(user.getUserId());
+        String refreshToken = jwtProcessor.generateRefreshToken(userId);
+
         storeRefreshTokenInCookie(response, refreshToken);
 
         LoginResponse loginResponse = new LoginResponse();
@@ -109,8 +107,6 @@ public class AuthService {
         // HttpEntity 생성
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
-        //log.error(request.toString());
-
         //RestTemplate은 기본적으로 jackson을 사용. 그래서 JsonObject로 받으면 안돼.
         ResponseEntity<String> response = restTemplate.postForEntity(
                 kakaoTokenUrl,
@@ -118,8 +114,6 @@ public class AuthService {
                 String.class
         );
 
-        //log.error(response.getStatusCode());
-        //log.error(response.getBody());
 
         if (response.getStatusCode() == HttpStatus.OK) {
             // JSON 파싱을 위해 Gson 사용
@@ -160,9 +154,6 @@ public class AuthService {
                 String.class
         );
 
-        //log.error("response status: {}", response.getStatusCode());
-        //log.error("response body: {}", response.getBody());
-
         if (response.getStatusCode() == HttpStatus.OK) {
             // JSON 파싱을 위해 Gson 사용
             Gson gson = new Gson();
@@ -184,7 +175,6 @@ public class AuthService {
                 }
             }
 
-            //log.error("user info: {}", userInfoMap);
             return userInfoMap;
 
         } else {

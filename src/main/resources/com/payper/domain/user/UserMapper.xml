@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.payper.domain.user.UserMapper">
 
-    <select id="findByOauthProviderAndOauthId" resultType="com.payper.domain.user.domain.User">
-        SELECT * from user where oauth_provider = #{ oauthProvider } and oauth_id = #{ oauthId }
+    <select id="findByOauthProviderAndOauthId" resultType="Integer">
+        SELECT user_id from user where oauth_provider = #{ oauthProvider } and oauth_id = #{ oauthId }
     </select>
 
     <select id="get" resultType="com.payper.domain.user.domain.User">
@@ -20,13 +20,9 @@
         UPDATE user SET is_deleted = true, SET deleted_at=NOW(),last_modified_at=NOW() WHERE user_id = #{userId}
     </update>
 
-    <insert id="createUser">
-        <selectKey resultType="Integer" keyProperty="user.userId" keyColumn="user_id" order="AFTER">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
-
-        INSERT INTO user (user_id,oauth_provider,oauth_id,nickname,connected_id,created_at,is_deleted,last_modified_at)
-        values (null,#{user.oauthProvider},#{user.oauthId},#{user.nickname},#{user.connectedId},NOW(),FALSE,NOW())
+    <insert id="createUser" useGeneratedKeys="true" keyProperty="user.userId">
+        INSERT INTO user (oauth_provider, oauth_id, nickname, last_modified_at)
+        values (#{user.oauthProvider}, #{user.oauthId}, #{user.nickname}, NOW())
     </insert>
 
     <select id="getUserInfo" resultType="UserResponse">
@@ -36,7 +32,7 @@
         AND is_deleted = false
     </select>
 
-    <select id="getConnectedId" resultType="java.lang.String">
+    <select id="getConnectedId" resultType="String">
         SELECT connected_id FROM user WHERE user_id = #{userId}
     </select>
 

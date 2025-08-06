@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -15,12 +17,15 @@ public class JwtProcessor {
     private static final long ACCESS_TOKEN_MAX_AGE = 7L * 24 * 60 * 60 * 1000;
     private static final long REFRESH_TOKEN_MAX_AGE = 30L * 24 * 60 * 60 * 1000; // 30일
 
-    //개발시 키
-    final private String secretKey = "abcdefghijklmnopqrstuvxyzabcdefghijklmnopqrstuvxyzabcdefghijklmnopqrstuvxyzabcdefghijklmnopqrstuvxyz";
-    final private Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    @Value("${token.secret.key}")
+    private String secretKey;
 
-    //운영시 키
-    //private Key key=Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private Key key;
+
+    @PostConstruct
+    public void init() {
+        key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateAccessToken(Integer userId) {
         return generateJwtToken(userId, ACCESS_TOKEN_MAX_AGE);

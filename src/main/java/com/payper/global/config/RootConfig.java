@@ -22,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
         @PropertySource("classpath:/application.properties"),
         @PropertySource(value = "classpath:/application-db.properties", ignoreResourceNotFound = true),
         @PropertySource(value = "classpath:/application-kakao.properties", ignoreResourceNotFound = true),
-        @PropertySource(value = "classpath:/application-codef.properties", ignoreResourceNotFound = true)
+        @PropertySource(value = "classpath:/application-codef.properties", ignoreResourceNotFound = true),
+        @PropertySource(value = "classpath:/application-secret.properties", ignoreResourceNotFound = true)
 })
 @ComponentScan(
         basePackages = "com.payper",
