@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.payper.external.crawling.config.CardDataMatcher.*;
@@ -56,11 +57,30 @@ public class CardSaveService {
     }
 
     // 공통 실적등급 등록
-    private void saveGrade(List<Grade> grades, Integer cardId){
-        if(grades.isEmpty()) return;
+    private void saveGrade(List<Grade> grades, Integer cardId) {
+        if (grades == null) {
+            grades = new ArrayList<>();
+        }
+
+        if (!hasZeroStart(grades)) {
+            Grade zeroGrade = Grade.builder()
+                    .start(0L)
+                    .build();
+            grades.add(zeroGrade);
+        }
+
         benefitMapper.registerGrades(grades, cardId);
     }
-//
+
+    // 실적 관련 설명이 없을 경우
+    private boolean hasZeroStart(List<Grade> grades) {
+        for (Grade g : grades) {
+            if (g.getStart() == 0) return true;
+        }
+        return false;
+    }
+
+
 //    // 파트너 등록
 //    private Integer savePartner(RegisterCategoryRequest request, Integer categoryId){
 //        Integer partnerId = partnerMapper.getPartnerId(request);

@@ -14,9 +14,6 @@ import okhttp3.Response;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,22 +26,18 @@ public class CrawlingService {
     private final CardGradeCleanService cardGradeCleanService;
 
     @Transactional
-    public List<CardData> crawlsCards() {
-        List<CardData> result = new ArrayList<>();
+    public CardData crawlsCards(int id) {
+        try {
+            String url = "https://api.card-gorilla.com:8080/v1/cards/" + id;
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("User-Agent", "Mozilla/5.0")
+                    .build();
 
-        int startId = 2423; //임시 test
-        for (int id = startId; id <= startId; id++) {
-            try {
-                String url = "https://api.card-gorilla.com:8080/v1/cards/" + id;
-                Request request = new Request.Builder()
-                        .url(url)
-                        .addHeader("User-Agent", "Mozilla/5.0")
-                        .build();
-                Response response = okHttpClient.newCall(request).execute();
-
+            try (Response response = okHttpClient.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
-                    log.info("ID {} 요청 실패 : {}", id, response.code());
-                    continue;
+                    log.error("ID {} 요청 실패 : {}", id, response.code());
+                    return null;
                 }
 
                 String body = response.body().string();
@@ -65,14 +58,13 @@ public class CrawlingService {
                     b.setCategories(benefitResult.getCategories());
                     b.setDiscount(benefitResult.getDiscount());
                 }
-
-                result.add(data);
-
-            } catch (Exception e) {
-                log.warn("ID {} 크롤링 실패: {}", id, e.getMessage());
+                return data;
             }
+
+        } catch (Exception e) {
+            log.error("ID {} 크롤링 실패: {}", id, e.getMessage());
+            return null;
         }
-        return result;
     }
 
 }

@@ -19,6 +19,8 @@ public class CardGradeCleanService {
 
     public List<Grade> cleanGrade(String gradeDescription) {
         List<Grade> grades = new ArrayList<>();
+        if(gradeDescription.equals("")) return grades; //빈 값이 올 경우 얼리 리턴
+
         Document doc = Jsoup.parse(gradeDescription);
         Elements tables = doc.select("table");
 

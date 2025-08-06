@@ -6,11 +6,8 @@ import com.payper.external.crawling.service.CrawlingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,14 +18,18 @@ public class CrawlAndSaveController {
     private final CardSaveService cardSaveService;
 
     @GetMapping("")
-    public ResponseEntity<Void> runCrawlingAndSave() {
-        List<CardData> cardDataList = crawlingService.crawlsCards();
+    public ResponseEntity<Void> runCrawlingAndSave(@RequestParam("start") int start,
+                                                   @RequestParam("end") int end) {
+        int triedCount = end - start + 1, completeCount = 0;
+        for(int id = start; id <= end; id++) {
+            CardData cardData = crawlingService.crawlsCards(id);
 
-        for (CardData cardData : cardDataList) {
+            if(cardData == null) continue;
             cardSaveService.saveFullCardData(cardData);
+            completeCount ++;
         }
 
-        log.info("크롤링 및 저장 완료: " + cardDataList.size() + "건");
+        log.info("카드 크롤링 및 저장 {}건 중, {}건 완료되었습니다.", triedCount, completeCount);
         return ResponseEntity.ok().build();
     }
 }

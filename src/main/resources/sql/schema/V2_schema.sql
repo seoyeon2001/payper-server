@@ -49,7 +49,7 @@ CREATE TABLE `card` (
                         `card_name` VARCHAR(100) UNIQUE,
                         `card_type` ENUM('CREDIT', 'CHECK') NOT NULL,
                         `card_image_url` VARCHAR(255) NOT NULL,
-                        `card_issue_url` VARCHAR(255) NOT NULL,
+                        `card_issue_url` VARCHAR(255),
                         `annual_fee` VARCHAR(255) DEFAULT '',
                         `company_id` INT NOT NULL,
                         `is_deleted` BOOLEAN DEFAULT FALSE,
