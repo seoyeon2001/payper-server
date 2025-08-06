@@ -9,6 +9,7 @@ import com.payper.domain.category.dto.RegisterCategoryRequest;
 import com.payper.domain.partner.PartnerMapper;
 import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
+import com.payper.external.crawling.dto.Discount;
 import com.payper.external.crawling.dto.Grade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -86,10 +87,10 @@ public class CardSaveService {
 //        benefitMapper.registerBenefitPartner(benefitId, partnerId);
 //    }
 //
-//    // 혜택_실적_할인 등록
-//    private void saveBenefitGradeDiscount(RegisterBenefitGradeDiscountRequest request, Integer benefitId, Integer gradeId){
-//        benefitMapper.registerBenefitGradeDiscount(request, benefitId, gradeId);
-//    }
+    // 혜택_실적_할인 등록
+    private void saveBenefitGradeDiscount(Discount discount, Integer benefitId, Integer gradeId){
+        benefitMapper.registerBenefitGradeDiscount(discount, benefitId, gradeId);
+    }
 
     @Transactional
     public void saveFullCardData(CardData cardData) {
@@ -107,22 +108,26 @@ public class CardSaveService {
         saveGrade(cardData.getGrades(), cardId);
 
         for(Benefit benefit : cardData.getBenefits()) {
+            // 혜택
             CreateBenefitRequest benefitRequest = toCreateBenefitRequest(benefit);
             Integer benefitId = saveBenefit(benefitRequest, cardId);
 
+            // 카테고리
             RegisterCategoryRequest categoryRequest = toRegisterCategoryRequest(benefit.getTitle());
             Integer categoryId = saveCategory(categoryRequest);
 
+            // 혜택_카테고리
             saveBenefitCategory(benefitId, categoryId);
-            System.out.println(benefitId);
-            System.out.println(categoryId);
 //
 //            for(benefit에서의 Partner들) {
 //                Integer partnerId = savePartner(, categoryId);
 //                saveBenefitPartner(benefitId, partnerId);
 //            }
 //
-//            saveBenefitGradeDiscount(request, benefitId, gradeId);
+            // 혜택_등급_할인
+            Discount disCount = benefit.getDiscount();
+            Integer gradeId = benefitMapper.findGradeIdByCardIdAndStart(cardId, disCount.getGradeStart());
+            saveBenefitGradeDiscount(disCount, benefitId, gradeId);
         }
     }
 }

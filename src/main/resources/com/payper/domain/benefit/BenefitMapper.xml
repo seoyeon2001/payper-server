@@ -75,5 +75,33 @@
             (#{cardId}, #{grade.start}, #{grade.totalDiscount}, NOW())
         </foreach>
     </insert>
+
+    <select id="findGradeIdByCardIdAndStart" resultType="Integer">
+        SELECT grade_id
+        FROM grade
+        WHERE card_id = #{cardId}
+        AND start &lt;= #{start}
+        ORDER BY start DESC
+        LIMIT 1;
+    </select>
+
+    <insert id="registerBenefitGradeDiscount">
+        insert into benefit_grade_discount (type,
+                                            amount,
+                                            min_payment,
+                                            limit_count,
+                                            limit_amount,
+                                            benefit_id,
+                                            grade_id,
+                                            last_modified_at)
+        values (#{discount.type},
+                #{discount.amount},
+                #{discount.minPayment},
+                #{discount.limitCount},
+                #{discount.limitAmount},
+                #{benefitId},
+                #{gradeId},
+                NOW());
+    </insert>
 </mapper>
 

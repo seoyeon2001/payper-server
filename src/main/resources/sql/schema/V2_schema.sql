@@ -162,7 +162,7 @@ CREATE TABLE `benefit_grade_discount` (
                                           `benefit_grade_id` INT NOT NULL AUTO_INCREMENT,
                                           `grade_id` INT NOT NULL,
                                           `benefit_id` INT NOT NULL,
-                                          `type` ENUM('RATE', 'FIXED_AMOUNT') NOT NULL,
+                                          `type` ENUM('RATE', 'FIXED_AMOUNT', 'UNKNOWN') NOT NULL,
                                           `amount` BIGINT NOT NULL,
                                           `limit_count` BIGINT,
                                           `limit_amount` BIGINT,

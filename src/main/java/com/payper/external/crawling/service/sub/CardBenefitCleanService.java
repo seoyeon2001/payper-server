@@ -36,40 +36,44 @@ public class CardBenefitCleanService {
     public CleanedResult cleanBenefit(String summary, String descriptionHtml) {
         String description = Jsoup.parse(descriptionHtml).text();
 
-        List<String> partnerTargetText = openAIExtractPartnerService.extractPartners(summary);
+        //List<String> partnerTargetText = openAIExtractPartnerService.extractPartners(summary);
+
+        Long gradeStart = description.contains("전월 이용실적 조건 없음")
+                ? 0L
+                : extractLong(GRADE_START_PATTERN, description);
 
         Long minPayment = description.contains("건당 이용조건 없음")
                 ? 0L
                 : extractLong(MIN_PAYMENT_PATTERN, description);
 
         Discount discount = Discount.builder()
-                .type(getDiscountType(description))
-                .amount(extractPercentOrAmount(description))
+                .type(getDiscountType(summary))
+                .amount(extractPercentOrAmount(summary))
                 .minPayment(minPayment)
                 .limitAmount(extractLong(LIMIT_AMOUNT_PATTERN, description))
                 .limitCount(extractLong(LIMIT_COUNT_PATTERN, description))
-                .gradeStart(extractLong(GRADE_START_PATTERN, description))
+                .gradeStart(gradeStart)
                 .build();
       
-        return new CleanedResult(partnerTargetText, discount);
+        return new CleanedResult(null, discount);
     }
 
-    private String getDiscountType(String description) {
-        if (description.contains("%")) return "RATE";
-        else if (description.contains("원")) return "AMOUNT";
-        return null;
+    private String getDiscountType(String summary) {
+        if (summary.contains("%")) return "RATE";
+        else if (summary.contains("원")) return "FIXED_AMOUNT";
+        return "UNKNOWN";
     }
 
-    private Long extractPercentOrAmount(String description) {
-        Matcher percent = PERCENT_PATTERN.matcher(description);
+    private Long extractPercentOrAmount(String summary) {
+        Matcher percent = PERCENT_PATTERN.matcher(summary);
         if (percent.find()) {
             return Long.parseLong(percent.group(1));
         }
-        Matcher amount = AMOUNT_PATTERN.matcher(description);
+        Matcher amount = AMOUNT_PATTERN.matcher(summary);
         if (amount.find()) {
             return parseAmount(amount.group(1));
         }
-        return null;
+        return 0L;
     }
 
     private Long extractLong(Pattern pattern, String text) {

@@ -17,5 +17,4 @@ public class Benefit {
     public String description;
     public List<String> categories;
     public Discount discount;
-    private Long gradeStart;
 }

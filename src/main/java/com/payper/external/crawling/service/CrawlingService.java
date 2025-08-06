@@ -1,6 +1,7 @@
 package com.payper.external.crawling.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
 import com.payper.external.crawling.service.sub.CardBenefitCleanService;
 import com.payper.external.crawling.service.sub.CardGradeCleanService;
@@ -55,15 +56,15 @@ public class CrawlingService {
                 data.setGrades(gradeResult);
 
                 // 혜택 정제 후 저장
-//                for (Benefit b : data.getBenefits()) {
-//                    var benefitResult = cardBenefitCleanService.cleanBenefit(
-//                            b.getSummary(),
-//                            b.getDescription()
-//                    );
-//
-//                    b.setCategories(benefitResult.getCategories());
-//                    b.setDiscount(benefitResult.getDiscount());
-//                }
+                for (Benefit b : data.getBenefits()) {
+                    var benefitResult = cardBenefitCleanService.cleanBenefit(
+                            b.getSummary(),
+                            b.getDescription()
+                    );
+
+                    b.setCategories(benefitResult.getCategories());
+                    b.setDiscount(benefitResult.getDiscount());
+                }
 
                 result.add(data);
 
