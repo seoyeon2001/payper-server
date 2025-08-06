@@ -18,4 +18,6 @@ public interface UserMapper {
     UserResponse getUserInfo(Integer userId);
 
     void softDeleteUser(Integer userId);
+
+    String getConnectedId(Integer userId);
 }

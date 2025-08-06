@@ -36,4 +36,8 @@
         AND is_deleted = false
     </select>
 
+    <select id="getConnectedId" resultType="java.lang.String">
+        SELECT connected_id FROM user WHERE user_id = #{userId}
+    </select>
+
 </mapper>

@@ -2,6 +2,7 @@ package com.payper.domain.user;
 
 import com.payper.domain.user.dto.UserResponse;
 import com.payper.domain.user.exception.NoSuchUserException;
+import com.payper.external.codef.exception.ConnectedIdUpdateFailedException;
 import com.payper.global.security.domain.CustomUser;
 import com.payper.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,8 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    // 이거 없애야함 - 서연이 할거임
-    public User getUserById(Integer userId) {
-        return userMapper.get(userId);
+    public String getConnectedIdById(Integer userId) {
+        return userMapper.getConnectedId(userId);
     }
 
     public Integer getUserId(CustomUser customUser) {
@@ -32,8 +32,9 @@ public class UserService {
     @Transactional
     public void updateConnectedId(Integer userId, String connectedId) {
         Integer updated = userMapper.updateConnectedId(userId, connectedId);
-        if (updated == 0) {
-            throw new IllegalStateException("ConnectedId 업데이트 실패");
+
+        if (updated != 1) {
+            throw new ConnectedIdUpdateFailedException(userId);
         }
     }
 

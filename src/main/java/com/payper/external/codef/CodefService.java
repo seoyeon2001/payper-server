@@ -9,15 +9,13 @@ import com.payper.external.codef.dto.request.ConnectedIdRequest;
 import com.payper.external.codef.dto.request.MyCardListRequest;
 import com.payper.external.codef.dto.response.ConnectedIdResponse;
 import com.payper.external.codef.dto.response.MyCardListResponse;
-import com.payper.domain.user.domain.User;
 import com.payper.domain.user.UserService;
+import com.payper.external.codef.exception.*;
 import io.codef.api.EasyCodef;
 import io.codef.api.EasyCodefServiceType;
 import io.codef.api.EasyCodefUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,18 +30,11 @@ public class CodefService {
     private final ObjectMapper objectMapper;
 
     public CodefStandardResponse<ConnectedIdResponse> createConnectedId(ConnectedIdRequest request, Integer userId) {
-        User user = userService.getUserById(userId);
-
-        // 가입하지 않은 user
-        if (user == null) {
-//            throw new RuntimeException("가입하지 않은 사용자입니다.");
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "가입하지 않은 사용자입니다.");
-        }
+        String connectedId = userService.getConnectedIdById(userId);
 
         // connected id가 있는 사용자
-        if (user.getConnectedId() != null) {
-//            throw new IllegalStateException("이미 connected id가 존재하므로 생성할 수 없습니다.");
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 connectedId가 존재합니다.");
+        if (connectedId != null) {
+            throw new AlreadyLinkedCodefAccountException();
         }
 
         try {
@@ -61,14 +52,12 @@ public class CodefService {
             HashMap<String, Object> dataMap = (HashMap<String, Object>) responseMap.get("data");
 
             String resultCode = (String) resultMap.get("code");
-            if (!"CF-00000".equals(resultCode)) {
-                throw new RuntimeException("CODEF 응답 실패: " + resultCode);
-            }
+            checkCodefResultCode(resultCode);
 
             // 3. 응답 객체 구성 및 저장
-            String connectedId = (String) dataMap.get("connectedId");
+            connectedId = (String) dataMap.get("connectedId");
             if (connectedId == null || connectedId.isBlank()) {
-                throw new RuntimeException("CODEF 성공 응답이지만 connectedId가 누락됨");
+                throw new MissingConnectedIdInCodefResponseException();
             }
 
             userService.updateConnectedId(userId, connectedId);
@@ -84,7 +73,6 @@ public class CodefService {
             return new CodefStandardResponse<>(result, response);
 
         } catch (Exception e) {
-            //e.printStackTrace();
             throw new RuntimeException("ConnectedId 생성 중 오류가 발생했습니다.", e);
         }
     }
@@ -101,24 +89,16 @@ public class CodefService {
             accountMap.put("password", EasyCodefUtil.encryptRSA(request.companyPassword(), codef.getPublicKey()));
             return accountMap;
         } catch (Exception e) {
-            throw new RuntimeException("비밀번호 암호화 실패", e);
+            throw new EncryptPasswordFailedException();
         }
     }
 
     public CodefStandardResponse<MyCardListResponse> getMyCardList(MyCardListRequest request, Integer userId) {
-        User user = userService.getUserById(userId);
+        String connectedId = userService.getConnectedIdById(userId);
 
-        // 가입하지 않은 user
-        if (user == null) {
-//            throw new RuntimeException("가입하지 않은 사용자입니다.");
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "가입하지 않은 사용자입니다.");
-        }
-
-        String connectedId = user.getConnectedId();
-
-        // connected id가 없는 사용자
+        // 사용자는 존재하는데, connected id가 없는 경우
         if (connectedId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "connectedId가 존재하지 않습니다. 연동 절차가 필요합니다.");
+            throw new CodefAccountNotLinkedException();
         }
 
         HashMap<String, Object> parameterMap = new HashMap<>();
@@ -155,13 +135,11 @@ public class CodefService {
             response.setData(cardList);
 
             String resultCode = (String) resultMap.get("code");
-            if (!"CF-00000".equals(resultCode)) {
-                throw new RuntimeException("CODEF 응답 실패: " + resultCode);
-            }
+            checkCodefResultCode(resultCode);
 
             String dataConnectedId = (String) responseMap.get("connectedId");
             if (!connectedId.equals(dataConnectedId)) {
-                throw new RuntimeException("요청한 사용자의 정보가 아닙니다.");
+                throw new MismatchedConnectedIdException(connectedId);
             }
 
             // 사용자별 카드 등록
@@ -177,8 +155,13 @@ public class CodefService {
             return new CodefStandardResponse<>(result, response);
 
         } catch (Exception e) {
-            //e.printStackTrace();
             throw new RuntimeException("응답 과정 중 오류가 발생했습니다.", e);
+        }
+    }
+
+    private void checkCodefResultCode(String resultCode) {
+        if (!"CF-00000".equals(resultCode)) {
+            throw new CodefResponseFailureException(resultCode);
         }
     }
 }
