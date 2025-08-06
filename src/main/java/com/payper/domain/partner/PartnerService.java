@@ -3,6 +3,7 @@ package com.payper.domain.partner;
 import com.payper.domain.card.CardMapper;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.category.CategoryMapper;
+import com.payper.domain.category.dto.CategoryResponse;
 import com.payper.domain.partner.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,9 +64,9 @@ public class PartnerService {
             String partnerName = matchedPartner != null ? matchedPartner.getPartnerName() : null;
             String partnerImageUrl = matchedPartner != null ? matchedPartner.getPartnerImageUrl() : null;
 
-            String categoryName =
+            CategoryResponse categoryResponse =
                     partnerId != null ?
-                            categoryMapper.findNameByPartnerId(partnerId) :
+                            categoryMapper.findByPartnerId(partnerId) :
                             null;
 
             //responseItem 생성
@@ -77,7 +78,7 @@ public class PartnerService {
                     partnerId,
                     partnerName,
                     partnerImageUrl,
-                    categoryName,
+                    categoryResponse,
                     position,
                     myCards
                     );

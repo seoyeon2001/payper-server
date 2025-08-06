@@ -40,4 +40,17 @@
                     NOW()
                )
     </insert>
+
+    <select id="findByPartnerId" resultMap="CategoryResponseMap">
+        SELECT c.category_id, c.category_name, c.category_image_url
+        FROM partner p
+                 JOIN category c ON p.category_id = c.category_id
+        WHERE p.partner_id = #{partnerId};
+    </select>
+
+    <resultMap id="CategoryResponseMap" type="CategoryResponse">
+        <id property="id" column="category_id"/>
+        <result property="name" column="category_name"/>
+        <result property="imageUrl" column="category_image_url"/>
+    </resultMap>
 </mapper>

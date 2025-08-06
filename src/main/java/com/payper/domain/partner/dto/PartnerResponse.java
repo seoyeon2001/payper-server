@@ -1,6 +1,7 @@
 package com.payper.domain.partner.dto;
 
 import com.payper.domain.card.dto.CardResponse;
+import com.payper.domain.category.dto.CategoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class PartnerResponse {
     private Integer id;
     private String name;
     private String imageUrl;
-    private String categoryName;
+    private CategoryResponse category;
     private Position position;
     private List<CardResponse> myCards;
 
@@ -54,14 +55,14 @@ public class PartnerResponse {
     public static PartnerResponse buildPartner(Integer id,
                                         String name,
                                         String imageUrl,
-                                        String categoryName,
+                                        CategoryResponse category,
                                         PartnerResponse.Position position,
                                         List<CardResponse> cards){
         return PartnerResponse.builder()
                 .id(id)
                 .name(name)
                 .imageUrl(imageUrl)
-                .categoryName(categoryName)
+                .category(category)
                 .position(position)
                 .myCards(cards)
                 .build();
