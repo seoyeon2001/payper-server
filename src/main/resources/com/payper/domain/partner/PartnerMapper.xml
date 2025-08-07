@@ -76,19 +76,6 @@
             p.partner_id = #{partnerId};
     </select>
 
-    <insert id="registerPartner" useGeneratedKeys="true" keyProperty="request.partnerId">
-        INSERT INTO partner (
-            partner_name,
-            category_id,
-            last_modified_at
-        )
-        VALUES (
-                   #{request.partnerName},
-                   #{categoryId},
-                   NOW()
-               )
-    </insert>
-
     <insert id="registerBenefitPartner">
         INSERT INTO benefit_partner (
             benefit_id,
@@ -101,5 +88,9 @@
                    NOW()
                )
     </insert>
+
+    <select id="selectAll" resultType="partner">
+        select * from partner;
+    </select>
 
 </mapper>

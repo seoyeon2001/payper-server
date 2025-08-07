@@ -24,30 +24,18 @@ public class CardJsonExtractService {
         data.imageUrl = root.path("card_img").path("url").asText("");
         data.issueUrl = root.path("request_pc").asText(null);
         data.annualFee = root.path("annual_fee_basic").asText("");
+        data.prevMonthSpending = root.path("pre_month_money").asLong(0);
 
         data.benefits = new ArrayList<>();
         JsonNode keyBenefits = root.path("key_benefit");
         if (keyBenefits.isArray()) {
-            boolean hasGradeDescription = false;
             for (JsonNode keyBenefit : keyBenefits) {
-                if(keyBenefit.path("cate").path("idx").asInt() == 28 ||
-                                keyBenefit.path("cate").path("name").asText("").equals("유의사항")
-                ) {
-                    data.gradeDescription = keyBenefit.path("info").asText("");
-                    hasGradeDescription = true;
-                    continue;
-                }
-                
                 Benefit benefit = new Benefit();
                 benefit.title = keyBenefit.path("title").asText("");
                 benefit.summary = keyBenefit.path("comment").asText("");
                 benefit.description = keyBenefit.path("info").asText("");
 
                 data.benefits.add(benefit);
-            }
-
-            if(!hasGradeDescription) {
-                data.gradeDescription = "";
             }
         }
 

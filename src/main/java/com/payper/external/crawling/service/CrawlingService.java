@@ -3,8 +3,7 @@ package com.payper.external.crawling.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
-import com.payper.external.crawling.service.sub.CardBenefitCleanService;
-import com.payper.external.crawling.service.sub.CardGradeCleanService;
+import com.payper.external.crawling.service.sub.BenefitToCategoryAndPartnerService;
 import com.payper.external.crawling.service.sub.CardJsonExtractService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +21,7 @@ public class CrawlingService {
     private final ObjectMapper objectMapper;
 
     private final CardJsonExtractService cardJsonExtractService;
-    private final CardBenefitCleanService cardBenefitCleanService;
-    private final CardGradeCleanService cardGradeCleanService;
+    private final BenefitToCategoryAndPartnerService benefitToCategoryAndPartnerService;
 
     @Transactional
     public CardData crawlsCards(int id) {
@@ -44,19 +42,16 @@ public class CrawlingService {
                 CardData data = cardJsonExtractService.parseCardJson(body);
                 log.info("ID {} 유효", id);
 
-                // 등급 정제 후 저장
-                var gradeResult = cardGradeCleanService.cleanGrade(data.getGradeDescription());
-                data.setGrades(gradeResult);
-
                 // 혜택 정제 후 저장
                 for (Benefit b : data.getBenefits()) {
-                    var benefitResult = cardBenefitCleanService.cleanBenefit(
+                    var result = benefitToCategoryAndPartnerService.extract(
+                            b.getTitle(),
                             b.getSummary(),
                             b.getDescription()
                     );
 
-                    b.setCategories(benefitResult.getCategories());
-                    b.setDiscount(benefitResult.getDiscount());
+                    b.setCategoryIds(result.getCategoryIds());
+                    b.setPartnerIds(result.getPartnerIds());
                 }
                 return data;
             }

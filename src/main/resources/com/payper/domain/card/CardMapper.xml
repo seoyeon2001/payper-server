@@ -133,8 +133,8 @@
     </insert>
 
     <insert id="register" useGeneratedKeys="true" keyProperty="card.cardId">
-        INSERT INTO card (annual_fee, card_name, card_type, card_image_url, card_issue_url, company_id, created_at, is_deleted, last_modified_at)
-        VALUES (#{card.annualFee}, #{card.cardName},#{card.cardType},#{card.cardImageUrl},#{card.cardIssueUrl},#{cardCompanyId},NOW(),FALSE,NOW())
+        INSERT INTO card (prev_month_spending, annual_fee, card_name, card_type, card_image_url, card_issue_url, company_id, created_at, is_deleted, last_modified_at)
+        VALUES (#{card.prevMonthSpending},#{card.annualFee}, #{card.cardName},#{card.cardType},#{card.cardImageUrl},#{card.cardIssueUrl},#{cardCompanyId},NOW(),FALSE,NOW())
     </insert>
 
 

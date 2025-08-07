@@ -16,4 +16,5 @@ public class RegisterCardRequest {
     private String cardImageUrl;
     private String cardIssueUrl;
     private String annualFee;
+    private Long prevMonthSpending;
 }

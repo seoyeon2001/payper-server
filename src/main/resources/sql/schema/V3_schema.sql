@@ -49,7 +49,7 @@ CREATE TABLE `card` (
                         `card_image_url` VARCHAR(255) NOT NULL,
                         `card_issue_url` VARCHAR(255),
                         `annual_fee` VARCHAR(255) DEFAULT '',
-                        `prev_month_spending` VARCHAR(255) DEFAULT '',
+                        `prev_month_spending` BIGINT DEFAULT 0,
                         `company_id` INT NOT NULL,
                         `is_deleted` BOOLEAN DEFAULT FALSE,
                         `created_at` DATETIME NOT NULL DEFAULT NOW(),

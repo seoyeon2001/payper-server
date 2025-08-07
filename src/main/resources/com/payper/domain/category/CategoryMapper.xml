@@ -9,16 +9,13 @@
                              and is_deleted = false;
     </select>
 
-    <insert id="registerCategory" useGeneratedKeys="true" keyProperty="request.categoryId">
-        INSERT INTO category (
-            category_name,
-            last_modified_at
-        )
-        VALUES (
-                   #{request.categoryName},
-                   NOW()
-               )
-    </insert>
+    <select id="findNameByPartnerId" resultType="String">
+        SELECT c.category_name
+        FROM partner p
+                 JOIN category c ON p.category_id = c.category_id
+        WHERE p.partner_id = #{partnerId};
+
+    </select>
 
     <insert id="registerBenefitCategory">
         INSERT INTO benefit_category (
@@ -45,4 +42,8 @@
         <result property="name" column="category_name"/>
         <result property="imageUrl" column="category_image_url"/>
     </resultMap>
+
+    <select id="selectAll" resultType="Category">
+        select * from category;
+    </select>
 </mapper>

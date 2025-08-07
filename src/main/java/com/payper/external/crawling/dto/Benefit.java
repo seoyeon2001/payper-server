@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +15,6 @@ public class Benefit {
     public String title;
     public String summary;
     public String description;
-    public List<String> categories;
-    public Discount discount;
+    public Set<Integer> categoryIds;
+    public Set<Integer> partnerIds;
 }
