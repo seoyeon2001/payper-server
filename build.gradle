@@ -115,6 +115,9 @@ dependencies {
 
   //jsoup
   implementation 'org.jsoup:jsoup:1.15.3'
+
+  // 한국어 형태소 분석
+  implementation 'org.openkoreantext:open-korean-text:2.1.0'
 }
 
 task mybatisGenerator(type: JavaExec) {

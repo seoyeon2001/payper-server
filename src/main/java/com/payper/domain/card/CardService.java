@@ -63,7 +63,7 @@ public class CardService {
     }
 
     // 이미 등록된 카드인지 확인하기 위함 - 단순 검증용이므로 void
-    private void checkDuplicateUserCard(Integer userId, Integer cardId) {
+    public void checkDuplicateUserCard(Integer userId, Integer cardId) {
         if (cardMapper.existsUserCard(userId, cardId)) {
             throw new DuplicateUserCardException(userId, cardId);
         }

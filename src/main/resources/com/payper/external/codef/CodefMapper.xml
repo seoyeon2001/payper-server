@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.payper.external.codef.CodefMapper">
+
+    <select id="findCardByCompanyName" resultMap="CardMap">
+        SELECT c.card_id as id, c.card_name as name, c.card_type as type
+        FROM card c
+                 JOIN card_company cc
+                      ON c.company_id = cc.company_id
+        WHERE cc.company_name = #{companyName}
+          -- AND c.is_deleted = false
+          AND cc.is_deleted = false
+    </select>
+
+    <resultMap id="CardMap" type="FilteredCardByCompanyName">
+        <id property="id" column="card_id"/>
+        <result property="name" column="card_name"/>
+        <result property="type" column="card_type"/>
+    </resultMap>
+
+</mapper>
+

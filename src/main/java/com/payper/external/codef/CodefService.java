@@ -2,6 +2,9 @@ package com.payper.external.codef;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.payper.domain.card.CardMapper;
+import com.payper.domain.card.CardService;
+import com.payper.domain.card.exception.DuplicateUserCardException;
 import com.payper.external.codef.dto.output.CardInfo;
 import com.payper.external.codef.dto.output.CodefStandardResponse;
 import com.payper.external.codef.dto.output.Result;
@@ -11,6 +14,9 @@ import com.payper.external.codef.dto.response.ConnectedIdResponse;
 import com.payper.external.codef.dto.response.MyCardListResponse;
 import com.payper.domain.user.UserService;
 import com.payper.external.codef.exception.*;
+import com.payper.external.codef.dto.FilteredCardByCompanyName;
+import com.payper.external.codef.dto.response.CardSimilarityResponse;
+import com.payper.external.codef.util.CardSimilarityService;
 import io.codef.api.EasyCodef;
 import io.codef.api.EasyCodefServiceType;
 import io.codef.api.EasyCodefUtil;
@@ -28,6 +34,10 @@ public class CodefService {
     private final EasyCodef codef;
     private final UserService userService;
     private final ObjectMapper objectMapper;
+    private final CodefMapper codefMapper;
+    private final CardSimilarityService cardSimilarityService;
+    private final CardService cardService;
+    private final CardMapper cardMapper;
 
     public CodefStandardResponse<ConnectedIdResponse> createConnectedId(ConnectedIdRequest request, Integer userId) {
         String connectedId = userService.getConnectedIdById(userId);
@@ -142,8 +152,17 @@ public class CodefService {
                 throw new MismatchedConnectedIdException(connectedId);
             }
 
-            // 사용자별 카드 등록
+            // codef로 받은 카드의 companyName
+            String companyName = request.organizationCode().name();
 
+            // TODO: 사용자별 카드 등록
+            for (CardInfo apiCard : cardList) {
+//                System.out.println("================== apiCard = " + apiCard);
+                String apiCardName = apiCard.getResCardName();
+//                System.out.println("================== apiCardName = " + apiCardName);
+
+                getCardId(apiCardName, companyName, userId);
+            }
 
             Result result = new Result (
                     (String) resultMap.get("code"),
@@ -156,6 +175,52 @@ public class CodefService {
 
         } catch (Exception e) {
             throw new RuntimeException("응답 과정 중 오류가 발생했습니다.", e);
+        }
+    }
+
+    private void getCardId(String apiCardName, String companyName, Integer userId) {
+        // 1. 카드사 기반으로 DB 카드 필터링
+        List<FilteredCardByCompanyName> dbCards = codefMapper.findCardByCompanyName(companyName);
+//        System.out.println("================== dbCards = " + dbCards);
+
+        if (dbCards.isEmpty()) return;
+
+        // 2. 유사도 계산을 위한 카드 이름 목록 준비
+        List<String> dbCardNames = dbCards.stream()
+                .map(FilteredCardByCompanyName::getName)
+                .toList();
+
+//        System.out.println("================== dbCardNames = " + dbCardNames);
+
+        // 3. 가장 유사한 카드 1개 추천
+        List<CardSimilarityResponse> recommendations =
+                cardSimilarityService.recommendSimilarCards(apiCardName, 1, dbCardNames);
+
+//        System.out.println("================== recommendations = " + recommendations);
+        if (recommendations.isEmpty()) return;
+
+        String matchedCardName = recommendations.get(0).cardName();
+
+//        System.out.println("================== matchedCardName = " + matchedCardName);
+        // 4. 매칭된 카드의 cardId 찾기
+        Integer cardId = cardMapper.getId(matchedCardName);
+//        System.out.println("================== cardId = " + cardId);
+
+        if (cardId == null) return;
+
+        boolean isAlreadyMyCard =  cardMapper.existsUserCard(userId, cardId);
+
+        if (isAlreadyMyCard) {
+            throw new DuplicateUserCardException(userId, cardId);
+        }
+
+        // 5. UserCard 등록
+        cardService.checkDuplicateUserCard(userId, cardId);
+
+        if(cardMapper.isPreviouslyDeletedUserCard(userId, cardId)) { // 등록 이력이 있는지 확인
+            cardMapper.restoreUserCard(userId, cardId);
+        } else {
+            cardMapper.registerMy(userId, cardId);
         }
     }
 
