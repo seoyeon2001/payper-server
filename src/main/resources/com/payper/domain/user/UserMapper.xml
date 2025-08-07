@@ -17,7 +17,11 @@
     </update>
 
     <update id="softDeleteUser">
-        UPDATE user SET is_deleted = true, SET deleted_at=NOW(),last_modified_at=NOW() WHERE user_id = #{userId}
+        UPDATE user
+        SET is_deleted = true,
+            deleted_at = NOW(),
+            last_modified_at = NOW()
+        WHERE user_id = #{userId};
     </update>
 
     <insert id="createUser" useGeneratedKeys="true" keyProperty="user.userId">
