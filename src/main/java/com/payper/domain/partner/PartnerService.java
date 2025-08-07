@@ -135,7 +135,7 @@ public class PartnerService {
 
     private List<CardResponse> findMyCardsByPartnerId(Integer partnerId, Integer userId) {
         return partnerId != null ?
-                cardMapper.findByPartnerId(userId, partnerId) :
+                cardMapper.selectByPartnerId(userId, partnerId) :
                 Collections.emptyList();
     }
 

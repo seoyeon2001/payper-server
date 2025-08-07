@@ -31,7 +31,7 @@ public class BenefitService {
     }
 
     public void updateBenefit(Integer cardId, Integer benefitId, UpdateBenefitRequest request) {
-        if (!cardMapper.existsByCardId(cardId)) {
+        if (!cardMapper.existsById(cardId)) {
             throw new CardNotFoundException();
         }
         if (benefitMapper.updateBenefit(benefitId, request) != 1) {
@@ -41,7 +41,7 @@ public class BenefitService {
 
     public void deleteBenefit(Integer cardId, Integer benefitId) {
         // 삭제되지 않은 존재하는 카드인지 확인
-        if (!cardMapper.existsByCardId(cardId)) {
+        if (!cardMapper.existsById(cardId)) {
             throw new CardNotFoundException();
         }
         if (benefitMapper.softDeleteBenefit(cardId, benefitId) != 1) {

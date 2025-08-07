@@ -10,8 +10,25 @@ import java.util.List;
 
 @Mapper
 public interface CardMapper {
-    List<CardResponse> selectAllCards();
-    CardResponse selectCardById(Integer cardId);
+    boolean existsCardCompany(@Param("cardCompanyName") String cardCompanyName);
+
+    boolean existedById(Integer cardId);
+
+    boolean existsById(Integer cardId);
+
+    boolean existsUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
+
+
+    List<CardResponse> selectAll();
+
+    CardResponse selectById(Integer cardId);
+
+    List<CardResponse> selectByPartnerId(
+            @Param("userId") Integer userId,
+            @Param("partnerId") Integer partnerId
+    );
+
+    List<CardResponse> selectCardsByUserID(Integer userId);
 
     List<CardResponse> searchWithConditions(
             @Param("name") String name,
@@ -20,36 +37,57 @@ public interface CardMapper {
             @Param("cardCompany") List<String> cardCompany
     );
 
-    List<CardResponse> selectCardsByUserID(Integer userId);
 
-    void registerCardMe(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
+    void registerMy(
+            @Param("userId") Integer userId,
+            @Param("cardId") Integer cardId
+    );
 
-    boolean existsCardCompany(@Param("cardCompanyName") String cardCompanyName);
+    Integer registerCompany(@Param("cardCompanyName")String cardCompanyName);
 
-    Integer getCardId(String cardName);
+    Integer register(
+            @Param("card") RegisterCardRequest card,
+            @Param("cardCompanyId")Integer cardCompanyId
+    );
 
-    Integer getCardCompanyId(@Param("cardCompanyName")String cardCompanyName);
 
-    Integer registerCardCompany(@Param("cardCompanyName")String cardCompanyName);
+    Integer getId(String cardName);
 
-    Integer registerCard(@Param("card") RegisterCardRequest card,@Param("cardCompanyId")Integer cardCompanyId);
+    Integer getCompanyId(@Param("cardCompanyName")String cardCompanyName);
 
-    Integer updateCard(@Param("card") UpdateCardRequest card, @Param("cardCompanyId")Integer cardCompanyId, @Param("cardId")Integer cardId);
 
-    Integer restoreUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
-    boolean isPreviouslyDeletedUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
+    Integer update(
+            @Param("card") UpdateCardRequest card,
+            @Param("cardCompanyId")Integer cardCompanyId,
+            @Param("cardId")Integer cardId
+    );
 
-    boolean existedByCardId(Integer cardId);
+    Integer restoreUserCard(
+            @Param("userId") Integer userId,
+            @Param("cardId") Integer cardId
+    );
 
-    boolean existsByCardId(Integer cardId);
+    boolean isPreviouslyDeletedUserCard(
+            @Param("userId") Integer userId,
+            @Param("cardId") Integer cardId
+    );
 
-    boolean existsUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
+    //  Card 테이블에서만 삭제할 때 사용 == 만료
+    Integer softDeactivateCard(Integer cardId);
 
-    Integer softDeleteMyCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
+    //  Card 테이블과 연관된 테이블들 모두에서 삭제할 때 == 우리 서비스에서 아예 제거
+    Integer softDelete(Integer cardId);
 
-    Integer softDeleteCard(Integer cardId);
+    Integer softDeleteMy(
+            @Param("userId") Integer userId,
+            @Param("cardId") Integer cardId
+    );
 
-    List<CardResponse> findByPartnerId(@Param("userId") Integer userId,
-                                       @Param("partnerId") Integer partnerId);
+    Integer softDeleteUserCard(Integer cardId);
+
+    Integer softDeleteGrade(Integer cardId);
+
+    Integer softDeleteBenefit(Integer cardId);
+
 }

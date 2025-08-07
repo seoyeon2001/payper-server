@@ -38,7 +38,7 @@ public class CardSaveService {
         Integer companyId = saveCardCompany(cardData.getCompanyName());
 
         // 카드
-        Integer cardId = cardMapper.getCardId(cardRequest.getCardName());
+        Integer cardId = cardMapper.getId(cardRequest.getCardName());
         if(cardId != null) return;
         cardId = saveCard(cardRequest, companyId);
 
@@ -73,10 +73,10 @@ public class CardSaveService {
 
     // 카드사 등록
     private Integer saveCardCompany(String companyName) {
-        Integer companyId = cardMapper.getCardCompanyId(companyName);
+        Integer companyId = cardMapper.getCompanyId(companyName);
         if (companyId == null) {
-            cardMapper.registerCardCompany(companyName);
-            companyId = cardMapper.getCardCompanyId(companyName);
+            cardMapper.registerCompany(companyName);
+            companyId = cardMapper.getCompanyId(companyName);
         }
         return companyId;
     }
@@ -84,7 +84,7 @@ public class CardSaveService {
     // 카드 등록
     private Integer saveCard(RegisterCardRequest request,
                              Integer companyId) {
-        cardMapper.registerCard(request, companyId);
+        cardMapper.register(request, companyId);
         return request.getCardId();
     }
 

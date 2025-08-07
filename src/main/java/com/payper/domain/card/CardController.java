@@ -95,7 +95,17 @@ public class CardController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{cardId}")
+    @PostMapping("/{cardId}")
+    public ResponseEntity<Void> deactivateCard(@PathVariable(name = "cardId") Integer cardId) {
+
+        cardService.deactivateCard(cardId);
+
+        log.info("카드 삭제 - cardId : {} ", cardId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/delete/{cardId}")
     public ResponseEntity<Void> deleteCard(@PathVariable(name = "cardId") Integer cardId) {
 
         cardService.deleteCard(cardId);

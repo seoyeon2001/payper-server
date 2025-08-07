@@ -2,7 +2,6 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.payper.domain.card.CardMapper">
 
     <!-- 등급 -->
@@ -79,13 +78,13 @@
     </sql>
 
     <!-- 카드 전체 조회 -->
-    <select id="selectAllCards" resultMap="CardResponseMap">
+    <select id="selectAll" resultMap="CardResponseMap">
         <include refid="cardJoinClause" />
         ORDER BY c.card_id, b.benefit_id;
     </select>
 
     <!-- 카드 조회 -->
-    <select id="selectCardById" resultMap="CardResponseMap">
+    <select id="selectById" resultMap="CardResponseMap">
         <include refid="cardJoinClause" />
         WHERE c.card_id = #{cardId};
     </select>
@@ -133,7 +132,7 @@
     </select>
 
     <!-- 내 카드로 등록 -->
-    <insert id="registerCardMe">
+    <insert id="registerMy">
         insert into user_card(user_id, card_id, created_at, is_deleted, last_modified_at)
         values (#{userId}, #{cardId},NOW(),FALSE ,NOW())
     </insert>
@@ -144,33 +143,33 @@
         )
     </select>
 
-    <select id="getCardId" resultType="Integer">
+    <select id="getId" resultType="Integer">
         select card_id from card where card_name=#{cardName};
     </select>
 
-    <select id="getCardCompanyId" resultType="Integer">
+    <select id="getCompanyId" resultType="Integer">
         select company_id from card_company where company_name=#{cardCompanyName}
     </select>
 
-    <insert id="registerCardCompany">
+    <insert id="registerCompany">
         INSERT INTO card_company(company_name,created_at, is_deleted, last_modified_at)
         VALUES(#{cardCompanyName},NOW(),FALSE, NOW())
     </insert>
 
-    <insert id="registerCard" useGeneratedKeys="true" keyProperty="card.cardId">
+    <insert id="register" useGeneratedKeys="true" keyProperty="card.cardId">
         INSERT INTO card (annual_fee, card_name, card_type, card_image_url, card_issue_url, company_id, created_at, is_deleted, last_modified_at)
         VALUES (#{card.annualFee}, #{card.cardName},#{card.cardType},#{card.cardImageUrl},#{card.cardIssueUrl},#{cardCompanyId},NOW(),FALSE,NOW())
     </insert>
 
 
     <!-- 내 카드 삭제 -->
-    <update id="softDeleteMyCard">
+    <update id="softDeleteMy">
         UPDATE user_card
         SET is_deleted = true, deleted_at = NOW(), last_modified_at = NOW()
         WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = false
     </update>
 
-    <select id="existsByCardId" resultType="boolean">
+    <select id="existsById" resultType="boolean">
         SELECT EXISTS (
             SELECT 1
             FROM card
@@ -196,7 +195,7 @@
         )
     </select>
 
-    <select id="existedByCardId" resultType="boolean">
+    <select id="existedById" resultType="boolean">
         SELECT EXISTS (
             SELECT 1
             FROM card
@@ -212,13 +211,41 @@
         )
     </select>
 
-    <update id="softDeleteCard">
+<!--Card 테이블에서만 삭제할 때 사용 == 만료-->
+    <update id="softDeactivateCard">
         UPDATE card
         SET deleted_at = NOW(), is_deleted = true, last_modified_at=NOW()
         WHERE card_id = #{cardId} AND is_deleted = FALSE
     </update>
 
-    <update id="updateCard">
+<!--Card 테이블과 연관된 테이블들 모두에서 삭제할 때 == 우리 서비스에서 아예 제거-->
+    <update id="softDelete">
+        UPDATE card
+        SET deleted_at = NOW(), is_deleted = true, last_modified_at=NOW()
+        WHERE card_id = #{cardId} AND is_deleted = FALSE
+
+
+    </update>
+
+    <update id="softDeleteUserCard">
+        UPDATE user_card
+        SET deleted_at = NOW(), is_deleted = true, last_modified_at=NOW()
+        WHERE card_id = #{cardId} AND is_deleted = FALSE
+    </update>
+
+    <update id="softDeleteGrade">
+        UPDATE grade
+        SET deleted_at = NOW(), is_deleted = true, last_modified_at=NOW()
+        WHERE card_id = #{cardId} AND is_deleted = FALSE
+    </update>
+
+    <update id="softDeleteBenefit">
+        UPDATE benefit
+        SET deleted_at = NOW(), is_deleted = true, last_modified_at=NOW()
+        WHERE card_id = #{cardId} AND is_deleted = FALSE
+    </update>
+
+    <update id="update">
         UPDATE card
         SET last_modified_at = NOW(),
             annual_fee= #{card.annualFee},
@@ -231,7 +258,7 @@
     </update>
 
     <!-- 가맹점에 맞는 내 카드 리스트 조회 -->
-    <select id="findByPartnerId" resultMap="CardResponseMap">
+    <select id="selectByPartnerId" resultMap="CardResponseMap">
         <include refid="cardJoinClause" />
         INNER JOIN user_card uc ON c.card_id = uc.card_id
         INNER JOIN benefit_partner bp ON b.benefit_id = bp.benefit_id
