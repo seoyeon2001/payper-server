@@ -99,14 +99,11 @@ CREATE TABLE `category` (
                             `category_id` INT NOT NULL AUTO_INCREMENT,
                             `category_name` VARCHAR(255) UNIQUE,
                             `category_image_url` VARCHAR(255),
-                            `pre_category_id` INT,
                             `is_deleted` BOOLEAN DEFAULT FALSE,
                             `created_at` DATETIME NOT NULL DEFAULT NOW(),
                             `deleted_at` DATETIME NULL,
                             `last_modified_at` DATETIME NULL,
-                            PRIMARY KEY (`category_id`),
-                            CONSTRAINT `FK_category_TO_category` FOREIGN KEY (`pre_category_id`)
-                                REFERENCES `category` (`category_id`)
+                            PRIMARY KEY (`category_id`)
 );
 
 -- 파트너
