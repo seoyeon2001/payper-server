@@ -18,17 +18,6 @@ repositories {
   mavenCentral()
 }
 
-tasks.withType(JavaCompile) {
-  options.encoding = 'UTF-8'
-}
-
-configurations {
-//  compileOnly {
-//    extendsFrom annotationProcessor
-//    }
-  mybatisGenerator
-}
-
 dependencies {
   // 스프링
   implementation 'org.springframework:spring-core'
@@ -60,6 +49,13 @@ dependencies {
   implementation 'ch.qos.logback:logback-classic:1.5.18'
   runtimeOnly 'org.apache.logging.log4j:log4j-to-slf4j:2.24.3'
   implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4:1.16'
+
+  // Micrometer + Prometheus
+  implementation 'org.springframework.boot:spring-boot-actuator:3.5.4'
+  implementation 'org.springframework.boot:spring-boot-actuator-autoconfigure:3.5.4'
+  implementation 'io.micrometer:micrometer-jakarta9:1.15.2'
+  implementation 'io.micrometer:micrometer-observation:1.15.2'
+  implementation 'io.micrometer:micrometer-registry-prometheus:1.15.2'
 
   // xml내 한글 처리
   implementation 'xerces:xercesImpl:2.12.2'
@@ -95,10 +91,6 @@ dependencies {
   implementation 'javax.annotation:javax.annotation-api:1.3.2'
   implementation 'org.apache.commons:commons-dbcp2:2.9.0'
 
-  // MyBatis Generator
-  mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.4.0'
-  mybatisGenerator 'mysql:mysql-connector-java:8.0.28'
-
   // codef easy
   implementation 'io.codef.api:easycodef-java:1.0.6'
 
@@ -120,18 +112,14 @@ dependencies {
   implementation 'org.openkoreantext:open-korean-text:2.1.0'
 }
 
-task mybatisGenerator(type: JavaExec) {
-  group = "MyBatis"
-  description = "Run MyBatis Generator"
-  classpath = configurations.mybatisGenerator
-  mainClass = 'org.mybatis.generator.api.ShellRunner'
-  args = ['-configfile', 'src/main/resources/generatorConfig.xml', '-overwrite']
-}
-
 test {
   useJUnitPlatform()
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
+}
+
+tasks.withType(JavaCompile).configureEach {
   options.compilerArgs << "-parameters"
 }

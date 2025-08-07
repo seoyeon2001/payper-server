@@ -34,6 +34,15 @@ services:
     networks:
       - payper-network
 
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - payper-network
+
 networks:
   payper-network:
     driver: bridge

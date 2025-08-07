@@ -116,7 +116,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return (web)->{
-            web.ignoring().requestMatchers("/assets/**", "/api/auth/**");
+            web.ignoring().requestMatchers("/assets/**", "/api/auth/**", "/actuator/**");
         };
     }
 
