@@ -15,12 +15,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Category {
     private Integer categoryId;
-    private Integer parentId;
+    private Integer preCategoryId;
     private String categoryName;
     private String categoryImageUrl; // nullable
 
     private Category parentCategory;
-    private List<BenefitCategory> benefitCategoryList;
     private List<Partner> partnerList;
 
     private Boolean isDeleted;

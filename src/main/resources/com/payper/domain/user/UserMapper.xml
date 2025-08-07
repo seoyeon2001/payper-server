@@ -8,8 +8,8 @@
         SELECT user_id from user where oauth_provider = #{ oauthProvider } and oauth_id = #{ oauthId }
     </select>
 
-    <select id="get" resultType="com.payper.domain.user.domain.User">
-        SELECT * from user where user_id=#{userId}
+    <select id="findById" resultType="User">
+        SELECT * from user WHERE user_id=#{userId} AND is_deleted = false
     </select>
 
     <update id="updateConnectedId">
@@ -24,13 +24,6 @@
         INSERT INTO user (oauth_provider, oauth_id, nickname, last_modified_at)
         values (#{user.oauthProvider}, #{user.oauthId}, #{user.nickname}, NOW())
     </insert>
-
-    <select id="getUserInfo" resultType="UserResponse">
-        SELECT user_id as id, nickname
-        FROM user
-        WHERE user_id = #{userId}
-        AND is_deleted = false
-    </select>
 
     <select id="getConnectedId" resultType="String">
         SELECT connected_id FROM user WHERE user_id = #{userId}

@@ -15,7 +15,7 @@ public class UserResponse {
     private Integer id;
     private String nickname;
 
-    public static UserResponse toDTO(User user) {
+    public static UserResponse toDto(User user) {
         if(user == null) {
             throw new CustomIllegalArgumentException("user");
         }

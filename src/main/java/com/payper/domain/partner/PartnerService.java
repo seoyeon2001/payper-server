@@ -116,7 +116,7 @@ public class PartnerService {
             return partnerMapper.findAllByCategoryId(categoryId);
         }
         // 2. query가 가맹점 이름으로 조회
-        PartnerTempDto PartnerTempDto = partnerMapper.findByPartnerName(keyword);
+        PartnerTempDto PartnerTempDto = partnerMapper.findByName(keyword);
         if (PartnerTempDto != null) {
             return List.of(PartnerTempDto);
         }

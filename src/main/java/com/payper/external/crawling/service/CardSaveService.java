@@ -122,7 +122,7 @@ public class CardSaveService {
 
     // 파트너 등록
     private Integer savePartner(RegisterPartnerRequest request, Integer categoryId){
-        Integer partnerId = partnerMapper.findIdByPartnerName(request.getPartnerName());
+        Integer partnerId = partnerMapper.findIdByName(request.getPartnerName());
         if(partnerId == null) {
             partnerMapper.registerPartner(request, categoryId);
             partnerId = request.getPartnerId();

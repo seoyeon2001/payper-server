@@ -39,11 +39,11 @@ public class UserService {
     }
 
     public UserResponse getMyInfo(Integer userId) {
-        UserResponse userInfo = userMapper.getUserInfo(userId);
-        if (userInfo == null) {
+        User user = userMapper.findById(userId);
+        if (user == null) {
             throw new NoSuchUserException();
         }
-        return userInfo;
+        return UserResponse.toDto(user);
     }
 
     @Transactional

@@ -13,6 +13,7 @@
         <package name="com.payper.domain.benefit.dto"/>
         <package name="com.payper.domain.category.dto"/>
         <package name="com.payper.domain.partner.dto"/>
+        <package name="com.payper.domain.user.domain"/>
     </typeAliases>
 
 </configuration>

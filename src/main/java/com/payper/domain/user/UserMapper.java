@@ -10,13 +10,11 @@ import org.apache.ibatis.annotations.Param;
 public interface UserMapper {
     Integer findByOauthProviderAndOauthId(@Param("oauthProvider") String oauthProvider, @Param("oauthId") String oauthId); //select
 
-    User get(@Param("userId") Integer userId);
+    User findById(@Param("userId") Integer userId);
 
     Integer updateConnectedId(@Param("userId") Integer userId, @Param("connectedId") String connectedId);
 
     Integer createUser(@Param("user") CreateUserRequest user); //insert
-
-    UserResponse getUserInfo(Integer userId);
 
     void softDeleteUser(Integer userId);
 
