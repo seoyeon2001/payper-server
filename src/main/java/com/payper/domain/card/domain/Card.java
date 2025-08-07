@@ -1,7 +1,6 @@
 package com.payper.domain.card.domain;
 
 import com.payper.domain.benefit.domain.Benefit;
-import com.payper.domain.benefit.domain.Grade;
 import com.payper.domain.user.domain.UserCard;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,9 +22,9 @@ public class Card {
     private String cardImageUrl; // 카드 사진 URL
     private String cardIssueUrl; // 카드 상세 URL
     private String annualFee; // 연회비
+    private Long prevMonthSpending;
 
     private List<UserCard> userCardList; // 카드를 가진 사용자 목록
-    private List<Grade> gradeList; // 카드의 실적 리스트
     private List<Benefit> benefitList; // 카드의 혜택 리스트
 
     private Boolean isDeleted;

@@ -27,14 +27,14 @@ public class BenefitService {
     }
 
     public void createBenefit(Integer cardId, CreateBenefitRequest request) {
-        benefitMapper.createBenefit(cardId, request);
+        benefitMapper.save(cardId, request);
     }
 
     public void updateBenefit(Integer cardId, Integer benefitId, UpdateBenefitRequest request) {
         if (!cardMapper.existsById(cardId)) {
             throw new CardNotFoundException();
         }
-        if (benefitMapper.updateBenefit(benefitId, request) != 1) {
+        if (benefitMapper.update(benefitId, request) != 1) {
             throw new BenefitNotFoundException(benefitId);
         }
     }
@@ -44,7 +44,7 @@ public class BenefitService {
         if (!cardMapper.existsById(cardId)) {
             throw new CardNotFoundException();
         }
-        if (benefitMapper.softDeleteBenefit(cardId, benefitId) != 1) {
+        if (benefitMapper.delete(cardId, benefitId) != 1) {
             throw new BenefitDeletionFailedException(cardId, benefitId);
         }
     }

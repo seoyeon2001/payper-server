@@ -9,14 +9,6 @@
                              and is_deleted = false;
     </select>
 
-    <select id="findNameByPartnerId" resultType="String">
-        SELECT c.category_name
-        FROM partner p
-                 JOIN category c ON p.category_id = c.category_id
-        WHERE p.partner_id = #{partnerId};
-
-    </select>
-
     <insert id="registerCategory" useGeneratedKeys="true" keyProperty="request.categoryId">
         INSERT INTO category (
             category_name,

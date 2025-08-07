@@ -86,8 +86,5 @@ public interface CardMapper {
 
     Integer softDeleteUserCard(Integer cardId);
 
-    Integer softDeleteGrade(Integer cardId);
-
     Integer softDeleteBenefit(Integer cardId);
-
 }

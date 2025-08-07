@@ -1,7 +1,6 @@
 package com.payper.domain.card;
 
 import com.payper.domain.benefit.exception.BenefitDeletionFailedException;
-import com.payper.domain.benefit.exception.GradeDeletionFailedException;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardMeRequest;
 import com.payper.domain.card.dto.RegisterCardRequest;
@@ -155,12 +154,6 @@ public class CardService {
 
         if(result!=1){
             throw new UserCardDeletionFailedException();
-        }
-
-        result = cardMapper.softDeleteGrade(cardId);
-
-        if(result!=1){
-            throw new GradeDeletionFailedException();
         }
 
         result = cardMapper.softDeleteBenefit(cardId);

@@ -106,7 +106,7 @@ public class CardSaveService {
 
     // 혜택 등록
     private Integer saveBenefit(CreateBenefitRequest request, Integer cardId){
-        benefitMapper.createBenefit(cardId, request);
+        benefitMapper.save(cardId, request);
         return request.getBenefitId();
     }
 

@@ -22,11 +22,9 @@ public class BenefitResponse {
 	private String description;
 	private String iconUrl;
 
-	private List<BenefitGradeDiscountResponse> benefitGrades;
 	private List<CategoryResponse> categories;
 
 	public static BenefitResponse toDTO(Benefit benefit,
-		List<BenefitGradeDiscountResponse> benefitGrades,
 		List<CategoryResponse> categories) {
 
 		if(benefit == null) {
@@ -39,7 +37,6 @@ public class BenefitResponse {
 				.summary(benefit.getBenefitSummary())
 				.description(benefit.getBenefitDescription())
 				.iconUrl(benefit.getBenefitIconUrl())
-				.benefitGrades(benefitGrades != null ? benefitGrades:Collections.emptyList())
 				.categories(categories != null ? categories: Collections.emptyList())
 				.build();
 	}

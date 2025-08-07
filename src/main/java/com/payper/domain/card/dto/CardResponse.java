@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.payper.domain.benefit.dto.response.BenefitResponse;
-import com.payper.domain.benefit.dto.response.GradeResponse;
 import com.payper.domain.card.domain.Card;
 import com.payper.domain.card.domain.CardType;
 import com.payper.global.exception.CustomIllegalArgumentException;
@@ -25,14 +24,13 @@ public class CardResponse {
 	private String annualCost;
 	private String cardIssueUrl;
 	private CardCompanyResponse company;
+	private Long prevMonthSpending;
 
 	private List<BenefitResponse> benefits;
-	private List<GradeResponse> grades;
 
 	public static CardResponse toDTO(Card card,
 		CardCompanyResponse cardCompanyResponse,
-		List<BenefitResponse> benefits,
-		List<GradeResponse> grades) {
+		List<BenefitResponse> benefits) {
 
 		if(card == null) {
 			throw new CustomIllegalArgumentException("card");
@@ -50,7 +48,6 @@ public class CardResponse {
 				.cardIssueUrl(card.getCardIssueUrl())
 				.company(cardCompanyResponse)
 				.benefits(benefits != null ? benefits:Collections.emptyList())
-				.grades(grades != null ? grades:Collections.emptyList())
 				.build();
 	}
 }

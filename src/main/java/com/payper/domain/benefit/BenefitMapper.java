@@ -14,11 +14,11 @@ import java.util.List;
 public interface BenefitMapper {
     List<BenefitResponse> findAllByCardId(int cardId);
 
-    void createBenefit(@Param("cardId") int cardId, @Param("request") CreateBenefitRequest request);
+    void save(@Param("cardId") int cardId, @Param("request") CreateBenefitRequest request);
 
-    int updateBenefit(@Param("benefitId") int benefitId, @Param("request") UpdateBenefitRequest request);
+    int update(@Param("benefitId") int benefitId, @Param("request") UpdateBenefitRequest request);
 
-    int softDeleteBenefit(@Param("cardId") Integer cardId, @Param("benefitId") Integer benefitId);
+    int delete(@Param("cardId") Integer cardId, @Param("benefitId") Integer benefitId);
 
     void registerGrades(@Param("grades") List<Grade> grades, @Param("cardId") Integer cardId);
 

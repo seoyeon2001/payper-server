@@ -23,7 +23,6 @@ public class Benefit {
 
     private List<BenefitCategory> benefitCategoryList;
     private List<BenefitPartner> benefitPartnerList;
-    private List<BenefitGradeDiscount> benefitGradeDiscountList;
 
     private Boolean isDeleted;
     private Date createdAt;

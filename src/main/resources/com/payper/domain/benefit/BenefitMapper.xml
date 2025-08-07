@@ -17,7 +17,7 @@
         ORDER BY b.benefit_id
     </select>
 
-    <insert id="createBenefit" useGeneratedKeys="true" keyProperty="request.benefitId">
+    <insert id="save" useGeneratedKeys="true" keyProperty="request.benefitId">
         INSERT INTO benefit (
                              card_id,
                              benefit_title,
@@ -42,7 +42,7 @@
         )
     </insert>
 
-    <update id="updateBenefit">
+    <update id="update">
         UPDATE benefit
         SET
             benefit_title = #{request.title},
@@ -53,7 +53,7 @@
         WHERE benefit_id = #{benefitId}
     </update>
 
-    <update id="softDeleteBenefit">
+    <update id="delete">
         UPDATE benefit
         SET is_deleted = true, deleted_at = NOW(), last_modified_at = NOW()
         WHERE card_id = #{cardId} AND benefit_id = #{benefitId} AND is_deleted = false

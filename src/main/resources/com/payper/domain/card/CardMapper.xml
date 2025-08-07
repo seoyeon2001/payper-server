@@ -4,24 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.payper.domain.card.CardMapper">
 
-    <!-- 등급 -->
-    <resultMap id="GradeResponseMap" type="GradeResponse">
-        <id property="id" column="grade_id"/>
-        <result property="start" column="start"/>
-        <result property="totalDiscount" column="total_discount"/>
-    </resultMap>
-
-    <!-- 혜택별 등급 할인 -->
-    <resultMap id="BenefitGradeResponseMap" type="BenefitGradeDiscountResponse">
-        <id property="id" column="benefit_grade_id"/>
-        <result property="type" column="type"/>
-        <result property="amount" column="amount"/>
-        <result property="limitCount" column="limit_count"/>
-        <result property="limitAmount" column="limit_amount"/>
-        <result property="minPayment" column="min_payment" />
-        <collection property="grade" javaType="GradeResponse" resultMap="GradeResponseMap"/>
-    </resultMap>
-
     <!-- 카테고리 -->
     <resultMap id="CategoryResponseMap" type="CategoryResponse">
         <id property="id" column="category_id"/>
@@ -36,7 +18,6 @@
         <result property="summary" column="benefit_summary"/>
         <result property="description" column="benefit_description"/>
         <result property="iconUrl" column="benefit_icon_url"/>
-        <collection property="benefitGrades" resultMap="BenefitGradeResponseMap"/>
         <collection property="categories" resultMap="CategoryResponseMap"/>
     </resultMap>
 
@@ -56,7 +37,6 @@
         <result property="cardIssueUrl" column="card_issue_url"/>
         <association property="company" javaType="CardCompanyResponse" resultMap="CardCompanyResponseMap"/>
         <collection property="benefits" resultMap="BenefitResponseMap"/>
-        <collection property="grades" resultMap="GradeResponseMap"/>
     </resultMap>
 
     <!-- 카드 리스트 조회에서 사용하는 SQL문 -->
@@ -65,14 +45,10 @@
             c.card_id, c.card_name, c.card_type, c.card_image_url, c.annual_fee, c.card_issue_url,
             cc.company_id, cc.company_name,
             b.benefit_id, b.benefit_title, b.benefit_summary, b.benefit_description, b.benefit_icon_url,
-            bgd.benefit_grade_id, bgd.type, bgd.amount, bgd.limit_count, bgd.limit_amount, bgd.min_payment,
-            g.grade_id, g.start, g.total_discount,
             cat.category_id, cat.category_name, cat.category_image_url
         FROM card c
                  LEFT JOIN card_company cc ON c.company_id = cc.company_id
                  LEFT JOIN benefit b ON c.card_id = b.card_id
-                 LEFT JOIN benefit_grade_discount bgd ON b.benefit_id = bgd.benefit_id
-                 LEFT JOIN grade g ON c.card_id = g.card_id AND bgd.grade_id = g.grade_id
                  LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
                  LEFT JOIN category cat ON bc.category_id = cat.category_id
     </sql>
@@ -229,12 +205,6 @@
 
     <update id="softDeleteUserCard">
         UPDATE user_card
-        SET deleted_at = NOW(), is_deleted = true, last_modified_at=NOW()
-        WHERE card_id = #{cardId} AND is_deleted = FALSE
-    </update>
-
-    <update id="softDeleteGrade">
-        UPDATE grade
         SET deleted_at = NOW(), is_deleted = true, last_modified_at=NOW()
         WHERE card_id = #{cardId} AND is_deleted = FALSE
     </update>
