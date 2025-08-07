@@ -93,4 +93,10 @@
         select * from partner;
     </select>
 
+    <select id="findById" resultType="Partner">
+        SELECT partner_id, category_id, partner_name, partner_image_url, is_deleted, created_at, deleted_at, last_modified_at
+        FROM partner
+        WHERE partner_id = #{partnerId}
+          AND is_deleted = false
+    </select>
 </mapper>

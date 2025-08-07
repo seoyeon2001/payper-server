@@ -30,13 +30,12 @@ public class PartnerController {
     }
 
     @GetMapping("/{partnerId}")
-    public ResponseEntity<PartnerDetailResponse> findPartnerById(
+    public ResponseEntity<PartnerResponse> findPartnerById(
             @AuthenticationPrincipal CustomUser customUser,
             @PathVariable Integer partnerId) {
         Integer userId = userService.getUserId(customUser);
         log.info("파트너 상세 조회 : partnerId - {}, userId - {}", partnerId, userId);
-        PartnerDetailResponse partner = partnerService.findPartnerById(partnerId, userId);
-        return ResponseEntity.ok(partner);
+        return ResponseEntity.ok(partnerService.findPartnerById(partnerId, userId));
     }
 
     @GetMapping("/search")

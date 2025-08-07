@@ -6,7 +6,9 @@ import com.payper.domain.partner.dto.SearchPartnersResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface PartnerMapper {
@@ -21,4 +23,6 @@ public interface PartnerMapper {
     void registerBenefitPartner(@Param("benefitId") Integer benefitId,
                                  @Param("partnerId") Integer partnerId);
     List<Partner> selectAll();
+
+    Optional<Partner> findById(Integer partnerId);
 }

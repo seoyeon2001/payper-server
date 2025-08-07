@@ -3,8 +3,12 @@ package com.payper.domain.partner;
 import com.payper.domain.card.CardMapper;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.category.CategoryMapper;
+import com.payper.domain.category.domain.Category;
 import com.payper.domain.category.dto.CategoryResponse;
+import com.payper.domain.category.exception.CategoryNotFoundException;
+import com.payper.domain.partner.domain.Partner;
 import com.payper.domain.partner.dto.*;
+import com.payper.domain.partner.exception.PartnerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -74,7 +78,7 @@ public class PartnerService {
 
             List<CardResponse> myCards = findMyCardsByPartnerId(partnerId, userId);
 
-            PartnerResponse responseItem = PartnerResponse.buildPartner(
+            PartnerResponse responseItem = PartnerResponse.build(
                     partnerId,
                     partnerName,
                     partnerImageUrl,
@@ -143,18 +147,11 @@ public class PartnerService {
         return partnerMapper.searchWithConditions(name, category);
     }
 
-    public PartnerDetailResponse findPartnerById(Integer partnerId, Integer userId) {
+    public PartnerResponse findPartnerById(Integer partnerId, Integer userId) {
+        Partner partner = partnerMapper.findById(partnerId).orElseThrow(() -> new PartnerNotFoundException(partnerId));
+        Category category = categoryMapper.findById(partner.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(partner.getCategoryId()));
         List<CardResponse> myCards = findMyCardsByPartnerId(partnerId, userId);
-        PartnerTempDto partnerTempDto = partnerMapper.findPartnerDetailById(partnerId);
 
-        PartnerDetailResponse responseItem = PartnerDetailResponse.build(
-                partnerId,
-                partnerTempDto.getPartnerName(),
-                partnerTempDto.getPartnerImageUrl(),
-                partnerTempDto.getCategoryName(),
-                myCards
-        );
-
-        return responseItem;
+        return PartnerResponse.build(partner, category, myCards);
     }
 }

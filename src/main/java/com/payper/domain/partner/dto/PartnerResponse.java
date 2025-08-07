@@ -1,7 +1,9 @@
 package com.payper.domain.partner.dto;
 
 import com.payper.domain.card.dto.CardResponse;
+import com.payper.domain.category.domain.Category;
 import com.payper.domain.category.dto.CategoryResponse;
+import com.payper.domain.partner.domain.Partner;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +22,16 @@ public class PartnerResponse {
     private CategoryResponse category;
     private Position position;
     private List<CardResponse> myCards;
+
+    public static PartnerResponse build(Partner partner, Category category, List<CardResponse> myCards) {
+        return PartnerResponse.builder()
+                .id(partner.getPartnerId())
+                .name(partner.getPartnerName())
+                .imageUrl(partner.getPartnerImageUrl())
+                .category(CategoryResponse.toDTO(category))
+                .myCards(myCards)
+                .build();
+    }
 
     @Data
     @NoArgsConstructor
@@ -52,7 +64,7 @@ public class PartnerResponse {
 //                .build();
 //    }
 
-    public static PartnerResponse buildPartner(Integer id,
+    public static PartnerResponse build(Integer id,
                                         String name,
                                         String imageUrl,
                                         CategoryResponse category,
@@ -78,6 +90,4 @@ public class PartnerResponse {
                 .placeUrl(doc.getPlaceUrl())
                 .build();
     }
-
-
 }

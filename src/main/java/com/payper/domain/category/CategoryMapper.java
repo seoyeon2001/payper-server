@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface CategoryMapper {
@@ -14,4 +15,6 @@ public interface CategoryMapper {
                                  @Param("categoryId") Integer categoryId);
     CategoryResponse findByPartnerId(Integer partnerId);
     List<Category> selectAll();
+
+    Optional<Category> findById(Integer categoryId);
 }
