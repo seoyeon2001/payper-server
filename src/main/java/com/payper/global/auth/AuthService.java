@@ -2,6 +2,7 @@ package com.payper.global.auth;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.payper.domain.user.domain.User;
 import com.payper.domain.user.dto.CreateUserRequest;
 import com.payper.global.auth.dto.LoginResponse;
 import com.payper.global.auth.dto.TokenResponse;
@@ -10,13 +11,11 @@ import com.payper.global.auth.exception.UserCreationFailedException;
 import com.payper.global.security.util.OAuthProvider;
 import com.payper.global.security.util.JwtProcessor;
 import com.payper.domain.user.UserMapper;
-import com.payper.domain.user.domain.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,45 +51,33 @@ public class AuthService {
     @Value("${kakao.user.info.url}")
     private String kakaoUserInfoUrl;
 
-    public LoginResponse login(String code, HttpServletResponse response) {// 우리 서비스의 로그인 응답 객체 반환
-        String kakaoAccessToken = getReturnAccessToken(code);
+    public LoginResponse login(String code, HttpServletResponse response) {
+        String kakaoAccessToken = getKakaoAccessToken(code);
 
         Map<String, Object> kakaoUserInfo = getMemberInfo(kakaoAccessToken);
         String kakaoId = kakaoUserInfo.get("kakao_id").toString();
         String kakaoNickname = kakaoUserInfo.get("nickname").toString();
 
-        Integer userId = userMapper.findByOauthProviderAndOauthId(OAuthProvider.KAKAO.name(), kakaoId);
+        User user = userMapper.findByOauthProviderAndOauthId(OAuthProvider.KAKAO.name(), kakaoId)
+                .orElse(createKakaoUser(kakaoId,kakaoNickname));
 
-        if(userId==null){
-            CreateUserRequest newUser=CreateUserRequest.toDTO(
-                    OAuthProvider.KAKAO.name(),kakaoId,kakaoNickname
-            );
-
-            if(userMapper.createUser(newUser)!=1){
-                log.error("유저 생성 Failed "+kakaoNickname);
-
-                throw new UserCreationFailedException(kakaoNickname);
-            }
-
-            userId = newUser.getUserId();
-        }
-
-        String accessToken = jwtProcessor.generateAccessToken(userId);
-
-        String refreshToken = jwtProcessor.generateRefreshToken(userId);
-
+        String accessToken = jwtProcessor.generateAccessToken(user.getUserId());
+        String refreshToken = jwtProcessor.generateRefreshToken(user.getUserId());
         storeRefreshTokenInCookie(response, refreshToken);
 
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setAccessToken(accessToken);
+        return new LoginResponse(accessToken);
+    }
 
-        return loginResponse;
+    private User createKakaoUser(String kakaoId, String kakaoNickname) {
+        User user = User.createKakaoUser(kakaoId, kakaoNickname);
+        userMapper.save(user);
+        return user;
     }
 
     //코드로 카카오auth 서버에서 억세스토큰과 리프레시토큰 얻기.
     //카카오 auth accessToken은 여기서만 쓰인다.
     //카카오 auth accessToken 카카오 계정 고유 ID를 얻기 위함이 크다!
-    private String getReturnAccessToken(String code) {
+    private String getKakaoAccessToken(String code) {
         // String refreshToken = "";
 
         HttpHeaders headers = new HttpHeaders();

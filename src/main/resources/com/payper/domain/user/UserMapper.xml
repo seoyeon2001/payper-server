@@ -4,8 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.payper.domain.user.UserMapper">
 
-    <select id="findByOauthProviderAndOauthId" resultType="Integer">
-        SELECT user_id from user where oauth_provider = #{ oauthProvider } and oauth_id = #{ oauthId }
+    <select id="findByOauthProviderAndOauthId" resultType="User">
+        SELECT user_id
+        FROM user
+        WHERE oauth_provider = #{ oauthProvider }
+          AND oauth_id = #{ oauthId }
+          AND is_deleted = false
     </select>
 
     <select id="findById" resultType="User">
@@ -24,9 +28,9 @@
         WHERE user_id = #{userId};
     </update>
 
-    <insert id="createUser" useGeneratedKeys="true" keyProperty="user.userId">
-        INSERT INTO user (oauth_provider, oauth_id, nickname, last_modified_at)
-        values (#{user.oauthProvider}, #{user.oauthId}, #{user.nickname}, NOW())
+    <insert id="save" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO user (oauth_provider, oauth_id, nickname, role, last_modified_at)
+        VALUES (#{oauthProvider}, #{oauthId}, #{nickname}, #{role}, NOW())
     </insert>
 
     <select id="getConnectedId" resultType="String">

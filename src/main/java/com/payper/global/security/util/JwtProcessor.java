@@ -66,6 +66,15 @@ public class JwtProcessor {
         );
     }
 
+    public String getUserIdString(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
     //유효하지 않을 경우 예외 발생함.
     public boolean validateJwtToken(String token) {
         Jws<Claims> claims = Jwts.parserBuilder()

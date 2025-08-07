@@ -4,6 +4,7 @@ import com.payper.domain.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +25,9 @@ public class CustomUser extends org.springframework.security.core.userdetails.Us
         super(
                 domainUser.getUserId().toString(),
                 commonPassword,
-                Optional.ofNullable(domainUser.getAuthList()).orElse(Collections.emptyList())
+                Collections.singletonList(
+                        new SimpleGrantedAuthority(domainUser.getRole().name())
+                )
         );
 
         this.user = domainUser;

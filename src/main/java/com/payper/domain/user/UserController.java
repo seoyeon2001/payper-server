@@ -18,7 +18,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMyInfo(@AuthenticationPrincipal CustomUser customUser) {
         Integer userId = userService.getUserId(customUser);
-        log.info("유저 정보 조회 - userId : {} ", userId);
+        log.info("유저 정보 조회 - userId: {}, role: {} ", userId, customUser.getAuthorities());
 
         UserResponse userInfo = userService.getMyInfo(userId);
         return ResponseEntity.ok(userInfo);
