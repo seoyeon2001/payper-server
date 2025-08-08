@@ -7,12 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyCardListResponse {
-
-    private List<CardInfo> data;
-
+    private List<CardInfo> myCardList;
 }

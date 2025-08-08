@@ -3,7 +3,6 @@ package com.payper.external.codef;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payper.domain.card.CardMapper;
-import com.payper.domain.card.CardService;
 import com.payper.domain.card.exception.DuplicateUserCardException;
 import com.payper.external.codef.dto.output.CardInfo;
 import com.payper.external.codef.dto.output.CodefStandardResponse;
@@ -19,16 +18,13 @@ import com.payper.external.codef.exception.*;
 import com.payper.external.codef.dto.FilteredCardByCompanyName;
 import com.payper.external.codef.dto.response.CardSimilarityResponse;
 import com.payper.external.codef.util.CardSimilarityService;
-import com.payper.global.security.domain.CustomUser;
 import io.codef.api.EasyCodef;
 import io.codef.api.EasyCodefServiceType;
 import io.codef.api.EasyCodefUtil;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +33,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CodefService {
     private final EasyCodef codef;
     private final UserService userService;
@@ -46,7 +43,6 @@ public class CodefService {
     private final CardMapper cardMapper;
     private static final String MY_CARD_LIST_URL = "/v1/kr/card/p/account/card-list";
     private static final String APPROVAL_LIST_URL = "/v1/kr/card/p/account/approval-list";
-
 
     public CodefStandardResponse<ConnectedIdResponse> createConnectedId(ConnectedIdRequest request, Integer userId) {
         String connectedId = userService.getConnectedIdById(userId);
@@ -81,13 +77,8 @@ public class CodefService {
 
             userService.updateConnectedId(userId, connectedId);
 
-            Result result = new Result (
-                    (String) resultMap.get("code"),
-                    (String) resultMap.get("extraMessage"),
-                    (String) resultMap.get("message"),
-                    (String) resultMap.get("transactionId")
-            );
-
+            // Result 객체 생성
+            Result result = createResult(resultMap);
             ConnectedIdResponse response = objectMapper.convertValue(dataMap, ConnectedIdResponse.class);
             return new CodefStandardResponse<>(result, response);
 
@@ -126,60 +117,40 @@ public class CodefService {
         parameterMap.put("inquiryType", request.inquiryType());
 
         try {
-            String myCardListURL = MY_CARD_LIST_URL;
-            String resultJson = codef.requestProduct(myCardListURL, EasyCodefServiceType.DEMO, parameterMap);
+            String resultJson = codef.requestProduct(MY_CARD_LIST_URL, EasyCodefServiceType.DEMO, parameterMap);
 
-            HashMap<String, Object> responseMap = objectMapper.readValue(resultJson, HashMap.class);
-            HashMap<String, Object> resultMap = (HashMap<String, Object>)responseMap.get("result");
-            Object dataRaw = responseMap.get("data");
-
-            List<CardInfo> cardList = new ArrayList<>();
-
-            if (dataRaw instanceof List) {
-                // 다건 응답
-                cardList = objectMapper.convertValue(
-                        dataRaw,
-                        new TypeReference<List<CardInfo>>() {}
-                );
-            } else if (dataRaw instanceof Map) {
-                // 단건 응답
-                CardInfo card = objectMapper.convertValue(
-                        dataRaw,
-                        CardInfo.class
-                );
-                cardList.add(card);
-            }
-
-            MyCardListResponse response = new MyCardListResponse();
-            response.setData(cardList);
-
+            Map<String, Object> responseMap = objectMapper.readValue(resultJson, new TypeReference<>() {});
+            // Result 정보 추출 및 검증
+            Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("result");
             String resultCode = (String) resultMap.get("code");
             checkCodefResultCode(resultCode);
 
+            // ConnectedId 검증
             String dataConnectedId = (String) responseMap.get("connectedId");
             if (!connectedId.equals(dataConnectedId)) {
                 throw new MismatchedConnectedIdException(connectedId);
             }
 
+            // 카드 데이터 변환
+            Object dataRaw = responseMap.get("data");
+            List<CardInfo> cardList = processCardResponse(dataRaw);
+
+            MyCardListResponse response = new MyCardListResponse(cardList);
+
             // codef로 받은 카드의 companyName
             String companyName = request.organizationName().name();
 
-            // TODO: 사용자별 카드 등록
             for (CardInfo apiCard : cardList) {
 //                System.out.println("================== apiCard = " + apiCard);
                 String apiCardName = apiCard.getResCardName();
 //                System.out.println("================== apiCardName = " + apiCardName);
 
+                // TODO: 사용자별 카드 등록
                 getCardId(apiCardName, companyName, userId);
             }
 
-            Result result = new Result (
-                    (String) resultMap.get("code"),
-                    (String) resultMap.get("extraMessage"),
-                    (String) resultMap.get("message"),
-                    (String) resultMap.get("transactionId")
-            );
-
+            // Result 객체 생성
+            Result result = createResult(resultMap);
             return new CodefStandardResponse<>(result, response);
 
         } catch (Exception e) {
@@ -208,10 +179,8 @@ public class CodefService {
 //        parameterMap.put("cardPassword", request.cardPassword());
         parameterMap.put("memberStoreInfoType", request.memberStoreInfoType());
 
-
         try {
-            String approvalListURL = APPROVAL_LIST_URL;
-            String resultJson = codef.requestProduct(approvalListURL, EasyCodefServiceType.DEMO, parameterMap);
+            String resultJson = codef.requestProduct(APPROVAL_LIST_URL, EasyCodefServiceType.DEMO, parameterMap);
 
             HashMap<String, Object> responseMap = objectMapper.readValue(resultJson, HashMap.class);
             HashMap<String, Object> resultMap = (HashMap<String, Object>)responseMap.get("result");
@@ -222,7 +191,7 @@ public class CodefService {
             if (dataRaw instanceof List) {
                 approvalList = objectMapper.convertValue(
                         dataRaw,
-                        new TypeReference<List<ApprovalListResponse>>() {}
+                        new TypeReference<>() {}
                 );
             } else if (dataRaw instanceof Map) {
                 ApprovalListResponse approval = objectMapper.convertValue(
@@ -240,21 +209,35 @@ public class CodefService {
                 throw new MismatchedConnectedIdException(connectedId);
             }
 
-            Result result = new Result(
-                    (String) resultMap.get("code"),
-                    (String) resultMap.get("extraMessage"),
-                    (String) resultMap.get("message"),
-                    (String) resultMap.get("transactionId")
-            );
-
+            // Result 객체 생성
+            Result result = createResult(resultMap);
             return new CodefStandardResponse<>(result, approvalList);
-
 
         } catch (Exception e) {
             throw new RuntimeException("응답 과정 중 오류가 발생했습니다.", e);
         }
     }
 
+    // 보유 카드 리스트
+    private List<CardInfo> processCardResponse(Object dataRaw) {
+        if (dataRaw == null) {
+            return Collections.emptyList();
+        }
+
+        try {
+            if (dataRaw instanceof List) {
+                // 다건 응답: data가 배열 [{}, {}]
+                return objectMapper.convertValue(dataRaw, new TypeReference<List<CardInfo>>() {});
+            } else {
+                // 단건 응답: data가 단일 객체 {}
+                CardInfo card = objectMapper.convertValue(dataRaw, CardInfo.class);
+                return List.of(card);
+            }
+        } catch (Exception e) {
+            log.error("Failed to convert card data: {}", dataRaw, e);
+            throw new RuntimeException("카드 정보 변환 실패", e);
+        }
+    }
 
 
     private void getCardId(String apiCardName, String companyName, Integer userId) {
@@ -310,4 +293,13 @@ public class CodefService {
         }
     }
 
+    // Result 생성 헬퍼 메서드
+    private Result createResult(Map<String, Object> resultMap) {
+        return new Result(
+                (String) resultMap.get("code"),
+                (String) resultMap.get("extraMessage"),
+                (String) resultMap.get("message"),
+                (String) resultMap.get("transactionId")
+        );
+    }
 }

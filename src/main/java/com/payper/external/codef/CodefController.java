@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/codef")
@@ -26,7 +25,10 @@ public class CodefController {
 
     // 계정 생성 - connected id 생성
     @PostMapping("/account/create")
-    public ResponseEntity<CodefStandardResponse<ConnectedIdResponse>> createConnectedId(@RequestBody ConnectedIdRequest request, @AuthenticationPrincipal CustomUser customUser) {
+    public ResponseEntity<CodefStandardResponse<ConnectedIdResponse>> createConnectedId(
+            @RequestBody ConnectedIdRequest request,
+            @AuthenticationPrincipal CustomUser customUser
+    ) {
         Integer userId = userService.getUserId(customUser);
         CodefStandardResponse<ConnectedIdResponse> result = codefService.createConnectedId(request, userId);
         return ResponseEntity.ok(result);
@@ -34,7 +36,10 @@ public class CodefController {
 
     // 보유카드 조회
     @PostMapping("/cards/me")
-    public ResponseEntity<CodefStandardResponse<MyCardListResponse>> getMyCardList(@RequestBody MyCardListRequest request, @AuthenticationPrincipal CustomUser customUser) {
+    public ResponseEntity<CodefStandardResponse<MyCardListResponse>> getMyCardList(
+            @RequestBody MyCardListRequest request,
+            @AuthenticationPrincipal CustomUser customUser
+    ) {
         Integer userId = userService.getUserId(customUser);
         CodefStandardResponse<MyCardListResponse> result = codefService.getMyCardList(request, userId);
         return ResponseEntity.ok(result);
