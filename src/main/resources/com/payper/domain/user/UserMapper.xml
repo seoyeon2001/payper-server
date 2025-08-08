@@ -5,7 +5,7 @@
 <mapper namespace="com.payper.domain.user.UserMapper">
 
     <select id="findByOauthProviderAndOauthId" resultType="User">
-        SELECT user_id
+        SELECT user_id, oauth_provider, oauth_id, nickname, connected_id, role, is_deleted, created_at, deleted_at, last_modified_at
         FROM user
         WHERE oauth_provider = #{ oauthProvider }
           AND oauth_id = #{ oauthId }
