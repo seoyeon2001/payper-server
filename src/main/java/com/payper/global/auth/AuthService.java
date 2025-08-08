@@ -59,7 +59,7 @@ public class AuthService {
         String kakaoNickname = kakaoUserInfo.get("nickname").toString();
 
         User user = userMapper.findByOauthProviderAndOauthId(OAuthProvider.KAKAO.name(), kakaoId)
-                .orElse(createKakaoUser(kakaoId,kakaoNickname));
+                .orElseGet(() -> createKakaoUser(kakaoId,kakaoNickname));
 
         String accessToken = jwtProcessor.generateAccessToken(user.getUserId());
         String refreshToken = jwtProcessor.generateRefreshToken(user.getUserId());
