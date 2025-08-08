@@ -2,8 +2,10 @@ package com.payper.external.codef;
 
 import com.payper.domain.user.UserService;
 import com.payper.external.codef.dto.output.CodefStandardResponse;
+import com.payper.external.codef.dto.request.ApprovalListRequest;
 import com.payper.external.codef.dto.request.MyCardListRequest;
 import com.payper.external.codef.dto.request.ConnectedIdRequest;
+import com.payper.external.codef.dto.response.ApprovalListResponse;
 import com.payper.external.codef.dto.response.MyCardListResponse;
 import com.payper.external.codef.dto.response.ConnectedIdResponse;
 import com.payper.global.security.domain.CustomUser;
@@ -11,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -33,6 +37,18 @@ public class CodefController {
     public ResponseEntity<CodefStandardResponse<MyCardListResponse>> getMyCardList(@RequestBody MyCardListRequest request, @AuthenticationPrincipal CustomUser customUser) {
         Integer userId = userService.getUserId(customUser);
         CodefStandardResponse<MyCardListResponse> result = codefService.getMyCardList(request, userId);
+        return ResponseEntity.ok(result);
+    }
+
+    // 승인내역 조회
+    @PostMapping("/approval/{cardId}")
+    public ResponseEntity<CodefStandardResponse<List<ApprovalListResponse>>> getApprovalList(
+            @RequestBody ApprovalListRequest request,
+            @PathVariable(name = "cardId") Integer cardId,
+            @AuthenticationPrincipal CustomUser customUser
+    ) {
+        Integer userId = userService.getUserId(customUser);
+        CodefStandardResponse<List<ApprovalListResponse>> result = codefService.getApprovalList(request, cardId, userId);
         return ResponseEntity.ok(result);
     }
 }

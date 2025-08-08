@@ -6,7 +6,7 @@
 <mapper namespace="com.payper.external.codef.CodefMapper">
 
     <select id="findCardByCompanyName" resultMap="CardMap">
-        SELECT c.card_id as id, c.card_name as name, c.card_type as type
+        SELECT c.card_id, c.card_name, c.card_type
         FROM card c
                  JOIN card_company cc
                       ON c.company_id = cc.company_id
