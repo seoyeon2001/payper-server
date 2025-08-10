@@ -1,50 +1,49 @@
 package com.payper.global.notification.service;
 
+import com.google.firebase.messaging.Notification;
 import com.payper.domain.card.CardMapper;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.partner.PartnerService;
 import com.payper.domain.partner.dto.PartnerKeywordSearchRequest;
 import com.payper.domain.partner.dto.PartnerKeywordSearchResponse;
 import com.payper.domain.partner.dto.PartnerTempDto;
-import com.payper.global.notification.dto.NotificationResponse;
+import com.payper.global.notification.dto.FcmPartnerResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-    private final FcmService fcmService;
     private final PartnerService partnerService;
     private final CardMapper cardMapper;
 
-    public boolean sendToUser(Integer userId, PartnerKeywordSearchRequest request) {
-        NotificationResponse notificationResponse = findPartnerAndCard(request, userId);
+    public Optional<Notification> buildPartnerNotification(Integer userId, PartnerKeywordSearchRequest request) {
+        FcmPartnerResponse fcmPartnerResponse = findPartnerAndCard(request, userId);
 
-        if(notificationResponse == null) {
-            log.error("사용자 ID {}가 해당 위치에서 혜택 받을 수 있는 지점이 없습니다.", userId);
-            return false;
+        if(fcmPartnerResponse == null) {
+            return Optional.empty();
         }
 
         // 위치 기반으로 메시지 생성
-        String title = String.format("📢%s에서 혜택을 받으실 수 있어요!", notificationResponse.getPartnerName());
+        String title = String.format("📢%s에서 혜택을 받으실 수 있어요!", fcmPartnerResponse.getPartnerName());
         String body = String.format("💳%s로 \'%s\' 혜택을 즐겨보세요.",
-                notificationResponse.getCardName(),
-                notificationResponse.getCardSummary());
+                fcmPartnerResponse.getCardName(),
+                fcmPartnerResponse.getCardSummary());
 
-        System.out.println("title = " + title);
-        System.out.println("body = " + body);
+        Notification notification = Notification.builder()
+                .setTitle(title)
+                .setBody(body)
+                .build();
 
-        fcmService.send(title, body);
-        return true;
+        return Optional.of(notification);
     }
 
-
-
-    private NotificationResponse findPartnerAndCard(
+    private FcmPartnerResponse findPartnerAndCard(
             PartnerKeywordSearchRequest request,
             Integer userId
     ) {
@@ -57,18 +56,12 @@ public class NotificationService {
         List<PartnerTempDto> matchedPartners = partnerService.findPartnersByQuery(keyword);
 
         // Response 값 채우기
-        List<PartnerKeywordSearchResponse.Document> documents = response.getDocuments();
-        for (PartnerKeywordSearchResponse.Document document : documents) {
-            if (document == null) {
-                // 문서가 null이면 건너뜀
-                log.warn("null 문서가 발견되었습니다.");
-                continue;
-            }
-
+        for (PartnerKeywordSearchResponse.Document document : response.getDocuments()) {
             String docCategoryName = document.getCategoryName();
 
             // category_name에 keyword가 포함되지 않으면 건너뜀
-            if (docCategoryName == null ||
+            if (document == null ||
+                    docCategoryName == null ||
                     !docCategoryName.toLowerCase().contains(keyword.toLowerCase())) {
                 continue;
             }
@@ -76,21 +69,19 @@ public class NotificationService {
             PartnerTempDto matchedPartner = partnerService.matchPartnerFromPlaceName(document.getPlaceName(), matchedPartners);
             if (matchedPartner == null) continue;
 
-            Integer partnerId = matchedPartner.getPartnerId();
+            CardResponse cardResponse = cardMapper.selectOneByPartnerId(userId, matchedPartner.getPartnerId());
+            if (cardResponse == null || cardResponse.getBenefits() == null || cardResponse.getBenefits().isEmpty()) {
+                continue;
+            }
 
-            CardResponse cardResponse = cardMapper.selectOneByPartnerId(userId, partnerId);
-            if (cardResponse == null) continue;
-
-            String cardName = cardResponse.getName();
-            String cardBenefit = cardResponse.getBenefits().get(0).getSummary();
-
-            return NotificationResponse.builder()
+            return FcmPartnerResponse.builder()
                     .partnerName(document.getPlaceName())
-                    .cardName(cardName)
-                    .cardSummary(cardBenefit)
+                    .cardName(cardResponse.getName())
+                    .cardSummary(cardResponse.getBenefits().get(0).getSummary())
                     .build();
         }
-        log.warn("문서가 존재하지 않습니다.");
+
+        log.error("사용자 ID {}가 해당 위치에서 혜택 받을 수 있는 지점이 없습니다.", userId);
         return null;
     }
 

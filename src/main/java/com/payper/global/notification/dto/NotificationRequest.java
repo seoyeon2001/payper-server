@@ -1,11 +1,12 @@
 package com.payper.global.notification.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @AllArgsConstructor
-public class NotificationResponse {
-    private boolean ok;
-    private boolean sent;
+public class NotificationRequest {
+    private String fcmToken;
 }
