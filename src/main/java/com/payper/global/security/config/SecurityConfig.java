@@ -72,7 +72,8 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/ws/**",
                                 "/actuator/**",
-                                "/api/crawl/**"
+                                "/api/crawl/**",
+                                "/api/notification/**" //임시 허용
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

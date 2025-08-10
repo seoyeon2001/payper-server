@@ -28,6 +28,8 @@ public interface CardMapper {
             @Param("partnerId") Integer partnerId
     );
 
+    CardResponse selectOneByPartnerId(@Param("userId") Integer userId, @Param("partnerId") Integer partnerId);
+
     List<CardResponse> selectCardsByUserID(Integer userId);
 
     List<CardResponse> searchWithConditions(

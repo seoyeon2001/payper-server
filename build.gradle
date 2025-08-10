@@ -110,6 +110,9 @@ dependencies {
 
   // 한국어 형태소 분석
   implementation 'org.openkoreantext:open-korean-text:2.1.0'
+
+  // fcm
+  implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 test {

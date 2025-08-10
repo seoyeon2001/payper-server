@@ -92,7 +92,7 @@ public class PartnerService {
         return result;
     }
 
-    private PartnerKeywordSearchResponse findNearbyKeyword(PartnerKeywordSearchRequest request) {
+    public PartnerKeywordSearchResponse findNearbyKeyword(PartnerKeywordSearchRequest request) {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl)
                 .queryParam("query", request.getQuery())
@@ -113,7 +113,7 @@ public class PartnerService {
         return response.getBody();
     }
 
-    private List<PartnerTempDto> findPartnersByQuery(String keyword) {
+    public List<PartnerTempDto> findPartnersByQuery(String keyword) {
         // 1. query가 카테고리 이름과 일치하는지 확인
         Integer categoryId = categoryMapper.findIdByCategoryName(keyword);
         if (categoryId != null) {
@@ -128,7 +128,7 @@ public class PartnerService {
         return Collections.emptyList();
     }
 
-    private PartnerTempDto matchPartnerFromPlaceName(String placeName, List<PartnerTempDto> candidates){
+    public PartnerTempDto matchPartnerFromPlaceName(String placeName, List<PartnerTempDto> candidates){
         for (PartnerTempDto partner : candidates) {
             if (placeName.contains(partner.getPartnerName())) {
                 return partner;
