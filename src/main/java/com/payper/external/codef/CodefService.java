@@ -3,7 +3,8 @@ package com.payper.external.codef;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payper.domain.card.CardMapper;
-import com.payper.domain.card.exception.DuplicateUserCardException;
+import com.payper.external.codef.dto.CardRegistrationResult;
+import com.payper.external.codef.dto.RegistrationStatus;
 import com.payper.external.codef.dto.output.CardInfo;
 import com.payper.external.codef.dto.output.CodefStandardResponse;
 import com.payper.external.codef.dto.output.Result;
@@ -103,7 +104,7 @@ public class CodefService {
         }
     }
 
-    public CodefStandardResponse<MyCardListResponse> getMyCardList(MyCardListRequest request, Integer userId) {
+    public MyCardListResponse getMyCardList(MyCardListRequest request, Integer userId) {
         String connectedId = userService.getConnectedIdById(userId);
 
         // 사용자는 존재하는데, connected id가 없는 경우
@@ -118,40 +119,32 @@ public class CodefService {
 
         try {
             String resultJson = codef.requestProduct(MY_CARD_LIST_URL, EasyCodefServiceType.DEMO, parameterMap);
-
+            
+            // Json -> java 객체
             Map<String, Object> responseMap = objectMapper.readValue(resultJson, new TypeReference<>() {});
-            // Result 정보 추출 및 검증
-            Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("result");
-            String resultCode = (String) resultMap.get("code");
-            checkCodefResultCode(resultCode);
 
-            // ConnectedId 검증
-            String dataConnectedId = (String) responseMap.get("connectedId");
-            if (!connectedId.equals(dataConnectedId)) {
-                throw new MismatchedConnectedIdException(connectedId);
-            }
+            // 검증 로직 (result, connectedId)
+            validateCodefResponse(responseMap, connectedId);
 
             // 카드 데이터 변환
             Object dataRaw = responseMap.get("data");
-            List<CardInfo> cardList = processCardResponse(dataRaw);
-
-            MyCardListResponse response = new MyCardListResponse(cardList);
+            List<CardInfo> apiCardList = processCardResponse(dataRaw);
 
             // codef로 받은 카드의 companyName
             String companyName = request.organizationName().name();
 
-            for (CardInfo apiCard : cardList) {
-//                System.out.println("================== apiCard = " + apiCard);
-                String apiCardName = apiCard.getResCardName();
-//                System.out.println("================== apiCardName = " + apiCardName);
+            // 카드사가 소유한 카드 리스트 조회 - 카드사이름 기반 DB 필터링
+            List<FilteredCardByCompanyName> dbCardList = codefMapper.findCardByCompanyName(companyName);
 
-                // TODO: 사용자별 카드 등록
-                getCardId(apiCardName, companyName, userId);
-            }
+            // 내 카드로 등록 처리
+            List<CardRegistrationResult> registrationResults = processCardRegistrations(apiCardList, dbCardList, userId);
 
-            // Result 객체 생성
-            Result result = createResult(resultMap);
-            return new CodefStandardResponse<>(result, response);
+            // 요약 메시지 생성
+            String summary = createSummaryMessage(registrationResults);
+
+            MyCardListResponse response = new MyCardListResponse(apiCardList, registrationResults, summary);
+
+            return response;
 
         } catch (Exception e) {
             throw new RuntimeException("응답 과정 중 오류가 발생했습니다.", e);
@@ -227,7 +220,7 @@ public class CodefService {
         try {
             if (dataRaw instanceof List) {
                 // 다건 응답: data가 배열 [{}, {}]
-                return objectMapper.convertValue(dataRaw, new TypeReference<List<CardInfo>>() {});
+                return objectMapper.convertValue(dataRaw, new TypeReference<>() {});
             } else {
                 // 단건 응답: data가 단일 객체 {}
                 CardInfo card = objectMapper.convertValue(dataRaw, CardInfo.class);
@@ -236,54 +229,6 @@ public class CodefService {
         } catch (Exception e) {
             log.error("Failed to convert card data: {}", dataRaw, e);
             throw new RuntimeException("카드 정보 변환 실패", e);
-        }
-    }
-
-
-    private void getCardId(String apiCardName, String companyName, Integer userId) {
-//        System.out.println("================== companyName = " + companyName);
-        // 1. 카드사 기반으로 DB 카드 필터링
-        List<FilteredCardByCompanyName> dbCards = codefMapper.findCardByCompanyName(companyName);
-//        System.out.println("================== dbCards = " + dbCards);
-
-        if (dbCards.isEmpty()) return;
-
-        // 2. 유사도 계산을 위한 카드 이름 목록 준비
-        List<String> dbCardNames = dbCards.stream()
-                .map(FilteredCardByCompanyName::getName)
-                .toList();
-
-//        System.out.println("================== dbCardNames = " + dbCardNames);
-
-        // 3. 가장 유사한 카드 1개 추천
-        List<CardSimilarityResponse> recommendations =
-                cardSimilarityService.recommendSimilarCards(apiCardName, 1, dbCardNames);
-
-//        System.out.println("================== recommendations = " + recommendations);
-        if (recommendations.isEmpty()) return;
-
-        String matchedCardName = recommendations.get(0).cardName();
-
-//        System.out.println("================== matchedCardName = " + matchedCardName);
-        // 4. 매칭된 카드의 cardId 찾기
-        Integer cardId = cardMapper.getId(matchedCardName);
-//        System.out.println("================== cardId = " + cardId);
-
-        if (cardId == null) return;
-
-        boolean isAlreadyMyCard =  cardMapper.existsUserCard(userId, cardId);
-
-        if (isAlreadyMyCard) {
-            throw new DuplicateUserCardException(userId, cardId);
-        }
-
-        // 5. UserCard 등록
-//        cardService.checkDuplicateUserCard(userId, cardId);
-
-        if(cardMapper.isPreviouslyDeletedUserCard(userId, cardId)) { // 등록 이력이 있는지 확인
-            cardMapper.restoreUserCard(userId, cardId);
-        } else {
-            cardMapper.registerMy(userId, cardId);
         }
     }
 
@@ -301,5 +246,117 @@ public class CodefService {
                 (String) resultMap.get("message"),
                 (String) resultMap.get("transactionId")
         );
+    }
+
+    private void validateCodefResponse(Map<String, Object> responseMap, String connectedId) {
+        // Result 정보 추출 및 검증
+        Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("result");
+        String resultCode = (String) resultMap.get("code");
+        checkCodefResultCode(resultCode);
+
+        // ConnectedId 검증
+        String dataConnectedId = (String) responseMap.get("connectedId");
+        if (!connectedId.equals(dataConnectedId)) {
+            throw new MismatchedConnectedIdException(connectedId);
+        }
+
+    }
+
+    // 카드 등록 일괄 처리
+    private List<CardRegistrationResult> processCardRegistrations(List<CardInfo> cardList, List<FilteredCardByCompanyName> dbCardList, Integer userId) {
+        List<CardRegistrationResult> results = new ArrayList<>();
+
+        if (dbCardList.isEmpty()) {
+            for (CardInfo apiCard : cardList) {
+                results.add(new CardRegistrationResult(
+                        apiCard.getResCardName(), null, null,
+                        RegistrationStatus.NO_MATCH,
+                        "해당 카드사의 카드가 없습니다."));
+            }
+            return results;
+        }
+
+        // DB 카드 이름만 추출
+        List<String> dbCardNames = dbCardList.stream()
+                .map(FilteredCardByCompanyName::getName)
+                .toList();
+
+        for (CardInfo apiCard : cardList) {
+            CardRegistrationResult result = registerUserCardWithResult(apiCard.getResCardName(), dbCardNames, userId);
+            results.add(result);
+
+            log.info("카드 등록 처리: {} - {}", result.getApiCardName(), result.getStatus().getDescription());
+        }
+
+        return results;
+    }
+
+    // 개별 카드 등록 (결과 반환)
+    private CardRegistrationResult registerUserCardWithResult(String apiCardName, List<String> dbCardNames, Integer userId) {
+        try {
+            // 유사도 매칭 - 가장 유사한 1개 추출
+            List<CardSimilarityResponse> recommendations =
+                    cardSimilarityService.recommendSimilarCards(apiCardName, 2, dbCardNames);
+
+            if (recommendations.isEmpty()) {
+                return new CardRegistrationResult(apiCardName, null, null,
+                        RegistrationStatus.NO_MATCH,
+                        "매칭되는 카드를 찾을 수 없습니다.");
+            }
+
+            // 매칭된 카드 이름 및 cardId 추출
+            String matchedCardName = recommendations.get(0).cardName();
+            Integer cardId = cardMapper.getId(matchedCardName);
+
+            if (cardId == null) {
+                return new CardRegistrationResult(apiCardName, matchedCardName, null,
+                        RegistrationStatus.FAILED,
+                        "카드 정보 오류");
+            }
+
+            // 등록된 이력 상태 확인 및 처리
+            boolean isAlreadyActive = cardMapper.existsUserCard(userId, cardId);
+
+            if (isAlreadyActive) { // 이미 등록된 경우
+                return new CardRegistrationResult(apiCardName, matchedCardName, cardId,
+                        RegistrationStatus.ALREADY_EXISTS,
+                        "이미 등록된 카드입니다.");
+            }
+
+            if (cardMapper.isPreviouslyDeletedUserCard(userId, cardId)) {
+                cardMapper.restoreUserCard(userId, cardId);
+                return new CardRegistrationResult(apiCardName, matchedCardName, cardId,
+                        RegistrationStatus.RESTORED,
+                        "삭제된 카드를 복원했습니다.");
+            } else {
+                cardMapper.registerMy(userId, cardId);
+                return new CardRegistrationResult(apiCardName, matchedCardName, cardId,
+                        RegistrationStatus.SUCCESS,
+                        "카드가 등록되었습니다.");
+            }
+
+        } catch (Exception e) {
+            log.error("카드 등록 처리 중 오류: apiCardName={}, userId={}", apiCardName, userId, e);
+            return new CardRegistrationResult(apiCardName, null, null,
+                    RegistrationStatus.FAILED,
+                    "등록 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 요약 메시지 생성
+    private String createSummaryMessage(List<CardRegistrationResult> results) {
+        long successCount = results.stream().filter(r -> r.getStatus() == RegistrationStatus.SUCCESS).count();
+        long restoredCount = results.stream().filter(r -> r.getStatus() == RegistrationStatus.RESTORED).count();
+        long alreadyExistsCount = results.stream().filter(r -> r.getStatus() == RegistrationStatus.ALREADY_EXISTS).count();
+        long failedCount = results.stream().filter(r -> r.getStatus() == RegistrationStatus.NO_MATCH ||
+                r.getStatus() == RegistrationStatus.FAILED).count();
+
+        List<String> messages = new ArrayList<>();
+        if (successCount > 0) messages.add(successCount + "개 카드 신규 등록");
+        if (restoredCount > 0) messages.add(restoredCount + "개 카드 복원");
+        if (alreadyExistsCount > 0) messages.add(alreadyExistsCount + "개 카드 이미 등록됨");
+        if (failedCount > 0) messages.add(failedCount + "개 카드 등록 실패");
+
+        return String.join(", ", messages);
     }
 }

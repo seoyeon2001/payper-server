@@ -36,12 +36,12 @@ public class CodefController {
 
     // 보유카드 조회
     @PostMapping("/cards/me")
-    public ResponseEntity<CodefStandardResponse<MyCardListResponse>> getMyCardList(
+    public ResponseEntity<MyCardListResponse> getMyCardList(
             @RequestBody MyCardListRequest request,
             @AuthenticationPrincipal CustomUser customUser
     ) {
         Integer userId = userService.getUserId(customUser);
-        CodefStandardResponse<MyCardListResponse> result = codefService.getMyCardList(request, userId);
+        MyCardListResponse result = codefService.getMyCardList(request, userId);
         return ResponseEntity.ok(result);
     }
 

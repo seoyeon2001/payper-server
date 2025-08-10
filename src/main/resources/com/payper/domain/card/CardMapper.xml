@@ -156,8 +156,13 @@
     <!-- 카드 재등록 - 복원 -->
     <update id="restoreUserCard">
         UPDATE user_card
-        SET is_deleted = false, deleted_at = NULL, last_modified_at = NOW()
-        WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = true
+        SET
+--             is_deactivate = false, deactivate_at = NULL, // 리뷰하시고 OK하시면 주석 해제하겠습니다.
+            last_modified_at = NOW()
+        WHERE user_id = #{userId}
+          AND card_id = #{cardId}
+--           AND is_deleted = true // 리뷰하시고 OK하시면 주석 해제하겠습니다.
+--           AND is_deactivate = true // 리뷰하시고 OK하시면 주석 해제하겠습니다.
     </update>
 
     <!-- 삭제 이력이 있는 카드인가 -->
@@ -165,9 +170,8 @@
         SELECT EXISTS (
             SELECT 1
             FROM user_card
-            WHERE user_id = #{userId}
-              AND card_id = #{cardId}
-              AND is_deleted = true
+            WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = true
+--               AND is_deactivate = true // 리뷰하시고 OK하시면 주석 해제하겠습니다.
         )
     </select>
 
@@ -184,13 +188,16 @@
             SELECT 1
             FROM user_card
             WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = false
+--             AND is_deactivate = true // 리뷰하시고 OK하시면 주석 해제하겠습니다.
         )
     </select>
 
 <!--Card 테이블에서만 삭제할 때 사용 == 만료-->
     <update id="softDeactivateCard">
         UPDATE card
-        SET deleted_at = NOW(), is_deleted = true, last_modified_at=NOW()
+        SET
+--             is_deactivate = true, deactivate_at = NOW(), // 리뷰하시고 OK하시면 주석 해제하겠습니다.
+            last_modified_at = NOW()
         WHERE card_id = #{cardId} AND is_deleted = FALSE
     </update>
 

@@ -52,8 +52,10 @@ CREATE TABLE `card` (
                         `prev_month_spending` BIGINT DEFAULT 0,
                         `company_id` INT NOT NULL,
                         `is_deleted` BOOLEAN DEFAULT FALSE,
+--                         `is_deactivate` BOOLEAN DEFAULT FALSE, // 리뷰하시고 OK하시면 주석 해제하겠습니다.
                         `created_at` DATETIME NOT NULL DEFAULT NOW(),
                         `deleted_at` DATETIME NULL,
+--                         `deactivate_at` DATETIME NULL, // 리뷰하시고 OK하시면 주석 해제하겠습니다.
                         `last_modified_at` DATETIME NULL,
                         PRIMARY KEY (`card_id`),
                         CONSTRAINT `FK_card_company_TO_card` FOREIGN KEY (`company_id`)
