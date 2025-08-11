@@ -105,7 +105,7 @@ jobs:
           echo "KAKAO_MAP_KEY=${{ secrets.KAKAO_MAP_KEY }}" >> .env
           echo "KAKAO_MAP_URL=${{ secrets.KAKAO_MAP_URL }}" >> .env
           echo "TOKEN_SECRET_KEY=${{ secrets.TOKEN_SECRET_KEY }}" >> .env
-          echo "FIREBASE_CREDENTIALS_PATH=/home/ubuntu/secrets/firebase-service-account.json" >> .env
+          echo "FIREBASE_CREDENTIALS_PATH=/etc/secrets/firebase-service-account.json" >> .env
 
       - name: Upload .env to EC2
         uses: appleboy/scp-action@v1.0.0

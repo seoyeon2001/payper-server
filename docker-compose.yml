@@ -6,6 +6,8 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    volumes:
+      - /home/ubuntu/secrets/firebase-service-account.json:/etc/secrets/firebase-service-account.json:ro
     networks:
       - payper-network
 
