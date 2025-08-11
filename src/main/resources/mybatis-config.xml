@@ -14,9 +14,16 @@
         <package name="com.payper.domain.category.dto"/>
         <package name="com.payper.domain.partner.dto"/>
         <package name="com.payper.domain.user.domain"/>
+        <package name="com.payper.external.codef.dto"/>
+
+
         <package name="com.payper.domain.category.domain"/>
         <package name="com.payper.domain.partner.domain"/>
-        <package name="com.payper.external.codef.dto"/>
+        <package name="com.payper.domain.user.domain"/>
+        <package name="com.payper.domain.card.domain"/>
+        <package name="com.payper.domain.benefit.domain"/>
+        <package name="com.payper.domain.user.domain"/>
+        <package name="com.payper.external.codef.domain"/>
     </typeAliases>
 
 </configuration>

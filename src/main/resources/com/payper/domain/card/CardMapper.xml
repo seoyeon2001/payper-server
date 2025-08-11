@@ -254,5 +254,11 @@
         AND bp.partner_id = #{partnerId}
         LIMIT 1;
     </select>
+
+    <select id="getByCardName" resultType="Card">
+        SELECT *
+        FROM card
+        WHERE card_name = #{cardName}
+    </select>
 </mapper>
 

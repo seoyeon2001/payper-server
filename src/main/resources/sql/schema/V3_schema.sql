@@ -141,21 +141,6 @@ CREATE TABLE `benefit_category` (
                                         REFERENCES `category` (`category_id`)
 );
 
--- 사용자 카드 결제 내역
-CREATE TABLE `user_card_transaction` (
-                                         `user_card_transaction_id` INT NOT NULL AUTO_INCREMENT,
-                                         `user_card_id` INT NOT NULL,
-                                         `amount` BIGINT NOT NULL,
-                                         `approved_at` DATETIME NOT NULL,
-                                         `is_deleted` BOOLEAN DEFAULT FALSE,
-                                         `created_at` DATETIME NOT NULL DEFAULT NOW(),
-                                         `deleted_at` DATETIME NULL,
-                                         `last_modified_at` DATETIME NULL,
-                                         PRIMARY KEY (`user_card_transaction_id`),
-                                         CONSTRAINT `FK_user_card_TO_transaction` FOREIGN KEY (`user_card_id`)
-                                             REFERENCES `user_card` (`user_card_id`)
-);
-
 -- 혜택_가맹점
 CREATE TABLE `benefit_partner` (
                                    `benefit_partner_id` INT NOT NULL AUTO_INCREMENT,
@@ -170,6 +155,46 @@ CREATE TABLE `benefit_partner` (
                                        REFERENCES `benefit` (`benefit_id`),
                                    CONSTRAINT `FK_partner_TO_benefit_partner` FOREIGN KEY (`partner_id`)
                                        REFERENCES `partner` (`partner_id`)
+);
+
+CREATE TABLE `user_card_transaction` (
+                                         `user_card_transaction_id`	INT	NOT NULL AUTO_INCREMENT,
+                                         `user_card_id`	INT	NOT NULL,
+                                         `partner_id`	INT	NOT NULL,
+                                         `res_used_date`	VARCHAR(255)	NOT NULL,
+                                         `res_used_time`	VARCHAR(255)	NOT NULL,
+                                         `res_payment_due_date`	VARCHAR(255)	NULL,
+                                         `comm_start_date`	VARCHAR(255)	NULL,
+                                         `comm_end_date`	VARCHAR(255)	NULL,
+                                         `res_card_no`	VARCHAR(255)	NULL,
+                                         `res_card_no1`	VARCHAR(255)	NULL,
+                                         `res_card_name`	VARCHAR(255)	NOT NULL,
+                                         `res_used_amount`	INT	NOT NULL,
+                                         `res_payment_type`	VARCHAR(255)	NOT NULL,
+                                         `res_installment_month`	VARCHAR(255)	NULL,
+                                         `res_approval_no`	VARCHAR(255)	NULL,
+                                         `res_vat`	INT	NULL,
+                                         `res_cash_back`	INT	NULL,
+                                         `res_krw_amt`	VARCHAR(255)	NULL,
+                                         `res_cancel_yn`	INT	NULL,
+                                         `res_cancel_amount`	INT	NULL,
+                                         `res_member_store_name`	VARCHAR(255)	NULL,
+                                         `res_member_store_corp_no`	VARCHAR(255)	NULL,
+                                         `res_member_store_type`	VARCHAR(255)	NULL,
+                                         `res_member_store_addr`	VARCHAR(255)	NULL,
+                                         `res_member_store_tel_no`	VARCHAR(255)	NULL,
+                                         `res_member_store_no`	VARCHAR(255)	NULL,
+                                         `res_account_currency`	VARCHAR(255)	NULL,
+                                         `res_home_foreign_type`	VARCHAR(255)	NULL,
+                                         `is_deleted` BOOLEAN DEFAULT FALSE,
+                                         `created_at` DATETIME NOT NULL DEFAULT NOW(),
+                                         `deleted_at` DATETIME NULL,
+                                         `last_modified_at` DATETIME NULL,
+                                         PRIMARY KEY (`user_card_transaction_id`),
+                                         CONSTRAINT `FK_benefit_TO_user_card_transaction` FOREIGN KEY (`user_card_id`)
+                                             REFERENCES `user_card` (`user_card_id`),
+                                         CONSTRAINT `FK_partner_TO_user_card_transaction` FOREIGN KEY (`partner_id`)
+                                             REFERENCES `partner` (`partner_id`)
 );
 COMMIT;
 

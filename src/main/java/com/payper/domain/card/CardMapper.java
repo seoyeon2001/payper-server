@@ -1,5 +1,6 @@
 package com.payper.domain.card;
 
+import com.payper.domain.card.domain.Card;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.card.dto.RegisterCardRequest;
 import com.payper.domain.card.dto.UpdateCardRequest;
@@ -57,6 +58,7 @@ public interface CardMapper {
 
     Integer getCompanyId(@Param("cardCompanyName")String cardCompanyName);
 
+    Card getByCardName(String cardName);
 
 
     Integer update(
