@@ -11,7 +11,7 @@ public class PrometheusController {
 
     private final PrometheusMeterRegistry prometheusMeterRegistry;
 
-    @GetMapping("/actuator/prometheus")
+    @GetMapping(value = "/actuator/prometheus", produces = "text/plain")
     public String scrape() {
         return prometheusMeterRegistry.scrape();
     }
