@@ -1,18 +1,17 @@
-version: '3.8'
-
 services:
   app:
+    container_name: app
     image: gyehyunbak/payper-server:${IMAGE_TAG}
     ports:
-      - "8080"
+      - "8080:8080"
     env_file:
       - .env
     networks:
       - payper-network
 
   nginx:
-    image: nginx:latest
     container_name: nginx
+    image: nginx:latest
     ports:
       - "80:80"
       - "443:443"
@@ -27,6 +26,7 @@ services:
       - payper-network
 
   certbot:
+    container_name: certbot
     image: certbot/certbot
     volumes:
       - ./nginx/certbot/webroot:/var/www/certbot
@@ -35,6 +35,7 @@ services:
       - payper-network
 
   prometheus:
+    container_name: prometheus
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
@@ -42,6 +43,19 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - payper-network
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "admin"   # 초기 admin 비밀번호 설정
+    depends_on:
+      - prometheus
+    networks:
+      - payper-network
+    restart: unless-stopped
 
 networks:
   payper-network:
