@@ -22,6 +22,7 @@ CREATE TABLE `user` (
                         `oauth_id` VARCHAR(255) NOT NULL,
                         `nickname` VARCHAR(10) NOT NULL,
                         `connected_id` VARCHAR(255),
+                        `fcm_token` VARCHAR(255) DEFAULT '',
                         `role` ENUM('ROLE_USER', 'ROLE_ADMIN') NOT NULL,
                         `is_deleted` BOOLEAN DEFAULT FALSE,
                         `created_at` DATETIME NOT NULL DEFAULT NOW(),

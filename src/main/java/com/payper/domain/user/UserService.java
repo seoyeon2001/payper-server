@@ -6,11 +6,13 @@ import com.payper.external.codef.exception.ConnectedIdUpdateFailedException;
 import com.payper.global.security.domain.CustomUser;
 import com.payper.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserMapper userMapper;
@@ -49,5 +51,10 @@ public class UserService {
     @Transactional
     public void deleteUser(Integer userId) {
         userMapper.softDeleteUser(userId);
+    }
+
+    @Transactional
+    public void updateFcmToken(Integer userId, String fcmToken) {
+        userMapper.updateFcmToken(userId, fcmToken);
     }
 }

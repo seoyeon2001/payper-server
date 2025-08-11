@@ -20,4 +20,7 @@ public interface UserMapper {
     void softDeleteUser(Integer userId);
 
     String getConnectedId(Integer userId);
+
+    Integer updateFcmToken(@Param("userId") Integer userId,
+                        @Param("fcmToken") String fcmToken);
 }

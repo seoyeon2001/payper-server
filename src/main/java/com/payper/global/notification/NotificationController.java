@@ -26,16 +26,22 @@ public class NotificationController {
 
     @PostMapping("/send")
     public ResponseEntity<NotificationResponse> sendNotification(
-            //@AuthenticationPrincipal CustomUser customUser,
+            // TODO : @AuthenticationPrincipal CustomUser customUser,추가
             PartnerKeywordSearchRequest request,
             @RequestBody NotificationRequest notificationRequest
     ) {
-        //Integer userId = userService.getUserId(customUser);
-        Integer userId = 1;
+        Integer userId = 1; // TODO : Integer userId = userService.getUserId(customUser); 변경
+
+        String fcmToken = notificationRequest.getFcmToken();
+        if (fcmToken == null || fcmToken.isBlank()) {
+            return ResponseEntity.ok(new NotificationResponse(true, false));
+        }
+
+        userService.updateFcmToken(userId, fcmToken);
 
         Optional<Notification> notification = notificationService.buildPartnerNotification(userId, request);
         boolean sent = notification.isPresent() &&
-                fcmService.send(notification.get(), notificationRequest.getFcmToken());
+                fcmService.send(notification.get(), fcmToken);
 
         return ResponseEntity.ok(new NotificationResponse(true, sent));
     }

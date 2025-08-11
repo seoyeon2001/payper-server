@@ -5,7 +5,7 @@
 <mapper namespace="com.payper.domain.user.UserMapper">
 
     <select id="findByOauthProviderAndOauthId" resultType="User">
-        SELECT user_id, oauth_provider, oauth_id, nickname, connected_id, role, is_deleted, created_at, deleted_at, last_modified_at
+        SELECT user_id, oauth_provider, oauth_id, nickname, connected_id, fcm_token, role, is_deleted, created_at, deleted_at, last_modified_at
         FROM user
         WHERE oauth_provider = #{ oauthProvider }
           AND oauth_id = #{ oauthId }
@@ -37,4 +37,10 @@
         SELECT connected_id FROM user WHERE user_id = #{userId}
     </select>
 
+    <update id="updateFcmToken">
+        UPDATE user
+        SET fcm_token = #{fcmToken}, last_modified_at = NOW()
+        WHERE user_id = #{userId}
+        AND (fcm_token IS NULL OR fcm_token &lt;&gt; #{fcmToken})
+    </update>
 </mapper>
