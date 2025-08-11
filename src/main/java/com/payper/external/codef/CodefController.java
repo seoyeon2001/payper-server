@@ -45,15 +45,14 @@ public class CodefController {
         return ResponseEntity.ok(result);
     }
 
-    // 승인내역 조회
-    @PostMapping("/approval/{cardId}")
-    public ResponseEntity<CodefStandardResponse<List<ApprovalListResponse>>> getApprovalList(
+    // 승인내역 조회 - 카드사별로 조회 가능
+    @PostMapping("/approval")
+    public ResponseEntity<ApprovalListResponse> getApprovalList(
             @RequestBody ApprovalListRequest request,
-            @PathVariable(name = "cardId") Integer cardId,
             @AuthenticationPrincipal CustomUser customUser
     ) {
         Integer userId = userService.getUserId(customUser);
-        CodefStandardResponse<List<ApprovalListResponse>> result = codefService.getApprovalList(request, cardId, userId);
+        ApprovalListResponse result = codefService.getApprovalList(request, userId);
         return ResponseEntity.ok(result);
     }
 }

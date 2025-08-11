@@ -46,6 +46,7 @@ CREATE TABLE `card_company` (
 CREATE TABLE `card` (
                         `card_id` INT NOT NULL AUTO_INCREMENT,
                         `card_name` VARCHAR(100) UNIQUE,
+                        `codef_card_name` VARCHAR(100) UNIQUE,
                         `card_type` ENUM('CREDIT', 'CHECK') NOT NULL,
                         `card_image_url` VARCHAR(255) NOT NULL,
                         `card_issue_url` VARCHAR(255),
@@ -160,7 +161,7 @@ CREATE TABLE `benefit_partner` (
 CREATE TABLE `user_card_transaction` (
                                          `user_card_transaction_id`	INT	NOT NULL AUTO_INCREMENT,
                                          `user_card_id`	INT	NOT NULL,
-                                         `partner_id`	INT	NOT NULL,
+                                         `partner_id`	INT NULL,
                                          `res_used_date`	VARCHAR(255)	NOT NULL,
                                          `res_used_time`	VARCHAR(255)	NOT NULL,
                                          `res_payment_due_date`	VARCHAR(255)	NULL,

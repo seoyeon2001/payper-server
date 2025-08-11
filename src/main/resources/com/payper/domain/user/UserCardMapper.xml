@@ -8,4 +8,11 @@
         FROM user_card
         WHERE user_id = #{userId} AND card_id = #{cardId}
     </select>
+
+    <select id="getUserCardId" resultType="Integer">
+        select
+            from
+
+        select card_id from card where card_name=#{cardName};
+    </select>
 </mapper>

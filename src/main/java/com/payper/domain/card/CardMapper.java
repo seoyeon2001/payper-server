@@ -46,6 +46,11 @@ public interface CardMapper {
             @Param("cardId") Integer cardId
     );
 
+    void registerCodefCardName(
+            @Param("cardId") Integer cardId,
+            @Param("apiCardName") String apiCardName
+    );
+
     Integer registerCompany(@Param("cardCompanyName")String cardCompanyName);
 
     Integer register(
@@ -55,6 +60,8 @@ public interface CardMapper {
 
 
     Integer getId(String cardName);
+
+    Integer getCardId(String codefCardName);
 
     Integer getCompanyId(@Param("cardCompanyName")String cardCompanyName);
 

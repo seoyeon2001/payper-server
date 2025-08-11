@@ -17,12 +17,22 @@
           AND is_deleted = false;
     </select>
 
+<!--    <select id="findIdByName" resultType="Integer">-->
+<!--        SELECT partner_id-->
+<!--        FROM partner-->
+<!--        WHERE partner_name = #{partnerName}-->
+<!--          AND is_deleted = false;-->
+<!--    </select>-->
+
     <select id="findIdByName" resultType="Integer">
+        <bind name="pattern" value="'%' + partnerName + '%'" />
         SELECT partner_id
         FROM partner
-        WHERE partner_name = #{partnerName}
-          AND is_deleted = false;
+        WHERE partner_name LIKE #{pattern}
+        AND is_deleted = false
+        LIMIT 1;
     </select>
+
 
     <resultMap id="SearchPartnersResponseMap" type="SearchPartnersResponse">
         <id property="id" column="partner_id"/>

@@ -11,7 +11,7 @@
             res_card_no,res_card_no1,res_card_name,
             res_used_amount,res_payment_type,res_installment_month,
             res_approval_no,
-            res_vat,res_cashback,res_krw_amt,
+            res_vat,res_cash_back,res_krw_amt,
             res_cancel_yn,res_cancel_amount,
             res_member_store_name,res_member_store_corp_no,res_member_store_type,
             res_member_store_addr,res_member_store_tel_no,res_member_store_no,
@@ -26,11 +26,54 @@
                #{resUsedAmount},#{resPaymentType},#{resInstallmentMonth},
                #{resApprovalNo},
                #{resVat},#{resCashback},#{resKrwAmt},
-               #{resCancelYn},#{resCancelAmount},
+               #{resCancelYn},
+        <if test="resCancelAmount == '' or resCancelAmount == null">
+            NULL
+        </if>
+        <if test="resCancelAmount != null and resCancelAmount != ''">
+            #{resCancelAmount}
+        </if>,
                #{resMemberStoreName},#{resMemberStoreCorpNo},#{resMemberStoreType},
                #{resMemberStoreAddr},#{resMemberStoreTelNo},#{resMemberStoreNo},
                #{resAccountCurrency},#{resHomeForeignType},
                FALSE,NOW(),NOW()
+              )
+    </insert>
+
+    <insert id="save2" useGeneratedKeys="true" keyProperty="userCardTransactionId">
+        INSERT INTO user_card_transaction(
+            user_card_id,partner_id,
+            res_used_date,res_used_time,
+            res_payment_due_date,comm_start_date,comm_end_date,
+            res_card_no,res_card_no1,res_card_name,
+            res_used_amount,res_payment_type,res_installment_month,
+            res_approval_no,
+            res_vat,res_cash_back,res_krw_amt,
+            res_cancel_yn,res_cancel_amount,
+            res_member_store_name,res_member_store_corp_no,res_member_store_type,
+            res_member_store_addr,res_member_store_tel_no,res_member_store_no,
+            res_account_currency,res_home_foreign_type,
+            is_deleted,last_modified_at
+        )
+        VALUES(
+                  #{userCardId},#{partnerId},
+                  #{resUsedDate},#{resUsedTime},
+                  #{resPaymentDueDate},#{commStartDate},#{commEndDate},
+                  #{resCardNo},#{resCardNo1},#{resCardName},
+                  #{resUsedAmount},#{resPaymentType},#{resInstallmentMonth},
+                  #{resApprovalNo},
+                  #{resVat},#{resCashback},#{resKrwAmt},
+                  #{resCancelYn},
+        <if test="resCancelAmount == '' or resCancelAmount == null">
+            NULL
+        </if>
+        <if test="resCancelAmount != null and resCancelAmount != ''">
+            #{resCancelAmount}
+        </if>,
+                  #{resMemberStoreName},#{resMemberStoreCorpNo},#{resMemberStoreType},
+                  #{resMemberStoreAddr},#{resMemberStoreTelNo},#{resMemberStoreNo},
+                  #{resAccountCurrency},#{resHomeForeignType},
+                  FALSE,NOW()
               )
     </insert>
 

@@ -7,4 +7,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserCardMapper {
     UserCard getByUserIdAndCardId(@Param("userId")Integer userId, @Param("cardId")Integer cardId);
+
+    Integer getUserCardId(@Param("codefCardName") String codefCardName);
 }

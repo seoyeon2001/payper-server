@@ -123,6 +123,17 @@
         select card_id from card where card_name=#{cardName};
     </select>
 
+    <select id="getCardId" resultType="Integer">
+        SELECT card_id
+        FROM card
+        WHERE codef_card_name LIKE CONCAT('%', #{codefCardName}, '%');
+    </select>
+
+<!--    <select id="getCardId" resultType="Integer">-->
+<!--        select card_id from card-->
+<!--                       where codef_card_name=#{codefCardName};-->
+<!--    </select>-->
+
     <select id="getCompanyId" resultType="Integer">
         select company_id from card_company where company_name=#{cardCompanyName}
     </select>
@@ -188,7 +199,7 @@
             SELECT 1
             FROM user_card
             WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = false
---             AND is_deactivate = true // 리뷰하시고 OK하시면 주석 해제하겠습니다.
+--             AND is_deactivate = false // 리뷰하시고 OK하시면 주석 해제하겠습니다.
         )
     </select>
 
@@ -232,6 +243,12 @@
             card_issue_url = #{card.cardIssueUrl},
             company_id = #{cardCompanyId}
         WHERE card_id=#{cardId}
+    </update>
+
+    <update id="registerCodefCardName">
+        UPDATE card
+        SET codef_card_name = #{apiCardName}
+        WHERE card_id = #{cardId}
     </update>
 
     <!-- 가맹점에 맞는 내 카드 리스트 조회 -->
