@@ -36,29 +36,6 @@ services:
     networks:
       - payper-network
 
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - payper-network
-
-  grafana:
-    container_name: grafana
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    environment:
-      GF_SECURITY_ADMIN_PASSWORD: "admin"   # 초기 admin 비밀번호 설정
-    depends_on:
-      - prometheus
-    networks:
-      - payper-network
-    restart: unless-stopped
-
 networks:
   payper-network:
     driver: bridge
