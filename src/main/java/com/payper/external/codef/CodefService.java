@@ -52,23 +52,29 @@ public class CodefService {
     private static final String MY_CARD_LIST_URL = "/v1/kr/card/p/account/card-list";
     private static final String APPROVAL_LIST_URL = "/v1/kr/card/p/account/approval-list";
 
+    // 계정 생성 - connected id 발급
     public CodefStandardResponse<ConnectedIdResponse> createConnectedId(ConnectedIdRequest request, Integer userId) {
         String connectedId = userService.getConnectedIdById(userId);
 
         // connected id가 있는 사용자
         if (connectedId != null) {
+//        if (connectedId != null && !connectedId.isEmpty()) {
             throw new AlreadyLinkedCodefAccountException();
         }
 
         try {
             // 1. CODEF 요청 파라미터 구성
             HashMap<String, Object> accountMap = buildAccountMap(request);
+            log.info("accountMap을 출력합니다.: {}", accountMap);
+
             List<HashMap<String, Object>> accountList = List.of(accountMap);
             HashMap<String, Object> parameterMap = new HashMap<>();
             parameterMap.put("accountList", accountList);
 
             // 2. CODEF API 호출 및 응답 파싱
             String resultJson = codef.createAccount(EasyCodefServiceType.DEMO, parameterMap);
+            log.info("resultJson을 출력합니다.: {}", resultJson);
+
             HashMap<String, Object> responseMap = objectMapper.readValue(resultJson, HashMap.class);
 
             HashMap<String, Object> resultMap = (HashMap<String, Object>) responseMap.get("result");
@@ -96,15 +102,25 @@ public class CodefService {
     }
 
     private HashMap<String, Object> buildAccountMap(ConnectedIdRequest request) {
+        log.info("request을 출력합니다.: {}", request);
+
         try {
             HashMap<String, Object> accountMap = new HashMap<>();
             accountMap.put("countryCode", "KR"); // 한국
             accountMap.put("businessType", "CD"); // 카드
             accountMap.put("clientType", "P"); // 개인
+            log.info("1. accountMap을 출력합니다.: {}", accountMap);
+
             accountMap.put("organization", request.organizationName().getCode());
+            log.info("2. accountMap을 출력합니다.: {}", accountMap);
+
             accountMap.put("loginType", "1"); // 아이디 비번 로그인
             accountMap.put("id", request.companyId());
+            log.info("3. accountMap을 출력합니다.: {}", accountMap);
+
             accountMap.put("password", EasyCodefUtil.encryptRSA(request.companyPassword(), codef.getPublicKey()));
+            log.info("4. accountMap을 출력합니다.: {}", accountMap);
+
             return accountMap;
         } catch (Exception e) {
             throw new EncryptPasswordFailedException();
@@ -115,7 +131,7 @@ public class CodefService {
         String connectedId = userService.getConnectedIdById(userId);
 
         // 사용자는 존재하는데, connected id가 없는 경우
-        if (connectedId == null) {
+        if (connectedId == null || connectedId.isEmpty()) {
             throw new CodefAccountNotLinkedException();
         }
 
@@ -162,7 +178,7 @@ public class CodefService {
         String connectedId = userService.getConnectedIdById(userId);
 
         // 사용자는 존재하는데, connected id가 없는 경우
-        if (connectedId == null) {
+        if (connectedId == null || connectedId.isEmpty()) {
             throw new CodefAccountNotLinkedException();
         }
 
