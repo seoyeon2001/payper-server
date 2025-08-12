@@ -28,8 +28,8 @@ public class FcmService {
                               Notification notification,
                               Map<String, String> data) {
         List<String> tokens = fcmTokenService.findActiveTokensByUserId(userId);
-        if (tokens.isEmpty()) {
-            log.warn("사용자 ID {}의 모든 FCM 토큰이 비활성화되어 있습니다.", userId);
+        if (tokens == null || tokens.isEmpty()) {
+            log.warn("사용자 ID {}의 FCM 토큰이 활성화되어 있지 않습니다.", userId);
             return false;
         }
 

@@ -33,11 +33,11 @@ CREATE TABLE `user` (
 
 -- FCM TOKEN
 CREATE TABLE `fcm_token` (
-                           user_id INT,
-                           token VARCHAR(255) UNIQUE,
+                           user_id INT NOT NULL,
+                           token VARCHAR(255) NOT NULL,
                            status ENUM('ACTIVE','INACTIVE') DEFAULT 'ACTIVE',
                            last_modified_at DATETIME DEFAULT NOW() ON UPDATE NOW(),
-                           UNIQUE KEY uk_fcm_token (token),
+                           PRIMARY KEY (user_id, token),
                             CONSTRAINT `FK_user_TO_fcm_token` FOREIGN KEY (`user_id`)
                             REFERENCES `user` (`user_id`)
 );
