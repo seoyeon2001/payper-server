@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS benefit;
 DROP TABLE IF EXISTS user_card;
 DROP TABLE IF EXISTS card;
 DROP TABLE IF EXISTS card_company;
+DROP TABLE IF EXISTS fcm_token;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS benefit_partner;
 DROP TABLE IF EXISTS partner;
@@ -22,13 +23,23 @@ CREATE TABLE `user` (
                         `oauth_id` VARCHAR(255) NOT NULL,
                         `nickname` VARCHAR(10) NOT NULL,
                         `connected_id` VARCHAR(255),
-                        `fcm_token` VARCHAR(255) DEFAULT '',
                         `role` ENUM('ROLE_USER', 'ROLE_ADMIN') NOT NULL,
                         `is_deleted` BOOLEAN DEFAULT FALSE,
                         `created_at` DATETIME NOT NULL DEFAULT NOW(),
                         `deleted_at` DATETIME NULL,
                         `last_modified_at` DATETIME NULL,
                         PRIMARY KEY (`user_id`)
+);
+
+-- FCM TOKEN
+CREATE TABLE `fcm_token` (
+                           user_id INT,
+                           token VARCHAR(255) UNIQUE,
+                           status ENUM('ACTIVE','INACTIVE') DEFAULT 'ACTIVE',
+                           last_modified_at DATETIME DEFAULT NOW() ON UPDATE NOW(),
+                           UNIQUE KEY uk_fcm_token (token),
+                            CONSTRAINT `FK_user_TO_fcm_token` FOREIGN KEY (`user_id`)
+                            REFERENCES `user` (`user_id`)
 );
 
 -- 카드사

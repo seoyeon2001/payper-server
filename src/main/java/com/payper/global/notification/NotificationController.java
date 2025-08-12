@@ -7,13 +7,16 @@ import com.payper.global.notification.dto.NotificationRequest;
 import com.payper.global.notification.dto.NotificationResponse;
 import com.payper.global.notification.service.FcmService;
 import com.payper.global.notification.service.NotificationService;
+import com.payper.global.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -26,23 +29,16 @@ public class NotificationController {
 
     @PostMapping("/send")
     public ResponseEntity<NotificationResponse> sendNotification(
-            // TODO : @AuthenticationPrincipal CustomUser customUser,추가
-            PartnerKeywordSearchRequest request,
-            @RequestBody NotificationRequest notificationRequest
+            @AuthenticationPrincipal CustomUser customUser,
+            PartnerKeywordSearchRequest request
     ) {
-        Integer userId = 1; // TODO : Integer userId = userService.getUserId(customUser); 변경
-
-        String fcmToken = notificationRequest.getFcmToken();
-        if (fcmToken == null || fcmToken.isBlank()) {
+        Integer userId = userService.getUserId(customUser);
+        Optional<Notification> notification = notificationService.buildPartnerNotification(userId, request);
+        if (notification.isEmpty()) {
             return ResponseEntity.ok(new NotificationResponse(true, false));
         }
 
-        userService.updateFcmToken(userId, fcmToken);
-
-        Optional<Notification> notification = notificationService.buildPartnerNotification(userId, request);
-        boolean sent = notification.isPresent() &&
-                fcmService.send(notification.get(), fcmToken);
-
+        boolean sent = fcmService.sendToUser(userId, notification.get(), Map.of());
         return ResponseEntity.ok(new NotificationResponse(true, sent));
     }
 }

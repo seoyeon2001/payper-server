@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.payper.domain.fcmToken.FcmTokenMapper">
+    <insert id="upsert">
+        INSERT INTO fcm_token(user_id, token, status)
+        VALUES(#{userId}, #{token}, 'ACTIVE')
+            ON DUPLICATE KEY UPDATE
+                                         status = VALUES(status),
+                                         last_modified_at = NOW()
+    </insert>
+
+    <select id="findActiveTokensByUserId" resultType="string">
+        SELECT token
+        FROM fcm_token
+        WHERE user_id = #{userId}
+          AND status = 'ACTIVE'
+    </select>
+
+    <update id="updateStatus">
+        UPDATE fcm_token
+        SET status = #{status}, last_modified_at = NOW()
+        WHERE token = #{token}
+    </update>
+</mapper>
