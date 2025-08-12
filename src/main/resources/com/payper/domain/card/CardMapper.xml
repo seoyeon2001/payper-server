@@ -113,6 +113,12 @@
         values (#{userId}, #{cardId},NOW(),FALSE ,NOW())
     </insert>
 
+    <!-- 내 카드로 등록(codef를 통해 저장 -> 카드 번호 포함) -->
+    <insert id="registerMyCardWithNumber">
+        insert into user_card(user_id, card_id, last3, created_at, is_deleted, last_modified_at)
+        values (#{userId}, #{cardId}, #{lastNumber}, NOW(), FALSE, NOW())
+    </insert>
+
     <select id="existsCardCompany" resultType="boolean">
         select EXISTS(
             select 1 from card_company where company_name=#{cardCompanyName}

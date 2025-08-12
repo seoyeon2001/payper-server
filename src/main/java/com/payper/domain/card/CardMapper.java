@@ -46,6 +46,12 @@ public interface CardMapper {
             @Param("cardId") Integer cardId
     );
 
+    void registerMyCardWithNumber(
+            @Param("userId") Integer userId,
+            @Param("cardId") Integer cardId,
+            @Param("lastNumber") String lastNumber
+    );
+
     void registerCodefCardName(
             @Param("cardId") Integer cardId,
             @Param("apiCardName") String apiCardName

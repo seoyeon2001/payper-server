@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 public interface UserCardTransactionMapper {
     Integer save(UserCardTransaction userCardTransaction);
 
-    Integer save2(@Param("userCardTransaction") UserCardTransaction userCardTransaction);
     UserCardTransaction get(Integer userCardTransactionId);
+
+    boolean existsByApprovalInfo(String approvalNo, String usedDate, String usedTime, String usedAmount, Integer userCardId);
 }

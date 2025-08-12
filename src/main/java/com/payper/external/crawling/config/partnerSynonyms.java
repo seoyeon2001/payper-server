@@ -137,7 +137,7 @@ public class partnerSynonyms {
             entry("땡겨요", List.of("ddanggyo", "땡겨요")),
 
             // 교통
-            entry("카카오택시", List.of("kakao taxi", "카카오택시", "카카오T")),
+            entry("카카오택시", List.of("kakao taxi", "카카오택시", "카카오T", "카카오T택시")),
             entry("우버", List.of("uber", "UBER")),
             entry("타다", List.of("tada", "TADA")),
             entry("쏘카", List.of("socar", "SOCAR")),

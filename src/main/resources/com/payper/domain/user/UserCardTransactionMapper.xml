@@ -5,82 +5,67 @@
 <mapper namespace="com.payper.domain.user.UserCardTransactionMapper">
     <insert id="save" useGeneratedKeys="true" keyProperty="userCardTransactionId">
         INSERT INTO user_card_transaction(
-            user_card_transaction_id,user_card_id,partner_id,
-            res_used_date,res_used_time,
-            res_payment_due_date,comm_start_date,comm_end_date,
-            res_card_no,res_card_no1,res_card_name,
-            res_used_amount,res_payment_type,res_installment_month,
+            user_card_id, partner_id,
+            res_used_date, res_used_time,
+            res_payment_due_date, comm_start_date, comm_end_date,
+            res_card_no, res_card_no1, res_card_name,
+            res_used_amount, res_payment_type, res_installment_month,
             res_approval_no,
-            res_vat,res_cash_back,res_krw_amt,
-            res_cancel_yn,res_cancel_amount,
-            res_member_store_name,res_member_store_corp_no,res_member_store_type,
-            res_member_store_addr,res_member_store_tel_no,res_member_store_no,
-            res_account_currency,res_home_foreign_type,
-            is_deleted,created_at,last_modified_at
+            res_vat, res_cash_back, res_krw_amt,
+            res_cancel_yn, res_cancel_amount,
+            res_member_store_name, res_member_store_corp_no, res_member_store_type,
+            res_member_store_addr, res_member_store_tel_no, res_member_store_no,
+            res_account_currency, res_home_foreign_type,
+            last_modified_at
         )
         VALUES(
-               null,#{userCardId},#{partnerId},
-               #{resUsedDate},#{resUsedTime},
-               #{resPaymentDueDate},#{commStartDate},#{commEndDate},
-               #{resCardNo},#{resCardNo1},#{resCardName},
-               #{resUsedAmount},#{resPaymentType},#{resInstallmentMonth},
+               #{userCardId}, #{partnerId},
+               #{resUsedDate}, #{resUsedTime},
+               #{resPaymentDueDate}, #{commStartDate}, #{commEndDate},
+               #{resCardNo}, #{resCardNo1}, #{resCardName},
+               #{resUsedAmount}, #{resPaymentType}, #{resInstallmentMonth},
                #{resApprovalNo},
-               #{resVat},#{resCashback},#{resKrwAmt},
+               #{resVat}, #{resCashback}, #{resKrwAmt},
                #{resCancelYn},
-        <if test="resCancelAmount == '' or resCancelAmount == null">
-            NULL
-        </if>
-        <if test="resCancelAmount != null and resCancelAmount != ''">
-            #{resCancelAmount}
-        </if>,
-               #{resMemberStoreName},#{resMemberStoreCorpNo},#{resMemberStoreType},
-               #{resMemberStoreAddr},#{resMemberStoreTelNo},#{resMemberStoreNo},
-               #{resAccountCurrency},#{resHomeForeignType},
-               FALSE,NOW(),NOW()
+                <if test="resCancelAmount == '' or resCancelAmount == null">
+                    NULL
+                </if>
+                <if test="resCancelAmount != null and resCancelAmount != ''">
+                    #{resCancelAmount}
+                </if>,
+               #{resMemberStoreName}, #{resMemberStoreCorpNo}, #{resMemberStoreType},
+               #{resMemberStoreAddr}, #{resMemberStoreTelNo}, #{resMemberStoreNo},
+               #{resAccountCurrency}, #{resHomeForeignType},
+               NOW()
               )
     </insert>
-
-    <insert id="save2" useGeneratedKeys="true" keyProperty="userCardTransactionId">
-        INSERT INTO user_card_transaction(
-            user_card_id,partner_id,
-            res_used_date,res_used_time,
-            res_payment_due_date,comm_start_date,comm_end_date,
-            res_card_no,res_card_no1,res_card_name,
-            res_used_amount,res_payment_type,res_installment_month,
-            res_approval_no,
-            res_vat,res_cash_back,res_krw_amt,
-            res_cancel_yn,res_cancel_amount,
-            res_member_store_name,res_member_store_corp_no,res_member_store_type,
-            res_member_store_addr,res_member_store_tel_no,res_member_store_no,
-            res_account_currency,res_home_foreign_type,
-            is_deleted,last_modified_at
-        )
-        VALUES(
-                  #{userCardId},#{partnerId},
-                  #{resUsedDate},#{resUsedTime},
-                  #{resPaymentDueDate},#{commStartDate},#{commEndDate},
-                  #{resCardNo},#{resCardNo1},#{resCardName},
-                  #{resUsedAmount},#{resPaymentType},#{resInstallmentMonth},
-                  #{resApprovalNo},
-                  #{resVat},#{resCashback},#{resKrwAmt},
-                  #{resCancelYn},
-        <if test="resCancelAmount == '' or resCancelAmount == null">
-            NULL
-        </if>
-        <if test="resCancelAmount != null and resCancelAmount != ''">
-            #{resCancelAmount}
-        </if>,
-                  #{resMemberStoreName},#{resMemberStoreCorpNo},#{resMemberStoreType},
-                  #{resMemberStoreAddr},#{resMemberStoreTelNo},#{resMemberStoreNo},
-                  #{resAccountCurrency},#{resHomeForeignType},
-                  FALSE,NOW()
-              )
-    </insert>
-
 
     <select id="get" resultType="userCardTransaction">
         SELECT *
         FROM user_card_transaction
         WHERE user_card_transaction_id=#{userCardTransactionId}
+    </select>
+
+    <select id="existsByApprovalInfo" resultType="Boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM user_card_transaction
+            WHERE user_card_id = #{userCardId}
+            AND res_used_date = #{usedDate}
+            AND res_used_amount = #{usedAmount}
+            <if test="approvalNo != null">
+                AND res_approval_no = #{approvalNo}
+            </if>
+            <if test="approvalNo == null">
+                AND res_approval_no IS NULL
+            </if>
+            <if test="usedTime != null">
+                AND res_used_time = #{usedTime}
+            </if>
+            <if test="usedTime == null">
+                AND res_used_time IS NULL
+            </if>
+            AND is_deleted = false
+        )
     </select>
 </mapper>

@@ -2,8 +2,10 @@ package com.payper.external.codef;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.payper.domain.user.UserCardMapper;
 import com.payper.domain.user.UserCardTransactionService;
 import com.payper.domain.card.CardMapper;
+import com.payper.domain.user.domain.UserCard;
 import com.payper.external.codef.dto.CardRegistrationResult;
 import com.payper.external.codef.dto.RegistrationStatus;
 import com.payper.external.codef.dto.output.ApprovalInfo;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +48,7 @@ public class CodefService {
     private final CardSimilarityService cardSimilarityService;
     private final UserCardTransactionService userCardTransactionService;
     private final CardMapper cardMapper;
+    private final UserCardMapper userCardMapper;
     private static final String MY_CARD_LIST_URL = "/v1/kr/card/p/account/card-list";
     private static final String APPROVAL_LIST_URL = "/v1/kr/card/p/account/approval-list";
 
@@ -181,13 +185,18 @@ public class CodefService {
             // 검증 로직 (result, connectedId)
             validateCodefResponse(responseMap, connectedId);
 
-            // 승인 내역 데이터 반환
+            // 승인 내역 데이터 반환 - 저장과 관련 없이 받아온 값 전부 return
             Object dataRaw = responseMap.get("data");
             List<ApprovalInfo> approvalList = processResponse(dataRaw, ApprovalInfo.class);
             log.info(approvalList.toString());
 
+            // 해당 유저가 가진 해당 카드사의 카드 목록 불러오기
+            String cardCompany = request.organizationName().name();
+            List<UserCard> myCardList = userCardMapper.getUserCardByUserIdAndCardCompany(userId, cardCompany);
+            log.info("소유하고 있는 {} 카드 목록입니다 {}", cardCompany, myCardList);
+
             // 승인 내역 저장
-            userCardTransactionService.saveApprovalTransactions(approvalList, userId);
+            userCardTransactionService.saveApprovalTransactions(approvalList, userId, myCardList);
 
             ApprovalListResponse response = new ApprovalListResponse(approvalList);
             return response;
@@ -270,7 +279,9 @@ public class CodefService {
                 .toList();
 
         for (CardInfo apiCard : cardList) {
-            CardRegistrationResult result = registerUserCardWithResult(apiCard.getResCardName(), dbCardNames, userId);
+            CardRegistrationResult result = registerUserCardWithResult(
+                    apiCard.getResCardName(), dbCardNames, userId,
+                    apiCard.getResCardNo());
             results.add(result);
 
             log.info("카드 등록 처리: {} - {}", result.getApiCardName(), result.getStatus().getDescription());
@@ -280,7 +291,8 @@ public class CodefService {
     }
 
     // 개별 카드 등록 (결과 반환)
-    private CardRegistrationResult registerUserCardWithResult(String apiCardName, List<String> dbCardNames, Integer userId) {
+    @Transactional
+    protected CardRegistrationResult registerUserCardWithResult(String apiCardName, List<String> dbCardNames, Integer userId, String apiCardNo) {
         try {
             // 유사도 매칭 - 가장 유사한 1개 추출
             List<CardSimilarityResponse> recommendations =
@@ -317,7 +329,8 @@ public class CodefService {
                         RegistrationStatus.RESTORED,
                         "삭제된 카드를 복원했습니다.");
             } else {
-                cardMapper.registerMy(userId, cardId);
+                String lastNumber = apiCardNo.substring(apiCardNo.length() - 3);
+                cardMapper.registerMyCardWithNumber(userId, cardId, lastNumber);
                 cardMapper.registerCodefCardName(cardId, apiCardName);
                 return new CardRegistrationResult(apiCardName, matchedCardName, cardId,
                         RegistrationStatus.SUCCESS,

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class UserCardTransaction {
     private Integer userCardTransactionId;
     private Integer userCardId;
-    private Integer partnerId;// 왜 필요했죠??
+    private Integer partnerId;
 
     private String resUsedDate;
     private String resUsedTime;
@@ -27,7 +27,7 @@ public class UserCardTransaction {
 
     private String resUsedAmount;
     private String resPaymentType;
-    private String resInstallmentMonth;//할부개월수
+    private String resInstallmentMonth; //할부개월수
 
     private String resApprovalNo;
 
@@ -124,5 +124,4 @@ public class UserCardTransaction {
                         .resHomeForeignType(resHomeForeignType)
                         .build();
     }
-
 }

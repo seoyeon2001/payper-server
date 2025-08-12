@@ -15,4 +15,21 @@
 
         select card_id from card where card_name=#{cardName};
     </select>
+
+    <select id="getUserCardByUserIdAndCardCompany" resultType="UserCard">
+        SELECT uc.*
+        FROM user_card uc
+        INNER JOIN card c ON c.card_id = uc.card_id
+        INNER JOIN card_company cc ON cc.company_id = c.company_id
+        WHERE uc.user_id = #{userId}
+          AND uc.is_deleted = false
+          AND c.is_deleted = false
+          AND cc.company_name = #{cardCompany}
+    </select>
+
+    <select id="getUserCardIdByLastCardNo" resultType="Integer">
+        SELECT user_card_id
+        FROM user_card
+        WHERE last3 = #{lastCardNo} AND is_deleted = false
+    </select>
 </mapper>
