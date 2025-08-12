@@ -257,7 +257,7 @@
         INNER JOIN user_card uc ON c.card_id = uc.card_id
         INNER JOIN benefit_partner bp ON b.benefit_id = bp.benefit_id
         WHERE uc.user_id = #{userId}
-        AND uc.is_deleted = false
+        AND uc.is_deactivate = false
         AND bp.partner_id = #{partnerId}
         ORDER BY c.card_id, b.benefit_id;
     </select>
