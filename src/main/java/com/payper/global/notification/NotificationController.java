@@ -30,7 +30,7 @@ public class NotificationController {
     @PostMapping("/send")
     public ResponseEntity<NotificationResponse> sendNotification(
             @AuthenticationPrincipal CustomUser customUser,
-            PartnerKeywordSearchRequest request
+            @RequestBody PartnerKeywordSearchRequest request
     ) {
         Integer userId = userService.getUserId(customUser);
         Optional<Notification> notification = notificationService.buildPartnerNotification(userId, request);
