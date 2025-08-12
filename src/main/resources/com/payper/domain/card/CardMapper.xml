@@ -103,14 +103,14 @@
         <include refid="cardJoinClause" />
         INNER JOIN user_card uc ON c.card_id = uc.card_id
         WHERE uc.user_id = #{userId}
-        AND uc.is_deleted = false
+            AND uc.is_deactivate = false
         ORDER BY c.card_id, b.benefit_id;
     </select>
 
     <!-- 내 카드로 등록 -->
     <insert id="registerMy">
-        insert into user_card(user_id, card_id, created_at, is_deleted, last_modified_at)
-        values (#{userId}, #{cardId},NOW(),FALSE ,NOW())
+        insert into user_card(user_id, card_id, last_modified_at)
+        values (#{userId}, #{cardId}, NOW())
     </insert>
 
     <!-- 내 카드로 등록(codef를 통해 저장 -> 카드 번호 포함) -->
@@ -154,12 +154,11 @@
         VALUES (#{card.prevMonthSpending},#{card.annualFee}, #{card.cardName},#{card.cardType},#{card.cardImageUrl},#{card.cardIssueUrl},#{cardCompanyId},NOW(),FALSE,NOW())
     </insert>
 
-
     <!-- 내 카드 삭제 -->
-    <update id="softDeleteMy">
+    <update id="deleteCardMe">
         UPDATE user_card
-        SET is_deleted = true, deleted_at = NOW(), last_modified_at = NOW()
-        WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = false
+        SET is_deactivate = true, deactivate_at = NOW(), last_modified_at = NOW()
+        WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deactivate = false
     </update>
 
     <select id="existsById" resultType="boolean">
@@ -173,25 +172,20 @@
     <!-- 카드 재등록 - 복원 -->
     <update id="restoreUserCard">
         UPDATE user_card
-        SET
---             is_deactivate = false, deactivate_at = NULL, // 리뷰하시고 OK하시면 주석 해제하겠습니다.
-            last_modified_at = NOW()
-        WHERE user_id = #{userId}
-          AND card_id = #{cardId}
---           AND is_deleted = true // 리뷰하시고 OK하시면 주석 해제하겠습니다.
---           AND is_deactivate = true // 리뷰하시고 OK하시면 주석 해제하겠습니다.
+        SET is_deactivate = false, deactivate_at = NULL, last_modified_at = NOW()
+        WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deactivate = true
     </update>
 
-    <!-- 삭제 이력이 있는 카드인가 -->
+    <!-- 내 카드로 삭제된 카드인가 -->
     <select id="isPreviouslyDeletedUserCard" resultType="boolean">
         SELECT EXISTS (
             SELECT 1
             FROM user_card
-            WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = true
---               AND is_deactivate = true // 리뷰하시고 OK하시면 주석 해제하겠습니다.
+            WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deactivate = true
         )
     </select>
 
+<!--    삭제 여부와 관계없이 카드 여부 확인-->
     <select id="existedById" resultType="boolean">
         SELECT EXISTS (
             SELECT 1
@@ -204,8 +198,8 @@
         SELECT EXISTS (
             SELECT 1
             FROM user_card
-            WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deleted = false
---             AND is_deactivate = false // 리뷰하시고 OK하시면 주석 해제하겠습니다.
+            WHERE user_id = #{userId} AND card_id = #{cardId}
+              AND is_deactivate = false
         )
     </select>
 

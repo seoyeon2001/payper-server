@@ -54,10 +54,10 @@ CREATE TABLE `card` (
                         `prev_month_spending` BIGINT DEFAULT 0,
                         `company_id` INT NOT NULL,
                         `is_deleted` BOOLEAN DEFAULT FALSE,
---                         `is_deactivate` BOOLEAN DEFAULT FALSE, // 리뷰하시고 OK하시면 주석 해제하겠습니다.
+                        `is_deactivate` BOOLEAN DEFAULT FALSE,
                         `created_at` DATETIME NOT NULL DEFAULT NOW(),
                         `deleted_at` DATETIME NULL,
---                         `deactivate_at` DATETIME NULL, // 리뷰하시고 OK하시면 주석 해제하겠습니다.
+                        `deactivate_at` DATETIME NULL,
                         `last_modified_at` DATETIME NULL,
                         PRIMARY KEY (`card_id`),
                         CONSTRAINT `FK_card_company_TO_card` FOREIGN KEY (`company_id`)
@@ -71,8 +71,10 @@ CREATE TABLE `user_card` (
                              `card_id` INT NOT NULL,
                              `last3` CHAR(3),               -- 카드번호 끝 3자리
                              `is_deleted` BOOLEAN DEFAULT FALSE,
+                             `is_deactivate` BOOLEAN DEFAULT FALSE,
                              `created_at` DATETIME NOT NULL DEFAULT NOW(),
                              `deleted_at` DATETIME NULL,
+                             `deactivate_at` DATETIME NULL,
                              `last_modified_at` DATETIME NULL,
                              PRIMARY KEY (`user_card_id`),
                              CONSTRAINT `FK_user_TO_user_card` FOREIGN KEY (`user_id`)

@@ -63,7 +63,7 @@ public class CardService {
     }
 
     // 이미 등록된 카드인지 확인하기 위함 - 단순 검증용이므로 void
-    public void checkDuplicateUserCard(Integer userId, Integer cardId) {
+    private void checkDuplicateUserCard(Integer userId, Integer cardId) {
         if (cardMapper.existsUserCard(userId, cardId)) {
             throw new DuplicateUserCardException(userId, cardId);
         }
@@ -90,7 +90,7 @@ public class CardService {
         }
     }
 
-    //등록되었는지 확인. 삭제여부 확인X.
+    // 등록되었는지 확인. 삭제여부 확인X.
     private void existedByCardId(Integer cardId){
         if(!cardMapper.existedById(cardId)){
             throw new CardExistedNotFoundException();
@@ -123,7 +123,7 @@ public class CardService {
             throw new AlreadyDeletedUserCardException();
         }
 
-        Integer updateCount = cardMapper.softDeleteMy(userId, cardId);
+        Integer updateCount = cardMapper.deleteCardMe(userId, cardId);
         if (updateCount != 1) {
             throw new MyCardDeletionFailedException();
         }

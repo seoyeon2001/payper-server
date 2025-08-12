@@ -19,7 +19,6 @@ public interface CardMapper {
 
     boolean existsUserCard(@Param("userId") Integer userId, @Param("cardId") Integer cardId);
 
-
     List<CardResponse> selectAll();
 
     CardResponse selectById(Integer cardId);
@@ -39,7 +38,6 @@ public interface CardMapper {
             @Param("category") List<String> category,
             @Param("cardCompany") List<String> cardCompany
     );
-
 
     void registerMy(
             @Param("userId") Integer userId,
@@ -96,7 +94,7 @@ public interface CardMapper {
     //  Card 테이블과 연관된 테이블들 모두에서 삭제할 때 == 우리 서비스에서 아예 제거
     Integer softDelete(Integer cardId);
 
-    Integer softDeleteMy(
+    Integer deleteCardMe(
             @Param("userId") Integer userId,
             @Param("cardId") Integer cardId
     );
