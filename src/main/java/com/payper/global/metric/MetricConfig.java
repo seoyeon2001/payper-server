@@ -8,6 +8,7 @@ import io.micrometer.core.instrument.binder.system.UptimeMetrics;
 import io.micrometer.prometheusmetrics.PrometheusConfig;
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
+import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -41,7 +42,7 @@ public class MetricConfig {
     }
 
     @Bean
-    public HttpMetricsFilter httpMetricsFilter(PrometheusMeterRegistry registry) {
-        return new HttpMetricsFilter(registry);
+    public InMemoryHttpExchangeRepository httpExchangeRepository() {
+        return new InMemoryHttpExchangeRepository();
     }
 }
