@@ -59,14 +59,14 @@ public class CardController {
     public ResponseEntity<CardsResponse> searchCards(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) List<String> categories,
-            @RequestParam(required = false) List<String> cardCompanies
+            @RequestParam(required = false) List<String> category,
+            @RequestParam(required = false) List<String> cardCompany
     ) {
         log.info("검색 카드 조회");
         
         //검색 옵션 값 지정
         SearchOptions searchOptions = SearchOptions.create(
-                name,type,categories,cardCompanies,null
+                name,type,category,cardCompany
         );
 
         return ResponseEntity.ok(searchService.searchCardsPhase0(searchOptions));

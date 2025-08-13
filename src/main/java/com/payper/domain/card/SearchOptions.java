@@ -13,17 +13,15 @@ public class SearchOptions {
     private String cardType;
     private List<String> categoryNames;
     private List<String> cardCompanyNames;
-    private Integer userId;
 
     public static SearchOptions create(
-            String cardName,String cardType,List<String> categoryNames,List<String> cardCompanyNames,Integer userId
+            String cardName,String cardType,List<String> categoryNames,List<String> cardCompanyNames
     ){
         return builder()
                 .cardName(cardName)
                 .cardType(cardType)
                 .categoryNames(categoryNames)
                 .cardCompanyNames(cardCompanyNames)
-                .userId(userId)
                 .build();
     }
 }
