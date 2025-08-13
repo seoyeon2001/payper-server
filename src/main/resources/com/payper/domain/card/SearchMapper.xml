@@ -142,8 +142,15 @@
     <select id="getCardsWithConditions" resultMap="CardMap">
         <include refid="SearchCardJoinClause"/>
         WHERE 1=1
-        <if test="options.cardName!=null and options.cardName!='' ">
-            AND c.card_name LIKE CONCAT('%', #{options.cardName}, '%')
+        <if test="options.keyword!=null and options.keyword!='' ">
+            AND (
+                c.card_name LIKE CONCAT('%', #{options.keyword}, '%')
+                or (
+                    b.benefit_title LIKE CONCAT('%', #{options.keyword}, '%')
+                    OR b.benefit_summary LIKE CONCAT('%', #{options.keyword}, '%')
+                    OR b.benefit_description LIKE CONCAT('%', #{options.keyword}, '%')
+                )
+            )
         </if>
         <if test="options.cardType!=null and options.cardType!='' ">
             AND c.card_type = #{options.cardType}

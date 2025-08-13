@@ -9,16 +9,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
 public class SearchOptions {
-    private String cardName;
+    private String keyword;
     private String cardType;
     private List<String> categoryNames;
     private List<String> cardCompanyNames;
 
     public static SearchOptions create(
-            String cardName,String cardType,List<String> categoryNames,List<String> cardCompanyNames
+            String keyword, String cardType, List<String> categoryNames, List<String> cardCompanyNames
     ){
         return builder()
-                .cardName(cardName)
+                .keyword(keyword)
                 .cardType(cardType)
                 .categoryNames(categoryNames)
                 .cardCompanyNames(cardCompanyNames)
