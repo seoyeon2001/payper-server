@@ -39,7 +39,6 @@
         <result property="name" column="partner_name"/>
         <result property="partnerImageUrl" column="partner_image_url"/>
         <result property="categoryId" column="category_id"/>
-        <result property="preCategoryId" column="pre_category_id"/>
         <result property="categoryName" column="category_name"/>
         <result property="categoryImageUrl" column="category_image_url"/>
     </resultMap>
@@ -48,7 +47,7 @@
     <sql id="partnerJoinClause">
         SELECT
             p.partner_id, p.partner_name, p.partner_image_url,
-            c.category_id, c.pre_category_id, c.category_name, c.category_image_url
+            c.category_id, c.category_name, c.category_image_url
         FROM partner p
                  LEFT JOIN category c ON p.category_id = c.category_id
     </sql>

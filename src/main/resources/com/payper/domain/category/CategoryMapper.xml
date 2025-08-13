@@ -48,7 +48,7 @@
     </select>
 
     <select id="findById" resultType="Category">
-        SELECT category_id, category_name, category_image_url, pre_category_id, is_deleted, created_at, deleted_at, last_modified_at
+        SELECT category_id, category_name, category_image_url, is_deleted, created_at, deleted_at, last_modified_at
         FROM category
         WHERE category_id = #{categoryId}
           AND is_deleted = false
