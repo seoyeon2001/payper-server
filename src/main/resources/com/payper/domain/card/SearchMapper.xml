@@ -91,7 +91,8 @@
         <result column="ca_category_image_url" property="categoryImageUrl"/>
     </resultMap>
 
-    <sql id="UserTransactionSelectClause">
+    <sql id="UserCardSelectClause">
+        uc.user_card_id as uc_user_card_id, uc.user_id as uc_user_id, uc.card_id as uc_card_id,
         uct.user_card_transaction_id as uct_user_card_transaction_id, uct.user_card_id as uct_user_card_id,
         uct.partner_id as uct_partner_id, uct.res_used_date as uct_res_used_date,
         uct.res_used_time as uct_res_used_time, uct.res_payment_due_date as uct_res_payment_due_date,
@@ -108,14 +109,18 @@
         uct.res_account_currency as uct_res_account_currency, uct.res_home_foreign_type as uct_res_home_foreign_type
     </sql>
 
+    <sql id="UserCardJoinClause">
+        LEFT JOIN user_card uc ON uc.card_id = c.card_id
+        LEFT JOIN user u ON u.user_id = uc.user_id
+        LEFT JOIN user_card_transaction uct ON uct.user_card_id = uc.user_card_id
+    </sql>
+
     <sql id="SearchCardJoinClause">
         SELECT
             cc.company_id as cc_company_id, cc.company_name as cc_company_name,
             c.card_id as c_card_id, c.company_id as c_company_id, c.card_name as c_card_name, c.card_type as c_card_type,
             c.card_image_url as c_card_image_url, c.card_issue_url as c_card_issue_url,
             c.annual_fee as c_annual_fee, c.prev_month_spending as c_prev_month_spending,
-            uc.user_card_id as uc_user_card_id, uc.user_id as uc_user_id, uc.card_id as uc_card_id,
-            <include refid="UserTransactionSelectClause"/>,
             b.benefit_id as b_benefit_id, b.card_id as b_card_id, b.benefit_title as b_benefit_title,
             b.benefit_summary as b_benefit_summary, b.benefit_description as b_benefit_description,
             b.benefit_icon_url as b_benefit_icon_url,
@@ -127,9 +132,6 @@
             ca.category_image_url as ca_category_image_url
         FROM
             card c
-            LEFT JOIN user_card uc ON uc.card_id = c.card_id
-            LEFT JOIN user u ON u.user_id = uc.user_id
-            LEFT JOIN user_card_transaction uct ON uct.user_card_id = uc.user_card_id
             LEFT JOIN card_company cc ON c.company_id = cc.company_id
             LEFT JOIN benefit b ON c.card_id = b.card_id
             LEFT JOIN benefit_partner bp ON b.benefit_id = bp.benefit_id
