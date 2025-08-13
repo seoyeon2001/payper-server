@@ -134,3 +134,4 @@ jobs:
             docker compose pull gyehyunbak/payper-server:${{ needs.build.outputs.IMAGE_TAG }}
             docker compose up -d --remove-orphans
             docker system prune -f --filter "label=compose-service"
+            docker image prune -a -f
