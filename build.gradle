@@ -113,6 +113,9 @@ dependencies {
 
   // fcm
   implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+  // logstash encoder
+  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '6.3'
 }
 
 test {
