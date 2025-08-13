@@ -1,0 +1,29 @@
+# ./filebeat/filebeat.yml
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /logs/app.log
+      - /logs/app.*.log.gz
+    fields:
+      app: spring
+    fields_under_root: true
+    multiline.pattern: '^\d{4}-\d{2}-\d{2}'   # 로그가 날짜로 시작한다고 가정
+    multiline.negate: true
+    multiline.match: after
+
+output.elasticsearch:
+  hosts: ["http://monitor.payper.cloud:9200"]
+  # username: "elastic"       # 필요하면 주석 해제 후 입력
+  # password: "yourpassword"  # 필요하면 주석 해제 후 입력
+
+setup.kibana:
+  host: "http://monitor.payper.cloud:5601"
+
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /usr/share/filebeat/logs
+  name: filebeat.log
+  keepfiles: 7
+  permissions: 0644

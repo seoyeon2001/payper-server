@@ -8,6 +8,7 @@ services:
       - .env
     volumes:
       - /home/ubuntu/secrets/firebase-service-account.json:/etc/secrets/firebase-service-account.json:ro
+      - /home/ubuntu/payper-app/logs:/logs
     networks:
       - payper-network
 
@@ -35,6 +36,18 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
     networks:
       - payper-network
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:9.1.1
+    container_name: filebeat
+    user: root  # 로그 권한 문제 예방용
+    volumes:
+      - /home/ubuntu/payper-app/logs:/logs:ro
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    networks:
+      - payper-network
+    depends_on:
+      - app
 
 networks:
   payper-network:
