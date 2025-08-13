@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.payper.domain.card.SearchMapper">
+    <resultMap id="CardCompanyMap" type="CardCompany">
+        <id column="cc_company_id" property="companyId"/>
+        <result column="cc_company_name" property="companyName"/>
+        <collection resultMap="CardMap" property="cardList" />
+    </resultMap>
+
+    <resultMap id="UserCardTransactionMap" type="UserCardTransaction">
+        <id column="uct_user_card_transaction_id" property="userCardTransactionId"/>
+        <result column="uct_user_card_id" property="userCardId"/>
+        <result column="uct_partner_id" property="partnerId"/>
+        <result column="uct_res_used_date" property="resUsedDate"/>
+        <result column="uct_res_used_time" property="resUsedTime"/>
+        <result column="uct_res_payment_due_date" property="resPaymentDueDate"/>
+        <result column="uct_comm_start_date" property="commStartDate"/>
+        <result column="uct_comm_end_date" property="commEndDate"/>
+        <result column="uct_res_card_no" property="resCardNo"/>
+        <result column="uct_res_card_no1" property="resCardNo1"/>
+        <result column="uct_res_card_name" property="resCardName"/>
+        <result column="uct_res_used_amount" property="resUsedAmount"/>
+        <result column="uct_res_payment_type" property="resPaymentType"/>
+        <result column="uct_res_installment_month" property="resInstallmentMonth"/>
+        <result column="uct_res_approval_no" property="resApprovalNo"/>
+        <result column="uct_res_vat" property="resVat"/>
+        <result column="uct_res_cashback" property="resCashback"/>
+        <result column="uct_res_krw_amt" property="resKrwAmt"/>
+        <result column="uct_res_cancel_yn" property="resCancelYn"/>
+        <result column="uct_res_cancel_amount" property="resCancelAmount"/>
+        <result column="uct_res_member_store_name" property="resMemberStoreName"/>
+        <result column="uct_res_member_store_corp_no" property="resMemberStoreCorpNo"/>
+        <result column="uct_res_member_store_type" property="resMemberStoreType"/>
+        <result column="uct_res_member_store_addr" property="resMemberStoreAddr"/>
+        <result column="uct_res_member_store_tel_no" property="resMemberStoreTelNo"/>
+        <result column="uct_res_member_store_no" property="resMemberStoreNo"/>
+        <result column="uct_res_account_currency" property="resAccountCurrency"/>
+        <result column="uct_res_home_foreign_type" property="resHomeForeignType"/>
+    </resultMap>
+
+    <resultMap id="UserCardMap" type="UserCard">
+        <id column="uc_user_card_id" property="userCardId"/>
+        <result column="uc_user_id" property="userId"/>
+        <result column="uc_card_id" property="cardId"/>
+        <collection resultMap="UserCardTransactionMap" property="userCardTransactionList" />
+    </resultMap>
+
+    <resultMap id="CardMap" type="Card">
+        <id column="c_card_id" property="cardId"/>
+        <result column="c_company_id" property="companyId"/>
+        <result column="c_card_name" property="cardName"/>
+        <result column="c_card_type" property="cardType"/>
+        <result column="c_card_image_url" property="cardImageUrl"/>
+        <result column="c_card_issue_url" property="cardIssueUrl"/>
+        <result column="c_annual_fee" property="annualFee"/>
+        <result column="c_prev_month_spending" property="prevMonthSpending"/>
+        <association resultMap="CardCompanyMap" property="cardCompany"/>
+        <collection resultMap="BenefitMap" property="benefitList" />
+        <collection resultMap="UserCardMap" property="userCardList" />
+    </resultMap>
+
+    <resultMap id="BenefitMap" type="Benefit">
+        <id column="b_benefit_id" property="benefitId"/>
+        <result column="b_card_id" property="cardId"/>
+        <result column="b_benefit_title" property="benefitTitle"/>
+        <result column="b_benefit_summary" property="benefitSummary"/>
+        <result column="b_benefit_description" property="benefitDescription"/>
+        <result column="b_benefit_icon_url" property="benefitIconUrl"/>
+        <collection resultMap="BenefitCategoryMap" property="benefitCategoryList" />
+        <collection resultMap="BenefitPartnerMap" property="benefitPartnerList" />
+    </resultMap>
+
+    <resultMap id="BenefitPartnerMap" type="BenefitPartner">
+        <id column="bp_benefit_partner_id" property="benefitPartnerId"/>
+        <result column="bp_benefit_id" property="benefitId"/>
+        <result column="bp_partner_id" property="partnerId"/>
+    </resultMap>
+
+    <resultMap id="BenefitCategoryMap" type="BenefitCategory">
+        <id column="bc_benefit_category_id" property="benefitCategoryId"/>
+        <result column="bc_benefit_id" property="benefitId"/>
+        <result column="bc_category_id" property="categoryId"/>
+        <association resultMap="CategoryMap" property="category"/>
+    </resultMap>
+
+    <resultMap id="CategoryMap" type="Category">
+        <id column="ca_category_id" property="categoryId"/>
+        <result column="ca_category_name" property="categoryName"/>
+        <result column="ca_category_image_url" property="categoryImageUrl"/>
+    </resultMap>
+
+    <sql id="UserTransactionSelectClause">
+        uct.user_card_transaction_id as uct_user_card_transaction_id, uct.user_card_id as uct_user_card_id,
+        uct.partner_id as uct_partner_id, uct.res_used_date as uct_res_used_date,
+        uct.res_used_time as uct_res_used_time, uct.res_payment_due_date as uct_res_payment_due_date,
+        uct.comm_start_date as uct_comm_start_date, uct.comm_end_date as uct_comm_end_date,
+        uct.res_card_no as uct_res_card_no, uct.res_card_no1 as uct_res_card_no1,
+        uct.res_card_name as uct_res_card_name, uct.res_used_amount as uct_res_used_amount,
+        uct.res_payment_type as uct_res_payment_type, uct.res_installment_month as uct_res_installment_month,
+        uct.res_approval_no as uct_res_approval_no, uct.res_vat as uct_res_vat,
+        uct.res_cash_back as uct_res_cashback, uct.res_krw_amt as uct_res_krw_amt,
+        uct.res_cancel_yn as uct_res_cancel_yn, uct.res_cancel_amount as uct_res_cancel_amount,
+        uct.res_member_store_name as uct_res_member_store_name, uct.res_member_store_corp_no as uct_res_member_store_corp_no,
+        uct.res_member_store_type as uct_res_member_store_type, uct.res_member_store_addr as uct_res_member_store_addr,
+        uct.res_member_store_tel_no as uct_res_member_store_tel_no, uct.res_member_store_no as uct_res_member_store_no,
+        uct.res_account_currency as uct_res_account_currency, uct.res_home_foreign_type as uct_res_home_foreign_type
+    </sql>
+
+    <sql id="SearchCardJoinClause">
+        SELECT
+            cc.company_id as cc_company_id, cc.company_name as cc_company_name,
+            c.card_id as c_card_id, c.company_id as c_company_id, c.card_name as c_card_name, c.card_type as c_card_type,
+            c.card_image_url as c_card_image_url, c.card_issue_url as c_card_issue_url,
+            c.annual_fee as c_annual_fee, c.prev_month_spending as c_prev_month_spending,
+            uc.user_card_id as uc_user_card_id, uc.user_id as uc_user_id, uc.card_id as uc_card_id,
+            <include refid="UserTransactionSelectClause"/>,
+            b.benefit_id as b_benefit_id, b.card_id as b_card_id, b.benefit_title as b_benefit_title,
+            b.benefit_summary as b_benefit_summary, b.benefit_description as b_benefit_description,
+            b.benefit_icon_url as b_benefit_icon_url,
+            bp.benefit_partner_id as bp_benefit_partner_id, bp.benefit_id as bp_benefit_id,
+            bp.partner_id as bp_partner_id,
+            bc.benefit_category_id as bc_benefit_category_id, bc.benefit_id as bc_benefit_id,
+            bc.category_id as bc_category_id,
+            ca.category_id as ca_category_id,ca.category_name as ca_category_name,
+            ca.category_image_url as ca_category_image_url
+        FROM
+            card c
+            LEFT JOIN user_card uc ON uc.card_id = c.card_id
+            LEFT JOIN user u ON u.user_id = uc.user_id
+            LEFT JOIN user_card_transaction uct ON uct.user_card_id = uc.user_card_id
+            LEFT JOIN card_company cc ON c.company_id = cc.company_id
+            LEFT JOIN benefit b ON c.card_id = b.card_id
+            LEFT JOIN benefit_partner bp ON b.benefit_id = bp.benefit_id
+            LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
+            LEFT JOIN category ca ON ca.category_id = bc.category_id
+    </sql>
+
+    <select id="getCardsWithConditions" resultMap="CardMap">
+        <include refid="SearchCardJoinClause"/>
+        WHERE 1=1
+        <if test="options.cardName!=null and options.cardName!='' ">
+            AND c.card_name LIKE CONCAT('%', #{options.cardName}, '%')
+        </if>
+        <if test="options.cardType!=null and options.cardType!='' ">
+            AND c.card_type = #{options.cardType}
+        </if>
+        <if test="options.categoryNames!=null and options.categoryNames.size()>0">
+            AND ca.category_name IN
+            <foreach collection="options.categoryNames" item="categoryName" open="(" separator="," close=")">
+                #{categoryName}
+            </foreach>
+        </if>
+        <if test="options.cardCompanyNames!=null and options.cardCompanyNames.size()>0">
+            AND cc.company_name IN
+            <foreach collection="options.cardCompanyNames" item="cardCompanyName" open="(" separator="," close=")">
+                #{cardCompanyName}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getCardCompanyByCardCompanyId" resultType="CardCompany">
+        SELECT *
+        FROM card_company
+        WHERE company_id = #{cardCompanyId}
+    </select>
+
+
+    <select id="getCategoryByCategoryId" resultType="Category">
+        SELECT *
+        FROM category
+        WHERE category_id = #{categoryId}
+    </select>
+</mapper>
+

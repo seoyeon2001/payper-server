@@ -1,17 +1,22 @@
 package com.payper.domain.card;
 
+import com.payper.domain.benefit.domain.Benefit;
+import com.payper.domain.benefit.dto.response.BenefitResponse;
 import com.payper.domain.benefit.exception.BenefitDeletionFailedException;
-import com.payper.domain.card.dto.CardResponse;
-import com.payper.domain.card.dto.RegisterCardMeRequest;
-import com.payper.domain.card.dto.RegisterCardRequest;
-import com.payper.domain.card.dto.UpdateCardRequest;
+import com.payper.domain.card.domain.Card;
+import com.payper.domain.card.domain.CardCompany;
+import com.payper.domain.card.dto.*;
 import com.payper.domain.card.exception.*;
+import com.payper.domain.category.domain.BenefitCategory;
+import com.payper.domain.category.domain.Category;
+import com.payper.domain.category.dto.CategoryResponse;
 import com.payper.domain.user.exception.UserCardDeletionFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,6 +51,8 @@ public class CardService {
         // 파라미터에 맞는 조건으로 검색
         return cardMapper.searchWithConditions(name, type, category, cardCompany);
     }
+
+
 
     public List<CardResponse> getAllCardsByMe(Integer userId){
         return cardMapper.selectCardsByUserID(userId);

@@ -16,6 +16,8 @@ public class BenefitCategory {
     private Integer benefitId;
     private Integer categoryId;
 
+    private Category category;
+
     private Boolean isDeleted;
     private Date createdAt;
     private Date deletedAt;

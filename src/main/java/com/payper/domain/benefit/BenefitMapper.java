@@ -1,8 +1,10 @@
 package com.payper.domain.benefit;
 
+import com.payper.domain.benefit.domain.Benefit;
 import com.payper.domain.benefit.dto.request.UpdateBenefitRequest;
 import com.payper.domain.benefit.dto.response.BenefitResponse;
 import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
+import com.payper.domain.card.domain.Card;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -27,6 +27,8 @@ public class Card {
     private List<UserCard> userCardList; // 카드를 가진 사용자 목록
     private List<Benefit> benefitList; // 카드의 혜택 리스트
 
+    private CardCompany cardCompany;
+
     private Boolean isDeleted;
     private Date createdAt;
     private Date deletedAt;

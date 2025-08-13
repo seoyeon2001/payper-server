@@ -1,9 +1,6 @@
 package com.payper.domain.card;
 
-import com.payper.domain.card.dto.CardResponse;
-import com.payper.domain.card.dto.RegisterCardMeRequest;
-import com.payper.domain.card.dto.RegisterCardRequest;
-import com.payper.domain.card.dto.UpdateCardRequest;
+import com.payper.domain.card.dto.*;
 import com.payper.domain.user.UserService;
 import com.payper.global.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +19,8 @@ import java.util.Map;
 public class CardController {
     private final CardService cardService;
     private final UserService userService;
+
+    private final SearchService searchService;
 
     @GetMapping("")
     public ResponseEntity<Map<String, List<CardResponse>>> getAllCards() {
@@ -57,15 +56,20 @@ public class CardController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Map<String, List<CardResponse>>> searchCards(
+    public ResponseEntity<CardsResponse> searchCards(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) List<String> category,
-            @RequestParam(required = false) List<String> cardCompany
+            @RequestParam(required = false) List<String> categories,
+            @RequestParam(required = false) List<String> cardCompanies
     ) {
         log.info("검색 카드 조회");
-        List<CardResponse> cards = cardService.searchCards(name, type, category, cardCompany);
-        return ResponseEntity.ok(Map.of("cards", cards));
+        
+        //검색 옵션 값 지정
+        SearchOptions searchOptions = SearchOptions.create(
+                name,type,categories,cardCompanies,null
+        );
+
+        return ResponseEntity.ok(searchService.searchCardsPhase0(searchOptions));
     }
 
     @GetMapping("/me")
