@@ -1,7 +1,9 @@
 package com.payper.domain.partner;
 
+import com.payper.domain.card.SearchOptions;
 import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.card.dto.CardResponse;
+import com.payper.domain.card.service.SearchService;
 import com.payper.domain.category.CategoryMapper;
 import com.payper.domain.category.domain.Category;
 import com.payper.domain.category.dto.CategoryResponse;
@@ -33,6 +35,8 @@ public class PartnerService {
     private String apiUrl;
 
     private final RestTemplate restTemplate;
+
+    private final SearchService searchService;
 
     private final CategoryMapper categoryMapper;
     private final PartnerMapper partnerMapper;
@@ -149,9 +153,18 @@ public class PartnerService {
 
     public PartnerResponse findPartnerById(Integer partnerId, Integer userId) {
         Partner partner = partnerMapper.findById(partnerId).orElseThrow(() -> new PartnerNotFoundException(partnerId));
+
         Category category = categoryMapper.findById(partner.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(partner.getCategoryId()));
+
         List<CardResponse> myCards = findMyCardsByPartnerId(partnerId, userId);
 
-        return PartnerResponse.build(partner, category, myCards);
+        List<CardResponse> cards = searchService.searchCardsPhase1(
+                SearchOptions.create(
+                        partner.getPartnerName(),
+                        null,null,null,0
+                )
+        ).getCards();
+
+        return PartnerResponse.build(partner, category, myCards,cards);
     }
 }

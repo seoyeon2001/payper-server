@@ -1,5 +1,6 @@
 package com.payper.domain.partner;
 
+import com.payper.domain.partner.domain.Partner;
 import com.payper.domain.partner.dto.*;
 import com.payper.domain.user.UserService;
 import com.payper.global.security.domain.CustomUser;
@@ -35,8 +36,13 @@ public class PartnerController {
             @PathVariable Integer partnerId) {
         Integer userId = userService.getUserId(customUser);
         log.info("파트너 상세 조회 : partnerId - {}, userId - {}", partnerId, userId);
-        return ResponseEntity.ok(partnerService.findPartnerById(partnerId, userId));
+
+        PartnerResponse partner = partnerService.findPartnerById(partnerId, userId);
+
+        return ResponseEntity.ok(partner);
     }
+
+
 
     @GetMapping("/search")
     public ResponseEntity<Map<String, List<SearchPartnersResponse>>> searchPartners(

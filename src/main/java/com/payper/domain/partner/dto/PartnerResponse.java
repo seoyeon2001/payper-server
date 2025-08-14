@@ -22,14 +22,21 @@ public class PartnerResponse {
     private CategoryResponse category;
     private Position position;
     private List<CardResponse> myCards;
+    private List<CardResponse> cards;
 
-    public static PartnerResponse build(Partner partner, Category category, List<CardResponse> myCards) {
+    public static PartnerResponse build(
+            Partner partner,
+            Category category,
+            List<CardResponse> myCards,
+            List<CardResponse> cards
+    ) {
         return PartnerResponse.builder()
                 .id(partner.getPartnerId())
                 .name(partner.getPartnerName())
                 .imageUrl(partner.getPartnerImageUrl())
                 .category(CategoryResponse.toDTO(category))
                 .myCards(myCards)
+                .cards(cards)
                 .build();
     }
 
