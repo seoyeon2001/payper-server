@@ -42,7 +42,7 @@ public class SearchService {
         else{
             return new CardsResponse(
                     true,
-                    searchOptions.getPage()+searchOptions.getLimit(),
+                    (searchOptions.getPage()+searchOptions.getLimit())/searchOptions.getLimit(),
                     cardResponses
             );
         }
