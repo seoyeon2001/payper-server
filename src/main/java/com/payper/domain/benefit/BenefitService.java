@@ -5,7 +5,7 @@ import com.payper.domain.benefit.dto.response.BenefitsResponse;
 import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
 import com.payper.domain.benefit.exception.BenefitDeletionFailedException;
 import com.payper.domain.benefit.exception.BenefitNotFoundException;
-import com.payper.domain.card.CardMapper;
+import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.card.exception.CardNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

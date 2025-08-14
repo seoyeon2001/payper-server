@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.payper.domain.card.SearchMapper">
+<mapper namespace="com.payper.domain.card.mapper.SearchMapper">
     <resultMap id="CardCompanyMap" type="CardCompany">
         <id column="cc_company_id" property="companyId"/>
         <result column="cc_company_name" property="companyName"/>
@@ -167,6 +167,7 @@
                 #{cardCompanyName}
             </foreach>
         </if>
+
     </select>
 
     <select id="getCardCompanyByCardCompanyId" resultType="CardCompany">
@@ -180,6 +181,148 @@
         SELECT *
         FROM category
         WHERE category_id = #{categoryId}
+    </select>
+
+
+
+    <!-- 더 간단한 방법1 페이징 방식 (성능 최적화) -->
+    <select id="getCardsWithConditionsSliced" resultMap="CardMap">
+        SELECT
+        cc.company_id as cc_company_id, cc.company_name as cc_company_name,
+        c.card_id as c_card_id, c.company_id as c_company_id, c.card_name as c_card_name, c.card_type as c_card_type,
+        c.card_image_url as c_card_image_url, c.card_issue_url as c_card_issue_url,
+        c.annual_fee as c_annual_fee, c.prev_month_spending as c_prev_month_spending,
+        b.benefit_id as b_benefit_id, b.card_id as b_card_id, b.benefit_title as b_benefit_title,
+        b.benefit_summary as b_benefit_summary, b.benefit_description as b_benefit_description,
+        b.benefit_icon_url as b_benefit_icon_url,
+        bp.benefit_partner_id as bp_benefit_partner_id, bp.benefit_id as bp_benefit_id,
+        bp.partner_id as bp_partner_id,
+        bc.benefit_category_id as bc_benefit_category_id, bc.benefit_id as bc_benefit_id,
+        bc.category_id as bc_category_id,
+        ca.category_id as ca_category_id,ca.category_name as ca_category_name,
+        ca.category_image_url as ca_category_image_url
+        FROM (
+        SELECT DISTINCT c0.card_id, c0.company_id, c0.card_name, c0.card_type,
+        c0.card_image_url, c0.card_issue_url, c0.annual_fee, c0.prev_month_spending
+        FROM card c0
+        LEFT JOIN card_company cc0 ON c0.company_id = cc0.company_id
+        LEFT JOIN benefit b0 ON c0.card_id = b0.card_id
+        LEFT JOIN benefit_category bc0 ON b0.benefit_id = bc0.benefit_id
+        LEFT JOIN category ca0 ON ca0.category_id = bc0.category_id
+        WHERE 1=1
+        <if test="options.keyword!=null and options.keyword!='' ">
+            AND (
+            c0.card_name LIKE CONCAT('%', #{options.keyword}, '%')
+                or (
+                b0.benefit_title LIKE CONCAT('%', #{options.keyword}, '%')
+                OR b0.benefit_summary LIKE CONCAT('%', #{options.keyword}, '%')
+                OR b0.benefit_description LIKE CONCAT('%', #{options.keyword}, '%')
+                )
+            )
+        </if>
+        <if test="options.cardType!=null and options.cardType!='' ">
+            AND c0.card_type = #{options.cardType}
+        </if>
+        <if test="options.categoryNames!=null and options.categoryNames.size()>0">
+            AND ca0.category_name IN
+            <foreach collection="options.categoryNames" item="categoryName" open="(" separator="," close=")">
+                #{categoryName}
+            </foreach>
+        </if>
+        <if test="options.cardCompanyNames!=null and options.cardCompanyNames.size()>0">
+            AND cc0.company_name IN
+            <foreach collection="options.cardCompanyNames" item="cardCompanyName" open="(" separator="," close=")">
+                #{cardCompanyName}
+            </foreach>
+        </if>
+        ORDER BY c0.card_id
+        <if test="options.limit != null and options.page != null">
+            LIMIT #{options.limit} OFFSET #{options.page}
+        </if>
+        ) c
+        LEFT JOIN card_company cc ON c.company_id = cc.company_id
+        LEFT JOIN benefit b ON c.card_id = b.card_id
+        LEFT JOIN benefit_partner bp ON b.benefit_id = bp.benefit_id
+        LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
+        LEFT JOIN category ca ON ca.category_id = bc.category_id
+        ORDER BY c.card_id, b.benefit_id, bc.benefit_category_id, bp.benefit_partner_id
+    </select>
+
+
+
+    <!-- 방법2 방식-->
+    <!-- 검색 조건을 위한 공통 WHERE 절 (방법2 방식에 사용될)-->
+    <sql id="CardSearchConditions">
+        WHERE 1=1
+        <if test="options.keyword!=null and options.keyword!='' ">
+            AND (
+            c.card_name LIKE CONCAT('%', #{options.keyword}, '%')
+            or (
+            b.benefit_title LIKE CONCAT('%', #{options.keyword}, '%')
+            OR b.benefit_summary LIKE CONCAT('%', #{options.keyword}, '%')
+            OR b.benefit_description LIKE CONCAT('%', #{options.keyword}, '%')
+            )
+            )
+        </if>
+        <if test="options.cardType!=null and options.cardType!='' ">
+            AND c.card_type = #{options.cardType}
+        </if>
+        <if test="options.categoryNames!=null and options.categoryNames.size()>0">
+            AND ca.category_name IN
+            <foreach collection="options.categoryNames" item="categoryName" open="(" separator="," close=")">
+                #{categoryName}
+            </foreach>
+        </if>
+        <if test="options.cardCompanyNames!=null and options.cardCompanyNames.size()>0">
+            AND cc.company_name IN
+            <foreach collection="options.cardCompanyNames" item="cardCompanyName" open="(" separator="," close=")">
+                #{cardCompanyName}
+            </foreach>
+        </if>
+    </sql>
+
+    <!-- 페이징할 카드 ID 목록만 조회 (방법2 방식의 첫 번째 단계) -->
+    <select id="getCardIdsForPaging" parameterType="map" resultType="int">
+        SELECT DISTINCT c.card_id
+        FROM card c
+        LEFT JOIN card_company cc ON c.company_id = cc.company_id
+        LEFT JOIN benefit b ON c.card_id = b.card_id
+        LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
+        LEFT JOIN category ca ON ca.category_id = bc.category_id
+        <include refid="CardSearchConditions"/>
+        ORDER BY c.card_id
+        <if test="options.limit != null and options.page != null">
+            LIMIT #{options.limit} OFFSET #{options.page}
+        </if>
+    </select>
+
+    <!-- 특정 카드 ID들의 상세 정보 조회 (방법2 방식의 두 번째 단계) -->
+    <select id="getCardDetailsByIds" parameterType="list" resultMap="CardMap">
+        SELECT
+        cc.company_id as cc_company_id, cc.company_name as cc_company_name,
+        c.card_id as c_card_id, c.company_id as c_company_id, c.card_name as c_card_name, c.card_type as c_card_type,
+        c.card_image_url as c_card_image_url, c.card_issue_url as c_card_issue_url,
+        c.annual_fee as c_annual_fee, c.prev_month_spending as c_prev_month_spending,
+        b.benefit_id as b_benefit_id, b.card_id as b_card_id, b.benefit_title as b_benefit_title,
+        b.benefit_summary as b_benefit_summary, b.benefit_description as b_benefit_description,
+        b.benefit_icon_url as b_benefit_icon_url,
+        bp.benefit_partner_id as bp_benefit_partner_id, bp.benefit_id as bp_benefit_id,
+        bp.partner_id as bp_partner_id,
+        bc.benefit_category_id as bc_benefit_category_id, bc.benefit_id as bc_benefit_id,
+        bc.category_id as bc_category_id,
+        ca.category_id as ca_category_id,ca.category_name as ca_category_name,
+        ca.category_image_url as ca_category_image_url
+        FROM card c
+        LEFT JOIN card_company cc ON c.company_id = cc.company_id
+        LEFT JOIN benefit b ON c.card_id = b.card_id
+        LEFT JOIN benefit_partner bp ON b.benefit_id = bp.benefit_id
+        LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
+        LEFT JOIN category ca ON ca.category_id = bc.category_id
+        WHERE c.card_id IN
+        <foreach collection="list" item="cardId" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+        ORDER BY c.card_id, b.benefit_id, bc.benefit_category_id, bp.benefit_partner_id
     </select>
 </mapper>
 

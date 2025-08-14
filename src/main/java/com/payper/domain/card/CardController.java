@@ -1,6 +1,8 @@
 package com.payper.domain.card;
 
 import com.payper.domain.card.dto.*;
+import com.payper.domain.card.service.CardService;
+import com.payper.domain.card.service.SearchService;
 import com.payper.domain.user.UserService;
 import com.payper.global.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
@@ -60,16 +62,17 @@ public class CardController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) List<String> category,
-            @RequestParam(required = false) List<String> cardCompany
+            @RequestParam(required = false) List<String> cardCompany,
+            @RequestParam(defaultValue = "0") int page //Integer면 변환될 때 null이 될 수 있어서 int로 지정
     ) {
         log.info("검색 카드 조회");
         
         //검색 옵션 값 지정
         SearchOptions searchOptions = SearchOptions.create(
-                name,type,category,cardCompany
+                name,type,category,cardCompany,page
         );
 
-        return ResponseEntity.ok(searchService.searchCardsPhase0(searchOptions));
+        return ResponseEntity.ok(searchService.searchCardsPhase1(searchOptions));
     }
 
     @GetMapping("/me")

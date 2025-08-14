@@ -1,7 +1,7 @@
 package com.payper.global.notification.service;
 
 import com.google.firebase.messaging.Notification;
-import com.payper.domain.card.CardMapper;
+import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.partner.PartnerService;
 import com.payper.domain.partner.dto.PartnerKeywordSearchRequest;

@@ -1,4 +1,4 @@
-package com.payper.domain.card;
+package com.payper.domain.card.mapper;
 
 import com.payper.domain.card.domain.Card;
 import com.payper.domain.card.dto.CardResponse;

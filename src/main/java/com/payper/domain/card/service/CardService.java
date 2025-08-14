@@ -1,22 +1,15 @@
-package com.payper.domain.card;
+package com.payper.domain.card.service;
 
-import com.payper.domain.benefit.domain.Benefit;
-import com.payper.domain.benefit.dto.response.BenefitResponse;
 import com.payper.domain.benefit.exception.BenefitDeletionFailedException;
-import com.payper.domain.card.domain.Card;
-import com.payper.domain.card.domain.CardCompany;
+import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.card.dto.*;
 import com.payper.domain.card.exception.*;
-import com.payper.domain.category.domain.BenefitCategory;
-import com.payper.domain.category.domain.Category;
-import com.payper.domain.category.dto.CategoryResponse;
 import com.payper.domain.user.exception.UserCardDeletionFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

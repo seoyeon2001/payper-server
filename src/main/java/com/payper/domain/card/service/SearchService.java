@@ -1,7 +1,9 @@
-package com.payper.domain.card;
+package com.payper.domain.card.service;
 
 import com.payper.domain.benefit.domain.Benefit;
 import com.payper.domain.benefit.dto.response.BenefitResponse;
+import com.payper.domain.card.mapper.SearchMapper;
+import com.payper.domain.card.SearchOptions;
 import com.payper.domain.card.domain.Card;
 import com.payper.domain.card.dto.CardCompanyResponse;
 import com.payper.domain.card.dto.CardResponse;
@@ -23,14 +25,27 @@ public class SearchService {
     private final SearchMapper searchMapper;
 
     @Transactional
-    public CardsResponse searchCardsPhase0(SearchOptions searchOptions) {
+    public CardsResponse searchCardsPhase1(SearchOptions searchOptions) {
         //조건에 맞는 카드 get
-        List<Card> cards=searchMapper.getCardsWithConditions(searchOptions);
+        List<Card> cards=searchMapper.getCardsWithConditionsSliced(searchOptions);
 
         //Card domain을 Card DTO로 바꾸고 반환
         List<CardResponse> cardResponses = getCardResponsesByCards(cards);
 
-        return new CardsResponse(cardResponses);
+        if(cardResponses.size()<searchOptions.getLimit()){
+            return new CardsResponse(
+                    false,
+                    null,
+                    cardResponses
+            );
+        }
+        else{
+            return new CardsResponse(
+                    true,
+                    searchOptions.getPage()+searchOptions.getLimit(),
+                    cardResponses
+            );
+        }
     }
 
     //Card domain들을 통해 Card DTO들 생성 후 반환

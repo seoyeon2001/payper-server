@@ -1,6 +1,6 @@
 package com.payper.domain.partner;
 
-import com.payper.domain.card.CardMapper;
+import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.card.dto.CardResponse;
 import com.payper.domain.category.CategoryMapper;
 import com.payper.domain.category.domain.Category;

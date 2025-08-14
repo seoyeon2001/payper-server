@@ -1,10 +1,9 @@
 package com.payper.domain.user;
 
-import com.payper.domain.card.CardMapper;
+import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.partner.PartnerMapper;
 import com.payper.domain.user.domain.UserCard;
 import com.payper.domain.user.domain.UserCardTransaction;
-import com.payper.domain.user.exception.UserCardTransactionSaveFailedException;
 import com.payper.external.codef.dto.output.ApprovalInfo;
 import com.payper.external.crawling.config.partnerSynonyms;
 import java.util.List;

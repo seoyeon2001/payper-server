@@ -2,7 +2,7 @@
 //
 //import com.fasterxml.jackson.core.type.TypeReference;
 //import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.payper.domain.card.CardMapper;
+//import com.payper.domain.card.mapper.CardMapper;
 //import com.payper.domain.card.exception.DuplicateUserCardException;
 //import com.payper.domain.user.UserService;
 //import com.payper.external.codef.dto.CardRegistrationResult;
