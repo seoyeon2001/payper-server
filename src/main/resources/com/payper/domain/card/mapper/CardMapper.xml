@@ -269,6 +269,7 @@
         WHERE uc.user_id = #{userId}
         AND uc.is_deleted = false
         AND bp.partner_id = #{partnerId}
+        ORDER BY RAND()
         LIMIT 1;
     </select>
 

@@ -1,5 +1,6 @@
 package com.payper.domain.user;
 
+import com.payper.domain.user.dto.UserReportResponse;
 import com.payper.domain.user.dto.UserResponse;
 import com.payper.global.security.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,11 @@ public class UserController {
     public ResponseEntity<Void> deleteMe(@AuthenticationPrincipal CustomUser customUser) {
         userService.deleteUser(userService.getUserId(customUser));
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/report")
+    public ResponseEntity<UserReportResponse> getReport(@AuthenticationPrincipal CustomUser customUser) {
+        Integer userId = userService.getUserId(customUser);
+        return ResponseEntity.ok(userService.analyzeMonthWithGpt(userId));
     }
 }

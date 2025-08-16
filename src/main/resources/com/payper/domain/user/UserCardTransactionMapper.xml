@@ -68,4 +68,19 @@
             AND is_deleted = false
         )
     </select>
+
+    <select id="getUserTransactionSummaryDto" resultType="UserTransactionSummaryDto">
+        SELECT
+            t.user_card_transaction_id AS userCardTransactionId,
+            t.res_member_store_name AS resMemberStoreName,
+            t.res_member_store_type AS resMemberStoreType,
+            t.res_used_amount       AS resUsedAmount
+        FROM user_card_transaction t
+                 JOIN user_card uc ON uc.user_card_id = t.user_card_id
+        WHERE uc.user_id = #{userId}
+          AND uc.is_deactivate = FALSE
+          AND t.res_used_date BETWEEN #{startDate} AND #{endDate}
+          AND t.res_cancel_yn = '0'
+          AND t.res_account_currency = 'KRW'
+    </select>
 </mapper>
