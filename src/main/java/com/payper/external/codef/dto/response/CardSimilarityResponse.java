@@ -8,5 +8,4 @@ package com.payper.external.codef.dto.response;
 public record CardSimilarityResponse(
         String cardName,
         double similarity
-//        MatchType matchType
 ) {}

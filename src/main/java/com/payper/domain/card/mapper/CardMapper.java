@@ -83,6 +83,12 @@ public interface CardMapper {
             @Param("cardId") Integer cardId
     );
 
+    Integer restoreUserCardWithNumber(
+            @Param("userId") Integer userId,
+            @Param("cardId") Integer cardId,
+            @Param("lastNumber") String lastNumber
+    );
+
     boolean isPreviouslyDeletedUserCard(
             @Param("userId") Integer userId,
             @Param("cardId") Integer cardId

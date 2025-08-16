@@ -115,8 +115,8 @@
 
     <!-- 내 카드로 등록(codef를 통해 저장 -> 카드 번호 포함) -->
     <insert id="registerMyCardWithNumber">
-        insert into user_card(user_id, card_id, last3, created_at, is_deleted, last_modified_at)
-        values (#{userId}, #{cardId}, #{lastNumber}, NOW(), FALSE, NOW())
+        insert into user_card(user_id, card_id, last3, last_modified_at)
+        values (#{userId}, #{cardId}, #{lastNumber}, NOW())
     </insert>
 
     <select id="existsCardCompany" resultType="boolean">
@@ -173,6 +173,13 @@
     <update id="restoreUserCard">
         UPDATE user_card
         SET is_deactivate = false, deactivate_at = NULL, last_modified_at = NOW()
+        WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deactivate = true
+    </update>
+
+    <!-- 카드 재등록 - 복원 (codef를 통해 -> 카드 번호 포함) -->
+    <update id="restoreUserCardWithNumber">
+        UPDATE user_card
+        SET is_deactivate = false, deactivate_at = NULL, last3 = #{lastNumber}, last_modified_at = NOW()
         WHERE user_id = #{userId} AND card_id = #{cardId} AND is_deactivate = true
     </update>
 

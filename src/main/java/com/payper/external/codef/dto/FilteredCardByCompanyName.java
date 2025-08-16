@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 public class FilteredCardByCompanyName {
-    private Long id;
+    private Integer id;
     private String name;  // DB 저장 카드 이름
     private String type; // 'CREDIT', 'CHECK'
 }

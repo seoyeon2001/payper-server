@@ -11,8 +11,6 @@
                  JOIN card_company cc
                       ON c.company_id = cc.company_id
         WHERE cc.company_name = #{companyName}
-          -- AND c.is_deleted = false
-          AND cc.is_deleted = false
     </select>
 
     <resultMap id="CardMap" type="FilteredCardByCompanyName">
