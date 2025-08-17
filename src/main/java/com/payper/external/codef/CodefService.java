@@ -12,11 +12,13 @@ import com.payper.external.codef.dto.output.ApprovalInfo;
 import com.payper.external.codef.dto.output.CardInfo;
 import com.payper.external.codef.dto.output.CodefStandardResponse;
 import com.payper.external.codef.dto.output.Result;
+import com.payper.external.codef.dto.request.AddAccountRequest;
 import com.payper.external.codef.dto.request.ApprovalListRequest;
-import com.payper.external.codef.dto.request.ConnectedIdRequest;
+import com.payper.external.codef.dto.request.CreateAccountRequest;
 import com.payper.external.codef.dto.request.MyCardListRequest;
+import com.payper.external.codef.dto.response.AddAccountResponse;
 import com.payper.external.codef.dto.response.ApprovalListResponse;
-import com.payper.external.codef.dto.response.ConnectedIdResponse;
+import com.payper.external.codef.dto.response.CreateAccountResponse;
 import com.payper.external.codef.dto.response.MyCardListResponse;
 import com.payper.domain.user.UserService;
 import com.payper.external.codef.exception.*;
@@ -63,7 +65,7 @@ public class CodefService {
 //    }
 
     // 계정 생성 - connected id 발급
-    public CodefStandardResponse<ConnectedIdResponse> createConnectedId(ConnectedIdRequest request, Integer userId) {
+    public CodefStandardResponse<CreateAccountResponse> createAccount(CreateAccountRequest request, Integer userId) {
         String connectedId = userService.getConnectedIdById(userId);
 
         // connected id가 있는 사용자
@@ -74,8 +76,11 @@ public class CodefService {
 
         try {
             // 1. CODEF 요청 파라미터 구성
-            HashMap<String, Object> accountMap = buildAccountMap(request);
-            log.info("accountMap을 출력합니다.: {}", accountMap);
+            HashMap<String, Object> accountMap = buildAccountMap (
+                    request.organizationName().getCode(),
+                    request.companyId(),
+                    request.companyPassword()
+            );
 
             List<HashMap<String, Object>> accountList = List.of(accountMap);
             HashMap<String, Object> parameterMap = new HashMap<>();
@@ -83,7 +88,6 @@ public class CodefService {
 
             // 2. CODEF API 호출 및 응답 파싱
             String resultJson = codef.createAccount(EasyCodefServiceType.DEMO, parameterMap);
-            log.info("resultJson을 출력합니다.: {}", resultJson);
 
             HashMap<String, Object> responseMap = objectMapper.readValue(resultJson, HashMap.class);
 
@@ -103,38 +107,85 @@ public class CodefService {
 
             // Result 객체 생성
             Result result = createResult(resultMap);
-            ConnectedIdResponse response = objectMapper.convertValue(dataMap, ConnectedIdResponse.class);
+            CreateAccountResponse response = objectMapper.convertValue(dataMap, CreateAccountResponse.class);
             return new CodefStandardResponse<>(result, response);
 
         } catch (Exception e) {
-            throw new RuntimeException("ConnectedId 생성 중 오류가 발생했습니다.", e);
+            throw new RuntimeException("계정 등록 중 오류가 발생했습니다.(ConnectedId 생성 실패)", e);
         }
     }
 
-    private HashMap<String, Object> buildAccountMap(ConnectedIdRequest request) {
-        log.info("request을 출력합니다.: {}", request);
+
+    // 계정 추가
+    public CodefStandardResponse<AddAccountResponse> addAccount(AddAccountRequest request, Integer userId) {
+        String connectedId = userService.getConnectedIdById(userId);
+
+        // 사용자는 존재하는데, connected id가 없는 경우
+        if (connectedId == null || connectedId.isEmpty()) {
+            throw new CodefAccountNotLinkedException();
+        }
 
         try {
-            HashMap<String, Object> accountMap = new HashMap<>();
-            accountMap.put("countryCode", "KR"); // 한국
-            accountMap.put("businessType", "CD"); // 카드
-            accountMap.put("clientType", "P"); // 개인
-            log.info("1. accountMap을 출력합니다.: {}", accountMap);
+            // 1. CODEF 요청 파라미터 구성
+            HashMap<String, Object> accountMap = buildAccountMap(
+                    request.organizationName().getCode(),
+                    request.companyId(),
+                    request.companyPassword()
+            );
 
-            accountMap.put("organization", request.organizationName().getCode());
-            log.info("2. accountMap을 출력합니다.: {}", accountMap);
+            List<HashMap<String, Object>> accountList = List.of(accountMap);
+            HashMap<String, Object> parameterMap = new HashMap<>();
+            parameterMap.put("accountList", accountList);
+            parameterMap.put("connectedId", connectedId);
 
-            accountMap.put("loginType", "1"); // 아이디 비번 로그인
-            accountMap.put("id", request.companyId());
-            log.info("3. accountMap을 출력합니다.: {}", accountMap);
+            // 2. CODEF API 호출 및 응답 파싱
+            String resultJson = codef.addAccount(EasyCodefServiceType.DEMO, parameterMap);
 
-            accountMap.put("password", EasyCodefUtil.encryptRSA(request.companyPassword(), codef.getPublicKey()));
-            log.info("4. accountMap을 출력합니다.: {}", accountMap);
+            HashMap<String, Object> responseMap = objectMapper.readValue(resultJson, HashMap.class);
 
-            return accountMap;
+            HashMap<String, Object> resultMap = (HashMap<String, Object>) responseMap.get("result");
+            HashMap<String, Object> dataMap = (HashMap<String, Object>) responseMap.get("data");
+
+            String resultCode = (String) resultMap.get("code");
+            checkCodefResultCode(resultCode);
+
+            // 3. 응답 객체 구성 및 저장
+            String resultConnectedId = (String) dataMap.get("connectedId");
+            if (resultConnectedId == null || resultConnectedId.isBlank()) {
+                throw new MissingConnectedIdInCodefResponseException();
+            }
+
+            // CODEF 응답 Connected ID와 DB Connected ID가 다르면 에러
+            if (!resultConnectedId.equals(connectedId)) {
+                throw new ConnectedIdMismatchException();
+            }
+
+            // Result 객체 생성
+            Result result = createResult(resultMap);
+            AddAccountResponse response = objectMapper.convertValue(dataMap, AddAccountResponse.class);
+            return new CodefStandardResponse<>(result, response);
+
+        } catch (Exception e) {
+            throw new RuntimeException("계정 추가 중 오류가 발생했습니다.", e);
+        }
+    }
+
+    private HashMap<String, Object> buildAccountMap(String organizationCode, String companyId, String companyPassword) {
+        HashMap<String, Object> accountMap = new HashMap<>();
+        accountMap.put("countryCode", "KR"); // 한국
+        accountMap.put("businessType", "CD"); // 카드
+        accountMap.put("clientType", "P"); // 개인
+        accountMap.put("loginType", "1"); // 아이디 비번 로그인
+        accountMap.put("organization", organizationCode);
+        accountMap.put("id", companyId);
+
+        try {
+            accountMap.put("password", EasyCodefUtil.encryptRSA(companyPassword, codef.getPublicKey()));
         } catch (Exception e) {
             throw new EncryptPasswordFailedException();
         }
+
+        return accountMap;
     }
 
     public MyCardListResponse getMyCardList(MyCardListRequest request, Integer userId) {
