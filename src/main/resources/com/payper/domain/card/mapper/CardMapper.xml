@@ -99,12 +99,21 @@
     </select>
 
     <!-- 내 카드 리스트 조회 -->
-    <select id="selectCardsByUserID" resultMap="CardResponseMap">
-        <include refid="cardJoinClause" />
-        INNER JOIN user_card uc ON c.card_id = uc.card_id
+    <select id="findByUserId" resultMap="CardResponseMap">
+        SELECT
+            c.card_id, c.card_name, c.card_type, c.card_image_url, c.annual_fee, c.card_issue_url,
+            cc.company_id, cc.company_name,
+            b.benefit_id, b.benefit_summary,
+            cat.category_id, cat.category_name, cat.category_image_url
+        FROM user_card uc
+                INNER JOIN card c on uc.card_id = c.card_id
+                 LEFT JOIN card_company cc ON c.company_id = cc.company_id
+                 LEFT JOIN benefit b ON c.card_id = b.card_id
+                 LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
+                 LEFT JOIN category cat ON bc.category_id = cat.category_id
         WHERE uc.user_id = #{userId}
             AND uc.is_deactivate = false
-        ORDER BY c.card_id, b.benefit_id;
+        ORDER BY c.card_name;
     </select>
 
     <!-- 내 카드로 등록 -->

@@ -10,6 +10,9 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -35,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @MapperScan(value = "com.payper", annotationClass = Mapper.class)
 @Slf4j
 @EnableTransactionManagement
+@EnableCaching
 public class RootConfig {
   @Value("${jdbc.driver}")
   private String driver;
@@ -69,5 +73,10 @@ public class RootConfig {
   @Bean
   public DataSourceTransactionManager transactionManager() {
     return new DataSourceTransactionManager(dataSource());
+  }
+
+  @Bean
+  public CacheManager cacheManager() {
+    return new ConcurrentMapCacheManager("myCards");
   }
 }

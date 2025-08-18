@@ -1,6 +1,10 @@
 package com.payper.domain.card;
 
-import com.payper.domain.card.dto.*;
+import com.payper.domain.card.dto.request.RegisterCardMeRequest;
+import com.payper.domain.card.dto.request.RegisterCardRequest;
+import com.payper.domain.card.dto.request.UpdateCardRequest;
+import com.payper.domain.card.dto.response.CardResponse;
+import com.payper.domain.card.dto.response.CardsResponse;
 import com.payper.domain.card.service.CardService;
 import com.payper.domain.card.service.SearchService;
 import com.payper.domain.user.UserService;
@@ -76,12 +80,9 @@ public class CardController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Map<String, List<CardResponse>>> getAllCardsByMe(@AuthenticationPrincipal CustomUser customUser) {
-        Integer userId = userService.getUserId(customUser);
-        log.info("내 카드 리스트 조회 - userId: {}", userId);
-
-        List<CardResponse> cards = cardService.getAllCardsByMe(userId);
-        return ResponseEntity.ok(Map.of("cards", cards));
+    public ResponseEntity<CardsResponse> getAllCardsByMe(@AuthenticationPrincipal CustomUser customUser) {
+        List<CardResponse> cards = cardService.getAllCardsByMe(customUser.getUser().getUserId());
+        return ResponseEntity.ok(new CardsResponse(false, 0, cards));
     }
 
     @PostMapping("/me")

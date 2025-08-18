@@ -3,7 +3,7 @@ package com.payper.external.crawling.service;
 import com.payper.domain.benefit.BenefitMapper;
 import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
 import com.payper.domain.card.mapper.CardMapper;
-import com.payper.domain.card.dto.RegisterCardRequest;
+import com.payper.domain.card.dto.request.RegisterCardRequest;
 import com.payper.domain.category.CategoryMapper;
 import com.payper.domain.partner.PartnerMapper;
 import com.payper.external.crawling.dto.Benefit;

@@ -1,4 +1,4 @@
-package com.payper.domain.card.dto;
+package com.payper.domain.card.dto.response;
 
 import com.payper.domain.card.domain.CardCompany;
 import com.payper.global.exception.CustomIllegalArgumentException;

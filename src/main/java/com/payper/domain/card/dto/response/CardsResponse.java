@@ -1,7 +1,6 @@
-package com.payper.domain.card.dto;
+package com.payper.domain.card.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;

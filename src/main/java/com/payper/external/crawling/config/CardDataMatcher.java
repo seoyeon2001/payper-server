@@ -1,7 +1,7 @@
 package com.payper.external.crawling.config;
 
 import com.payper.domain.benefit.dto.request.CreateBenefitRequest;
-import com.payper.domain.card.dto.RegisterCardRequest;
+import com.payper.domain.card.dto.request.RegisterCardRequest;
 import com.payper.external.crawling.dto.Benefit;
 import com.payper.external.crawling.dto.CardData;
 

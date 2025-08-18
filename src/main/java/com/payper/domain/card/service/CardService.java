@@ -1,12 +1,17 @@
 package com.payper.domain.card.service;
 
 import com.payper.domain.benefit.exception.BenefitDeletionFailedException;
+import com.payper.domain.card.dto.request.RegisterCardMeRequest;
+import com.payper.domain.card.dto.request.RegisterCardRequest;
+import com.payper.domain.card.dto.request.UpdateCardRequest;
+import com.payper.domain.card.dto.response.CardResponse;
 import com.payper.domain.card.mapper.CardMapper;
-import com.payper.domain.card.dto.*;
 import com.payper.domain.card.exception.*;
 import com.payper.domain.user.exception.UserCardDeletionFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,11 +51,13 @@ public class CardService {
     }
 
 
-
+    @Cacheable(value = "myCards", key = "#userId")
     public List<CardResponse> getAllCardsByMe(Integer userId){
-        return cardMapper.selectCardsByUserID(userId);
+        return cardMapper.findByUserId(userId);
     }
 
+    @Transactional
+    @CacheEvict(value = "myCards", key = "#userId")
     public void registerCardMe(RegisterCardMeRequest request, Integer userId) {
         existedByCardId(request.getCardId()); // 존재하는 card인지 확인
         checkDuplicateUserCard(userId, request.getCardId()); // 이미 사용자 카드로 등록되어 있는지 확인
@@ -115,6 +122,7 @@ public class CardService {
     }
 
     @Transactional
+    @CacheEvict(value = "myCards", key = "#userId")
     public void deleteCardMe(Integer userId, Integer cardId) {
         existedByCardId(cardId);
 

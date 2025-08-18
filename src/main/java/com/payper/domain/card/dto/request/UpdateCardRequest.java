@@ -1,4 +1,4 @@
-package com.payper.domain.card.dto;
+package com.payper.domain.card.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

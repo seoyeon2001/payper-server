@@ -1,6 +1,6 @@
 package com.payper.domain.partner.dto;
 
-import com.payper.domain.card.dto.CardResponse;
+import com.payper.domain.card.dto.response.CardResponse;
 import com.payper.domain.category.domain.Category;
 import com.payper.domain.category.dto.CategoryResponse;
 import com.payper.domain.partner.domain.Partner;

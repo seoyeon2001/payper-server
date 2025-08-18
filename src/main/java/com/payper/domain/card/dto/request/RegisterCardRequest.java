@@ -1,6 +1,5 @@
-package com.payper.domain.card.dto;
+package com.payper.domain.card.dto.request;
 
-import com.payper.external.crawling.dto.CardData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,9 +1,9 @@
 package com.payper.domain.card.mapper;
 
 import com.payper.domain.card.domain.Card;
-import com.payper.domain.card.dto.CardResponse;
-import com.payper.domain.card.dto.RegisterCardRequest;
-import com.payper.domain.card.dto.UpdateCardRequest;
+import com.payper.domain.card.dto.response.CardResponse;
+import com.payper.domain.card.dto.request.RegisterCardRequest;
+import com.payper.domain.card.dto.request.UpdateCardRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,7 +30,7 @@ public interface CardMapper {
 
     CardResponse selectOneByPartnerId(@Param("userId") Integer userId, @Param("partnerId") Integer partnerId);
 
-    List<CardResponse> selectCardsByUserID(Integer userId);
+    List<CardResponse> findByUserId(Integer userId);
 
     List<CardResponse> searchWithConditions(
             @Param("name") String name,
