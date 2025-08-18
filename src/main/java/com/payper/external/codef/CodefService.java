@@ -3,7 +3,7 @@ package com.payper.external.codef;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payper.domain.user.UserCardMapper;
-import com.payper.domain.user.UserCardTransactionService;
+import com.payper.domain.userCardTransaction.UserCardTransactionService;
 import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.user.domain.UserCard;
 import com.payper.external.codef.dto.CardRegistrationResult;

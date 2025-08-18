@@ -1,11 +1,15 @@
-package com.payper.domain.user;
+package com.payper.domain.userCardTransaction;
 
-import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.partner.PartnerMapper;
+import com.payper.domain.user.UserCardMapper;
 import com.payper.domain.user.domain.UserCard;
 import com.payper.domain.user.domain.UserCardTransaction;
 import com.payper.external.codef.dto.output.ApprovalInfo;
+import com.payper.external.codef.dto.response.ApprovalListResponse;
 import com.payper.external.crawling.config.partnerSynonyms;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserCardTransactionService {
     private final UserCardMapper userCardMapper;
-    private final CardMapper cardMapper;
     private final PartnerMapper partnerMapper;
     private final UserCardTransactionMapper userCardTransactionMapper;
 
@@ -172,5 +175,26 @@ public class UserCardTransactionService {
         }
 
         return null;
+    }
+
+
+    public ApprovalListResponse getRecentTransactions(Integer userId, int days) {
+        // 오늘 포함 최근 N일 (오늘 - (days-1) ~ 오늘)
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        LocalDate start = today.minusDays(Math.max(days, 1) - 1);
+
+        String startDate = start.format(DateTimeFormatter.BASIC_ISO_DATE); // yyyyMMdd
+        String endDate   = today.format(DateTimeFormatter.BASIC_ISO_DATE); // yyyyMMdd
+
+        List<UserCardTransaction> rows = userCardTransactionMapper.findByUserAndDateRange(userId, startDate, endDate);
+
+        // DB 도메인 → API 응답 DTO(ApprovalInfo) 리스트로 변환
+        List<ApprovalInfo> approvalInfos = rows.stream()
+                .map(ApprovalInfo::fromDomain)
+                .toList();
+
+        return ApprovalListResponse.builder()
+                .approvalList(approvalInfos)
+                .build();
     }
 }

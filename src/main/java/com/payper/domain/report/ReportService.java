@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payper.domain.report.exception.ReportPayloadParseException;
 import com.payper.domain.report.exception.ReportPayloadSerializeException;
 import com.payper.domain.report.util.ReportDateUtil;
-import com.payper.domain.user.UserCardTransactionMapper;
+import com.payper.domain.userCardTransaction.UserCardTransactionMapper;
 import com.payper.domain.user.dto.UserReportResponse;
 import com.payper.domain.user.dto.UserTransactionSummaryDto;
 import com.payper.external.gpt.OpenAIExtractService;

@@ -1,4 +1,4 @@
-package com.payper.domain.user;
+package com.payper.domain.userCardTransaction;
 
 import com.payper.domain.user.domain.UserCardTransaction;
 import com.payper.domain.user.dto.UserTransactionSummaryDto;
@@ -20,4 +20,10 @@ public interface UserCardTransactionMapper {
             @Param("startDate") String startDate,
             @Param("endDate") String endDate
             );
+
+    List<UserCardTransaction> findByUserAndDateRange(
+            @Param("userId") Integer userId,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate
+    );
 }

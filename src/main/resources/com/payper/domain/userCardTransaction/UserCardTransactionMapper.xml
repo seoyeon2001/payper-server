@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.payper.domain.user.UserCardTransactionMapper">
+<mapper namespace="com.payper.domain.userCardTransaction.UserCardTransactionMapper">
     <insert id="save" useGeneratedKeys="true" keyProperty="userCardTransactionId">
         INSERT INTO user_card_transaction(
             user_card_id, partner_id,
@@ -83,4 +83,55 @@
           AND t.res_cancel_yn = '0'
           AND t.res_account_currency = 'KRW'
     </select>
+
+    <!-- 엔티티 매핑: FQCN 사용 -->
+    <resultMap id="UserCardTransactionMap"
+               type="com.payper.domain.user.domain.UserCardTransaction">
+        <id     property="userCardTransactionId" column="user_card_transaction_id"/>
+        <result property="userCardId"            column="user_card_id"/>
+        <result property="partnerId"             column="partner_id"/>
+
+        <result property="resUsedDate"           column="res_used_date"/>
+        <result property="resUsedTime"           column="res_used_time"/>
+        <result property="resCardNo"             column="res_card_no"/>
+        <result property="resCardNo1"            column="res_card_no1"/>
+        <result property="resCardName"           column="res_card_name"/>
+        <result property="resMemberStoreName"    column="res_member_store_name"/>
+        <result property="resUsedAmount"         column="res_used_amount"/>
+        <result property="resPaymentType"        column="res_payment_type"/>
+        <result property="resInstallmentMonth"   column="res_installment_month"/>
+        <result property="resApprovalNo"         column="res_approval_no"/>
+        <result property="resPaymentDueDate"     column="res_payment_due_date"/>
+        <result property="resHomeForeignType"    column="res_home_foreign_type"/>
+        <result property="resMemberStoreCorpNo"  column="res_member_store_corp_no"/>
+        <result property="resMemberStoreType"    column="res_member_store_type"/>
+        <result property="resMemberStoreTelNo"   column="res_member_store_tel_no"/>
+        <result property="resMemberStoreAddr"    column="res_member_store_addr"/>
+        <result property="resMemberStoreNo"      column="res_member_store_no"/>
+        <result property="resCancelYn"           column="res_cancel_yn"/>
+        <result property="resCancelAmount"       column="res_cancel_amount"/>
+        <result property="resVat"                column="res_vat"/>
+        <result property="resCashback"           column="res_cash_back"/>
+        <result property="resKrwAmt"             column="res_krw_amt"/>
+        <result property="commStartDate"         column="comm_start_date"/>
+        <result property="commEndDate"           column="comm_end_date"/>
+        <result property="resAccountCurrency"    column="res_account_currency"/>
+
+        <result property="isDeleted"             column="is_deleted"/>
+        <result property="createdAt"             column="created_at"/>
+        <result property="deletedAt"             column="deleted_at"/>
+        <result property="lastModifiedAt"        column="last_modified_at"/>
+    </resultMap>
+
+
+    <!-- 사용자 + 날짜구간 상세 (user_id는 user_card에 있으므로 JOIN) -->
+    <select id="findByUserAndDateRange" resultMap="UserCardTransactionMap">
+        SELECT t.*
+        FROM user_card_transaction t
+                 JOIN user_card uc ON uc.user_card_id = t.user_card_id
+        WHERE uc.user_id = #{userId}
+          AND t.res_used_date BETWEEN #{startDate} AND #{endDate}
+        ORDER BY t.res_used_date DESC, t.res_used_time DESC, t.user_card_transaction_id DESC
+    </select>
+
 </mapper>
