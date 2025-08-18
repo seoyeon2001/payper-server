@@ -23,6 +23,7 @@
         <package name="com.payper.domain.card.domain"/>
         <package name="com.payper.domain.benefit.domain"/>
         <package name="com.payper.domain.user.domain"/>
+        <package name="com.payper.domain.report.domain"/>
         <package name="com.payper.external.codef.domain"/>
     </typeAliases>
 

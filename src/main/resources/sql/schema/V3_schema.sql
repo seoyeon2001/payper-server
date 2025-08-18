@@ -211,5 +211,17 @@ CREATE TABLE `user_card_transaction` (
                                          CONSTRAINT `FK_partner_TO_user_card_transaction` FOREIGN KEY (`partner_id`)
                                              REFERENCES `partner` (`partner_id`)
 );
+
+CREATE TABLE report (
+                        report_id  INT AUTO_INCREMENT PRIMARY KEY,
+                        user_id    INT NOT NULL,
+                        month      DATE NOT NULL,              -- 해당 월의 1일로 저장 (예: 2025-07-01)
+                        payload    JSON NOT NULL,              -- 원본 JSON
+                        created_at DATETIME NOT NULL DEFAULT NOW(),
+                        UNIQUE KEY uq_user_month (user_id, month),
+                        CONSTRAINT fk_user_report FOREIGN KEY (user_id)
+                            REFERENCES `user` (user_id)
+);
+
 COMMIT;
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payper.domain.user.dto.UserReportResponse;
 import com.payper.domain.user.dto.UserTransactionSummaryDto;
+import com.payper.external.gpt.exception.OpenAIAnalyseReportException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -14,9 +15,6 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static com.payper.domain.user.UserService.endDate;
-import static com.payper.domain.user.UserService.startDate;
 
 @Service
 @RequiredArgsConstructor
@@ -38,14 +36,14 @@ public class OpenAIExtractService {
     private static final int MAX_ITEMS_PER_CALL = 50;
     private static final List<String> ALLOWED = List.of(
             "카페/디저트", "베이커리", "편의점", "마트/슈퍼",
-            "한식", "중식", "일식", "양식", "분식", "패스트푸드", "배달/포장", "일반음식점",
-            "술/유흥",
-            "버스/지하철", "택시/모빌리티", "쇼핑", "영화/공연", "게임/PC방", "여행/숙박", "스포츠",
-            "약국/병원", "기타"
+            "한식", "중식", "일식", "양식", "분식", "패스트푸드", "배달", "일반음식점", "술/유흥",
+            "버스/지하철", "택시/모빌리티",
+            "쇼핑", "온라인쇼핑", "영화/공연", "게임/PC방", "여행/숙박", "스포츠", "약국/병원", "뷰티",
+            "간편결제", "기타"
     );
 
     /** ==== PUBLIC ==== */
-    public UserReportResponse extract(List<UserTransactionSummaryDto> rows) {
+    public UserReportResponse extract(List<UserTransactionSummaryDto> rows, String startDate, String endDate) {
         objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
 
         if (rows.isEmpty()) {
@@ -86,11 +84,11 @@ public class OpenAIExtractService {
                     : mergePayloads(payloads, allowIds);
 
             // 합산 및 정렬 -> 응답
-            return buildReportFromBuckets(merged, rows);
+            return buildReportFromBuckets(merged, rows, startDate, endDate);
 
         } catch (Exception e) {
             log.error("GPT 분석 실패: {}", e.getMessage(), e);
-            return UserReportResponse.ofDto(startDate, endDate, "분석 실패", List.of());
+            throw new OpenAIAnalyseReportException();
         }
     }
 
@@ -99,14 +97,13 @@ public class OpenAIExtractService {
                     너는 카드 사용내역을 한국 로컬 카테고리로 묶는 분류기다.
                     - 입력 items는 [{ id, store, type }] 이다. id는 정수형 실제 거래 ID다.
                     - 출력은 반드시 JSON (스키마 고정):
-                      { "title": "10자 내외 한국어 우스꽝스러운 별명",
+                      { "title": "10자 내외 한국어 우스꽝스러운 별명 (예: '카페인 뱀파이어')",
                         "buckets": [ { "category": "<카테고리>", "ids": [정수 ID들] }, ... ] }
                     - 제약:
                       1) ids에는 오직 입력 items의 id만 사용 (새 숫자 생성 금지)
                       2) 모든 id는 정확히 한 번만 등장 (중복/누락 금지)
                       3) store를 모르면, type으로 구분해라.
                       4) 카테고리는 아래 집합만 사용: %s
-                      5) title은 **건수가 가장 많은 카테고리**를 우스꽝스럽게 반영하여 지어라. (예: '카페인 뱀파이어')
                 """.formatted(ALLOWED);
     }
 
@@ -260,7 +257,7 @@ public class OpenAIExtractService {
     }
 
     // GPT가 준 분류 결과(JSON), 원본 거래 rows -> 카테고리별 금액 합계 리포트
-    private UserReportResponse buildReportFromBuckets(JsonNode textJson, List<UserTransactionSummaryDto> rows) {
+    private UserReportResponse buildReportFromBuckets(JsonNode textJson, List<UserTransactionSummaryDto> rows, String startDate, String endDate) {
 
         Map<Integer, Long> amountById = new HashMap<>();
         for (UserTransactionSummaryDto r : rows) {
