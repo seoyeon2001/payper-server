@@ -2,8 +2,8 @@ package com.payper.domain.card.service;
 
 import com.payper.domain.benefit.domain.Benefit;
 import com.payper.domain.benefit.dto.response.BenefitResponse;
+import com.payper.domain.card.dto.SearchOptions;
 import com.payper.domain.card.mapper.SearchMapper;
-import com.payper.domain.card.SearchOptions;
 import com.payper.domain.card.domain.Card;
 import com.payper.domain.card.dto.response.CardCompanyResponse;
 import com.payper.domain.card.dto.response.CardResponse;
@@ -25,6 +25,14 @@ public class SearchService {
     private final SearchMapper searchMapper;
 
     @Transactional
+//    @Cacheable(
+//            value = "cardSearch",
+//            key="#searchOptions.cardType+'_'+#searchOptions.page",
+//            condition = "(#searchOptions.keyword==null || #searchOptions.keyword=='') && " +
+//                    "(#searchOptions.cardCompanyNames==null || #searchOptions.cardCompanyNames.size()==0) && " +
+//                    "(#searchOptions.categoryNames==null || #searchOptions.categoryNames.size()==0)",
+//            unless = "#result == null"
+//    )
     public CardsResponse searchCardsPhase1(SearchOptions searchOptions) {
         //조건에 맞는 카드 get
         List<Card> cards=searchMapper.getCardsWithConditionsSliced(searchOptions);

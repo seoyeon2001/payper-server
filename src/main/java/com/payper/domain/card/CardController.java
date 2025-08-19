@@ -6,6 +6,7 @@ import com.payper.domain.card.dto.request.UpdateCardRequest;
 import com.payper.domain.card.dto.response.CardResponse;
 import com.payper.domain.card.dto.response.CardsResponse;
 import com.payper.domain.card.service.CardService;
+import com.payper.domain.card.dto.SearchOptions;
 import com.payper.domain.card.service.SearchService;
 import com.payper.domain.user.UserService;
 import com.payper.global.security.domain.CustomUser;
@@ -73,6 +74,13 @@ public class CardController {
             @RequestParam(defaultValue = "0") int page //Integer면 변환될 때 null이 될 수 있어서 int로 지정
     ) {
         log.info("검색 카드 조회");
+
+
+        if(category!=null)
+            category.sort(null);
+
+        if(cardCompany!=null)
+            cardCompany.sort(null);
 
         //검색 옵션 값 지정
         SearchOptions searchOptions = SearchOptions.create(

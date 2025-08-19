@@ -1,6 +1,6 @@
 package com.payper.domain.card.mapper;
 
-import com.payper.domain.card.SearchOptions;
+import com.payper.domain.card.dto.SearchOptions;
 import com.payper.domain.card.domain.Card;
 import com.payper.domain.card.domain.CardCompany;
 import com.payper.domain.category.domain.Category;

@@ -1,4 +1,4 @@
-package com.payper.domain.card;
+package com.payper.domain.card.dto;
 
 import lombok.*;
 

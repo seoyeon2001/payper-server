@@ -1,6 +1,6 @@
 package com.payper.domain.partner;
 
-import com.payper.domain.card.SearchOptions;
+import com.payper.domain.card.dto.SearchOptions;
 import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.card.dto.response.CardResponse;
 import com.payper.domain.card.service.SearchService;
