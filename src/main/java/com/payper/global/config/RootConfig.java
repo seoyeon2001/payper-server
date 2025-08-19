@@ -60,22 +60,6 @@ public class RootConfig {
     config.setUsername(username);
     config.setPassword(password);
 
-/*    config.setMaximumPoolSize(100);          // 최대 100개 커넥션 (1000명 / 10 = 100)
-    config.setMinimumIdle(50);               // 최소 50개 유지 (피크타임 대비)
-
-    config.setConnectionTimeout(3000);       // 3초 커넥션 대기 (빠른 실패)
-    config.setIdleTimeout(300000);           // 5분 유휴 타임아웃
-    config.setMaxLifetime(600000);           // 10분 최대 생존시간
-    config.setLeakDetectionThreshold(15000); // 15초 누수 탐지
-    config.setValidationTimeout(2000);       // 2초 검증 타임아웃*/
-
-    //jdbc레벨 캐싱 최적화
-    config.addDataSourceProperty("cachePrepStmts", "true");
-    config.addDataSourceProperty("prepStmtCacheSize", "100");        // 1000 → 100
-    config.addDataSourceProperty("prepStmtCacheSqlLimit", "1024");   // 2048 → 1024
-    config.addDataSourceProperty("useServerPrepStmts", "false");     // true → false (중요!)
-    config.addDataSourceProperty("rewriteBatchedStatements", "true"); // 유지
-    
     return new HikariDataSource(config);
   }
 
@@ -94,6 +78,6 @@ public class RootConfig {
 
   @Bean
   public CacheManager cacheManager() {
-    return new ConcurrentMapCacheManager("myCards","cardSearch");
+    return new ConcurrentMapCacheManager("myCards");
   }
 }

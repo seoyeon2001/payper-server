@@ -74,12 +74,6 @@ public class CardController {
     ) {
         log.info("검색 카드 조회");
 
-        if(category!=null)
-            category.sort(null);
-
-        if(cardCompany!=null)
-            cardCompany.sort(null);
-
         //검색 옵션 값 지정
         SearchOptions searchOptions = SearchOptions.create(
                 name,type,category,cardCompany,page

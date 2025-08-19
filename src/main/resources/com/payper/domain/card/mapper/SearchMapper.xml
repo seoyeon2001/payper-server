@@ -202,71 +202,58 @@
         ca.category_id as ca_category_id,ca.category_name as ca_category_name,
         ca.category_image_url as ca_category_image_url
         FROM (
-            SELECT DISTINCT c0.card_id, c0.company_id, c0.card_name, c0.card_type,
-            c0.card_image_url, c0.card_issue_url, c0.annual_fee, c0.prev_month_spending
-            FROM card c0
-            LEFT JOIN card_company cc0 ON c0.company_id = cc0.company_id
-            LEFT JOIN benefit b0 ON c0.card_id = b0.card_id and b0.is_deleted=false
-            <if test="options.categoryNames!=null and options.categoryNames.size()>0">
-                LEFT JOIN benefit_category bc0 ON b0.benefit_id = bc0.benefit_id and bc0.is_deleted=false
-                LEFT JOIN category ca0 ON ca0.category_id = bc0.category_id
-            </if>
-
-            WHERE 1=1
-            <if test="options.keyword!=null and options.keyword!='' ">
---                 AND (
---                 MATCH(c0.card_name) AGAINST(#{options.keyword} IN NATURAL LANGUAGE MODE)
---                     OR (
---                     MATCH(b0.benefit_title, b0.benefit_summary, b0.benefit_description)
---                     AGAINST(#{options.keyword} IN NATURAL LANGUAGE MODE)
---                     )
---                 )
-                AND (
-
-                    c0.card_name LIKE CONCAT('%', #{options.keyword}, '%')
-                    or
-                    b0.benefit_title LIKE CONCAT('%', #{options.keyword}, '%')
-                    OR b0.benefit_summary LIKE CONCAT('%', #{options.keyword}, '%')
-                    OR b0.benefit_description LIKE CONCAT('%', #{options.keyword}, '%')
-
-                )
-            </if>
-            <if test="options.categoryNames!=null and options.categoryNames.size()>0">
-                AND ca0.category_name IN
-                <foreach collection="options.categoryNames" item="categoryName" open="(" separator="," close=")">
-                    #{categoryName}
-                </foreach>
-            </if>
-            <if test="options.cardCompanyNames!=null and options.cardCompanyNames.size()>0">
-                AND cc0.company_name IN
-                <foreach collection="options.cardCompanyNames" item="cardCompanyName" open="(" separator="," close=")">
-                    #{cardCompanyName}
-                </foreach>
-            </if>
-            <if test="options.cardType!=null and options.cardType!='' ">
-                AND c0.card_type = #{options.cardType}
-            </if>
-            AND c0.is_deleted=false
-
-            ORDER BY c0.card_id
+        SELECT DISTINCT c0.card_id, c0.company_id, c0.card_name, c0.card_type,
+        c0.card_image_url, c0.card_issue_url, c0.annual_fee, c0.prev_month_spending
+        FROM card c0
+        LEFT JOIN card_company cc0 ON c0.company_id = cc0.company_id
+        LEFT JOIN benefit b0 ON c0.card_id = b0.card_id
+        LEFT JOIN benefit_category bc0 ON b0.benefit_id = bc0.benefit_id
+        LEFT JOIN category ca0 ON ca0.category_id = bc0.category_id
+        WHERE 1=1
+        <if test="options.keyword!=null and options.keyword!='' ">
+            AND (
+            c0.card_name LIKE CONCAT('%', #{options.keyword}, '%')
+            or (
+            b0.benefit_title LIKE CONCAT('%', #{options.keyword}, '%')
+            OR b0.benefit_summary LIKE CONCAT('%', #{options.keyword}, '%')
+            OR b0.benefit_description LIKE CONCAT('%', #{options.keyword}, '%')
+            )
+            )
+        </if>
+        <if test="options.cardType!=null and options.cardType!='' ">
+            AND c0.card_type = #{options.cardType}
+        </if>
+        <if test="options.categoryNames!=null and options.categoryNames.size()>0">
+            AND ca0.category_name IN
+            <foreach collection="options.categoryNames" item="categoryName" open="(" separator="," close=")">
+                #{categoryName}
+            </foreach>
+        </if>
+        <if test="options.cardCompanyNames!=null and options.cardCompanyNames.size()>0">
+            AND cc0.company_name IN
+            <foreach collection="options.cardCompanyNames" item="cardCompanyName" open="(" separator="," close=")">
+                #{cardCompanyName}
+            </foreach>
+        </if>
+        ORDER BY c0.card_id
 
         <if test="options.limit != null and options.page != null">
             LIMIT #{options.limit} OFFSET #{options.page}
         </if>
         ) c
         LEFT JOIN card_company cc ON c.company_id = cc.company_id
-        LEFT JOIN benefit b ON c.card_id = b.card_id AND b.is_deleted=false
+        LEFT JOIN benefit b ON c.card_id = b.card_id
         LEFT JOIN benefit_partner bp ON b.benefit_id = bp.benefit_id
-        LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id AND bc.is_deleted=false
+        LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id
         LEFT JOIN category ca ON ca.category_id = bc.category_id
-        ORDER BY c.card_id
+        ORDER BY c.card_id, b.benefit_id, bc.benefit_category_id, bp.benefit_partner_id
     </select>
 
 
 
     <!-- 방법2 방식-->
     <!-- 검색 조건을 위한 공통 WHERE 절 (방법2 방식에 사용될)-->
-    <!--<sql id="CardSearchConditions">
+    <sql id="CardSearchConditions">
         WHERE 1=1
         <if test="options.keyword!=null and options.keyword!='' ">
             AND (
@@ -293,10 +280,10 @@
                 #{cardCompanyName}
             </foreach>
         </if>
-    </sql>-->
+    </sql>
 
     <!-- 페이징할 카드 ID 목록만 조회 (방법2 방식의 첫 번째 단계) -->
-    <!--<select id="getCardIdsForPaging" parameterType="map" resultType="int">
+    <select id="getCardIdsForPaging" parameterType="map" resultType="int">
         SELECT DISTINCT c.card_id
         FROM card c
         LEFT JOIN card_company cc ON c.company_id = cc.company_id
@@ -308,10 +295,10 @@
         <if test="options.limit != null and options.page != null">
             LIMIT #{options.limit} OFFSET #{options.page}
         </if>
-    </select>-->
+    </select>
 
     <!-- 특정 카드 ID들의 상세 정보 조회 (방법2 방식의 두 번째 단계) -->
-    <!--<select id="getCardDetailsByIds" parameterType="list" resultMap="CardMap">
+    <select id="getCardDetailsByIds" parameterType="list" resultMap="CardMap">
         SELECT
         cc.company_id as cc_company_id, cc.company_name as cc_company_name,
         c.card_id as c_card_id, c.company_id as c_company_id, c.card_name as c_card_name, c.card_type as c_card_type,
@@ -337,6 +324,6 @@
             #{cardId}
         </foreach>
         ORDER BY c.card_id, b.benefit_id, bc.benefit_category_id, bp.benefit_partner_id
-    </select>-->
+    </select>
 </mapper>
 
