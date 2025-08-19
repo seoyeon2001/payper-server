@@ -94,6 +94,6 @@ public class RootConfig {
 
   @Bean
   public CacheManager cacheManager() {
-    return new ConcurrentMapCacheManager("myCards");
-  }//,"cardSearch");
+    return new ConcurrentMapCacheManager("myCards", "cardSearch");
+  }
 }

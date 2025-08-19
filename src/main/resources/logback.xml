@@ -22,6 +22,11 @@
         </rollingPolicy>
     </appender>
 
+    <!-- 캐시 AOP 내부 키 계산/히트/미스/저장 로그 -->
+    <logger name="org.springframework.cache.interceptor.CacheAspectSupport" level="TRACE"/>
+    <!-- (선택) 캐시 관련 추가 로그 범위 확대 -->
+    <logger name="org.springframework.cache.interceptor" level="TRACE"/>
+
     <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />

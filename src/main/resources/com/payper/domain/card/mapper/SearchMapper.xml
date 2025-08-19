@@ -209,7 +209,6 @@
                 LEFT JOIN benefit_category bc0 ON b0.benefit_id = bc0.benefit_id and bc0.is_deleted=false
                 LEFT JOIN category ca0 ON ca0.category_id = bc0.category_id
             </if>
-
             WHERE 1=1
             <if test="options.keyword!=null and options.keyword!='' ">
                 <!--AND (
@@ -242,12 +241,8 @@
                 AND c0.card_type = #{options.cardType}
             </if>
             AND c0.is_deleted=false
-
             ORDER BY c0.card_id
-
-        <if test="options.limit != null and options.page != null">
             LIMIT #{options.limit, javaType=Integer ,jdbcType=INTEGER} OFFSET #{options.page,javaType=Integer ,jdbcType=INTEGER}
-        </if>
         ) c
         LEFT JOIN card_company cc ON c.company_id = cc.company_id
         LEFT JOIN benefit b ON c.card_id = b.card_id AND b.is_deleted=false
