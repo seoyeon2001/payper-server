@@ -46,9 +46,12 @@ public class CardController {
     }
 
     @GetMapping("/{cardId}")
-    public ResponseEntity<CardResponse> getCardById(@PathVariable(name = "cardId") Integer cardId) {
+    public ResponseEntity<CardResponse> getCardById(@PathVariable(name = "cardId") Integer cardId,
+                                                    @AuthenticationPrincipal CustomUser customUser) {
+        Integer userId = userService.getUserId(customUser);
+
         log.info("시중카드 조회 - cardId : {}", cardId);
-        CardResponse card = cardService.getCardById(cardId);
+        CardResponse card = cardService.getCardById(cardId, userId);
         return ResponseEntity.ok(card);
     }
 
@@ -70,7 +73,13 @@ public class CardController {
             @RequestParam(defaultValue = "0") int page //Integer면 변환될 때 null이 될 수 있어서 int로 지정
     ) {
         log.info("검색 카드 조회");
-        
+
+        if(category!=null)
+            category.sort(null);
+
+        if(cardCompany!=null)
+            cardCompany.sort(null);
+
         //검색 옵션 값 지정
         SearchOptions searchOptions = SearchOptions.create(
                 name,type,category,cardCompany,page

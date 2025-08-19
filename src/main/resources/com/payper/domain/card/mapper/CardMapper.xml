@@ -35,6 +35,7 @@
         <result property="imageUrl" column="card_image_url"/>
         <result property="annualCost" column="annual_fee"/>
         <result property="cardIssueUrl" column="card_issue_url"/>
+        <result property="mine" column="isMine" javaType="boolean" jdbcType="TINYINT"/>
         <result property="prevMonthSpending" column="prev_month_spending" />
         <association property="company" javaType="CardCompanyResponse" resultMap="CardCompanyResponseMap"/>
         <collection property="benefits" resultMap="BenefitResponseMap"/>
@@ -62,8 +63,22 @@
 
     <!-- 카드 조회 -->
     <select id="selectById" resultMap="CardResponseMap">
-        <include refid="cardJoinClause" />
-        WHERE c.card_id = #{cardId};
+        SELECT
+        base.*,
+        CASE
+        WHEN EXISTS (
+        SELECT 1
+        FROM user_card uc
+        WHERE uc.card_id = base.card_id
+        AND uc.user_id = #{userId}
+        AND COALESCE(uc.is_deactivate, 0) = 0
+        ) THEN TRUE
+        ELSE FALSE
+        END AS isMine
+        FROM (
+        <include refid="cardJoinClause"/>
+        ) base
+        WHERE base.card_id = #{cardId}
     </select>
 
     <!-- 카드 검색 -->

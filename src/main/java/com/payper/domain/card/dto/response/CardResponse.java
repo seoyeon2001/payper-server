@@ -3,6 +3,7 @@ package com.payper.domain.card.dto.response;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.payper.domain.benefit.dto.response.BenefitResponse;
 import com.payper.domain.card.domain.Card;
 import com.payper.domain.card.domain.CardType;
@@ -25,6 +26,9 @@ public class CardResponse {
 	private String cardIssueUrl;
 	private CardCompanyResponse company;
 	private Long prevMonthSpending;
+
+	@JsonProperty("isMine")
+	private boolean mine;
 
 	private List<BenefitResponse> benefits;
 

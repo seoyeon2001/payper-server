@@ -21,7 +21,7 @@ public interface CardMapper {
 
     List<CardResponse> selectAll();
 
-    CardResponse selectById(Integer cardId);
+    CardResponse selectById(@Param("cardId")Integer cardId, @Param("userId") Integer userId);
 
     List<CardResponse> selectByPartnerId(
             @Param("userId") Integer userId,

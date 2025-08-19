@@ -71,8 +71,7 @@ public class SecurityConfig {
                                 "/docs/**",
                                 "/api/auth/**",
                                 "/ws/**",
-                                "/actuator/**",
-                                "/api/crawl/**"
+                                "/actuator/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -27,9 +27,9 @@ public class CardService {
         return cardMapper.selectAll();
     }
 
-    public CardResponse getCardById(Integer cardId) {
+    public CardResponse getCardById(Integer cardId, Integer userId) {
         existsByCardId(cardId);
-        return cardMapper.selectById(cardId);
+        return cardMapper.selectById(cardId, userId);
     }
 
 
