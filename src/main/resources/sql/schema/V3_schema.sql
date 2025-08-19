@@ -223,5 +223,21 @@ CREATE TABLE report (
                             REFERENCES `user` (user_id)
 );
 
+CREATE INDEX idx_benefit_category_lookup ON benefit_category(benefit_id, is_deleted);
+
+drop table if exists search_card;
+create table search_card as
+SELECT
+    c0.card_id, c0.company_id, c0.card_name, c0.card_type,
+    c0.card_image_url, c0.card_issue_url, c0.annual_fee, c0.prev_month_spending,
+    ca0.category_name, cc0.company_name,
+    b0.benefit_title,b0.benefit_summary,b0.benefit_description
+FROM card c0
+         LEFT JOIN card_company cc0 ON c0.company_id = cc0.company_id
+         LEFT JOIN benefit b0 ON c0.card_id = b0.card_id and b0.is_deleted=false
+         LEFT JOIN benefit_category bc0 ON b0.benefit_id = bc0.benefit_id and bc0.is_deleted=false
+         LEFT JOIN category ca0 ON ca0.category_id = bc0.category_id
+WHERE c0.is_deleted=false;
+
 COMMIT;
 

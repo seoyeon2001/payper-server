@@ -183,7 +183,7 @@
         WHERE category_id = #{categoryId}
     </select>
 
-    <!-- 더 간단한 방법1 페이징 방식 (성능 최적화) -->
+    <!-- 더 간단한 방법1 페이징 방식 (성능 최적화) 전버전 현재는 이게 더 빨라서 이거 사용-->
     <select id="getCardsWithConditionsSliced" resultMap="CardMap">
         SELECT
         cc.company_id as cc_company_id, cc.company_name as cc_company_name,
@@ -240,11 +240,66 @@
             <if test="options.cardType!=null and options.cardType!='' ">
                 AND c0.card_type = #{options.cardType}
             </if>
+
             AND c0.is_deleted=false
-            ORDER BY c0.card_id
             LIMIT #{options.limit, javaType=Integer ,jdbcType=INTEGER} OFFSET #{options.page,javaType=Integer ,jdbcType=INTEGER}
         ) c
         LEFT JOIN card_company cc ON c.company_id = cc.company_id
+        LEFT JOIN benefit b ON c.card_id = b.card_id AND b.is_deleted=false
+        LEFT JOIN benefit_partner bp ON b.benefit_id = bp.benefit_id
+        LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id AND bc.is_deleted=false
+        LEFT JOIN category ca ON ca.category_id = bc.category_id
+        ORDER BY c.card_id
+    </select>
+
+    <!-- 더 간단한 방법1 페이징 방식 (성능 최적화) 비정규화된 테이블 버전 -->
+    <select id="getCardsWithConditionsSliced2" resultMap="CardMap">
+        SELECT
+        c.company_id as cc_company_id, c.company_name as cc_company_name,
+        c.card_id as c_card_id, c.company_id as c_company_id, c.card_name as c_card_name, c.card_type as c_card_type,
+        c.card_image_url as c_card_image_url, c.card_issue_url as c_card_issue_url,
+        c.annual_fee as c_annual_fee, c.prev_month_spending as c_prev_month_spending,
+        b.benefit_id as b_benefit_id, b.card_id as b_card_id, b.benefit_title as b_benefit_title,
+        b.benefit_summary as b_benefit_summary, b.benefit_description as b_benefit_description,
+        b.benefit_icon_url as b_benefit_icon_url,
+        bp.benefit_partner_id as bp_benefit_partner_id, bp.benefit_id as bp_benefit_id,
+        bp.partner_id as bp_partner_id,
+        bc.benefit_category_id as bc_benefit_category_id, bc.benefit_id as bc_benefit_id,
+        bc.category_id as bc_category_id,
+        ca.category_id as ca_category_id,ca.category_name as ca_category_name,
+        ca.category_image_url as ca_category_image_url
+        FROM (
+        SELECT DISTINCT c0.card_id, c0.company_id, c0.card_name, c0.card_type,
+        c0.card_image_url, c0.card_issue_url, c0.annual_fee, c0.prev_month_spending,
+        c0.company_name
+        FROM search_card c0
+        WHERE 1=1
+        <if test="options.keyword!=null and options.keyword!='' ">
+            AND (
+            c0.card_name LIKE CONCAT('%', #{options.keyword}, '%')
+            or c0.benefit_title LIKE CONCAT('%', #{options.keyword}, '%')
+            OR c0.benefit_summary LIKE CONCAT('%', #{options.keyword}, '%')
+            OR c0.benefit_description LIKE CONCAT('%', #{options.keyword}, '%')
+            )
+        </if>
+        <if test="options.categoryNames!=null and options.categoryNames.size()>0">
+            AND c0.category_name IN
+            <foreach collection="options.categoryNames" item="categoryName" open="(" separator="," close=")">
+                #{categoryName}
+            </foreach>
+        </if>
+        <if test="options.cardCompanyNames!=null and options.cardCompanyNames.size()>0">
+            AND c0.company_name IN
+            <foreach collection="options.cardCompanyNames" item="cardCompanyName" open="(" separator="," close=")">
+                #{cardCompanyName}
+            </foreach>
+        </if>
+        <if test="options.cardType!=null and options.cardType!='' ">
+            AND c0.card_type = #{options.cardType}
+        </if>
+
+        LIMIT #{options.limit, javaType=Integer ,jdbcType=INTEGER} OFFSET #{options.page,javaType=Integer ,jdbcType=INTEGER}
+        ) c
         LEFT JOIN benefit b ON c.card_id = b.card_id AND b.is_deleted=false
         LEFT JOIN benefit_partner bp ON b.benefit_id = bp.benefit_id
         LEFT JOIN benefit_category bc ON b.benefit_id = bc.benefit_id AND bc.is_deleted=false
