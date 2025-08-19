@@ -71,11 +71,11 @@ public class RootConfig {
     config.setValidationTimeout(2000);       // 2초 검증 타임아웃*/
 
 //    jdbc레벨 캐싱 최적화
-//    config.addDataSourceProperty("cachePrepStmts", "true");
-//    config.addDataSourceProperty("prepStmtCacheSize", "100");        // 1000 → 100
-//    config.addDataSourceProperty("prepStmtCacheSqlLimit", "1024");   // 2048 → 1024
-//    config.addDataSourceProperty("useServerPrepStmts", "false");     // true → false (중요!)
-//    config.addDataSourceProperty("rewriteBatchedStatements", "true"); // 유지
+    config.addDataSourceProperty("cachePrepStmts", "true");
+    config.addDataSourceProperty("prepStmtCacheSize", "100");        // 1000 → 100
+    config.addDataSourceProperty("prepStmtCacheSqlLimit", "1024");   // 2048 → 1024
+    config.addDataSourceProperty("useServerPrepStmts", "false");     // true → false (중요!)
+    config.addDataSourceProperty("rewriteBatchedStatements", "true"); // 유지
     return new HikariDataSource(config);
   }
 

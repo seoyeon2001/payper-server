@@ -13,6 +13,7 @@ import com.payper.domain.category.dto.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,13 +27,29 @@ public class SearchService {
     private final SearchMapper searchMapper;
 
     @Transactional
-    @Cacheable(
-            value = "cardSearch",
-            key="#searchOptions.cardType+'_'+#searchOptions.page",
-            condition = "(#searchOptions.keyword==null || #searchOptions.keyword=='') && " +
-                    "(#searchOptions.cardCompanyNames==null || #searchOptions.cardCompanyNames.size()==0) && " +
-                    "(#searchOptions.categoryNames==null || #searchOptions.categoryNames.size()==0)",
-            unless = "#result == null"
+    @Caching(
+            cacheable = {
+                    @Cacheable(
+                            value = "cardSearch",
+                            key="#searchOptions.cardType+'_'+#searchOptions.page",
+                            condition =
+                                    "(#searchOptions.cardType!=null && #searchOptions.cardType!='') && " +
+                                            "(#searchOptions.keyword==null || #searchOptions.keyword=='') && " +
+                                            "(#searchOptions.cardCompanyNames==null || #searchOptions.cardCompanyNames.size()==0) && " +
+                                            "(#searchOptions.categoryNames==null || #searchOptions.categoryNames.size()==0)",
+                            unless = "#result == null"
+                    ),
+                    @Cacheable(
+                            value = "cardSearch",
+                            key="#searchOptions.cardType+'_'+#searchOptions.page+'_'+#searchOptions.categoryNames",
+                            condition =
+                                    "(#searchOptions.cardType!=null && #searchOptions.cardType!='') && " +
+                                            "(#searchOptions.categoryNames!=null && #searchOptions.categoryNames.size()>0) && "+
+                                            "(#searchOptions.keyword==null || #searchOptions.keyword=='') && " +
+                                            "(#searchOptions.cardCompanyNames==null || #searchOptions.cardCompanyNames.size()==0)",
+                            unless = "#result == null"
+                    )
+            }
     )
     public CardsResponse searchCardsPhase1(SearchOptions searchOptions) {
         //조건에 맞는 카드 get

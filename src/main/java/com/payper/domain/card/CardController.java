@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -77,10 +78,10 @@ public class CardController {
 
 
         if(category!=null)
-            category.sort(null);
+            category.sort(Comparator.naturalOrder());
 
-        if(cardCompany!=null)
-            cardCompany.sort(null);
+//        if(cardCompany!=null)
+//            cardCompany.sort(Comparator.naturalOrder());
 
         //검색 옵션 값 지정
         SearchOptions searchOptions = SearchOptions.create(
