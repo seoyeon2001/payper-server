@@ -1,7 +1,6 @@
 package com.payper.external.codef.dto.output;
 
 import com.payper.domain.user.domain.UserCardTransaction;
-import com.payper.external.codef.dto.response.ApprovalListResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

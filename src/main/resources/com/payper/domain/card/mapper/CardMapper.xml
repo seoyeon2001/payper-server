@@ -310,5 +310,15 @@
         FROM card
         WHERE card_name = #{cardName}
     </select>
+
+    <select id="getCardNameByUserCardId" resultType="string">
+        SELECT c.card_name
+        FROM user_card uc
+                 JOIN card c ON c.card_id = uc.card_id
+        WHERE uc.user_card_id = #{userCardId}
+          AND uc.is_deleted = FALSE
+          AND c.is_deleted = FALSE
+    </select>
+
 </mapper>
 

@@ -49,7 +49,6 @@ public class CodefService {
     private final ObjectMapper objectMapper;
     private final CodefMapper codefMapper;
     private final CardSimilarityService cardSimilarityService;
-    private final UserCardTransactionService userCardTransactionService;
     private final CardMapper cardMapper;
     private final UserCardMapper userCardMapper;
     private static final String MY_CARD_LIST_URL = "/v1/kr/card/p/account/card-list";
@@ -343,13 +342,13 @@ public class CodefService {
         }
 
         HashMap<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put("organization", request.organizationName().getCode());
+        parameterMap.put("organization", request.getOrganizationName().getCode());
         parameterMap.put("connectedId", connectedId);
-        parameterMap.put("startDate", request.startDate());
-        parameterMap.put("endDate", request.endDate());
+        parameterMap.put("startDate", request.getStartDate());
+        parameterMap.put("endDate", request.getEndDate());
         parameterMap.put("orderBy", "0"); // 최신순
         parameterMap.put("inquiryType", "1"); // 카드사 별로 조회
-        parameterMap.put("memberStoreInfoType", request.memberStoreInfoType());
+        parameterMap.put("memberStoreInfoType", request.getMemberStoreInfoType());
 
         try {
             String resultJson = codef.requestProduct(APPROVAL_LIST_URL, EasyCodefServiceType.DEMO, parameterMap);
@@ -367,15 +366,14 @@ public class CodefService {
             log.info(approvalList.toString());
 
             // 해당 유저가 가진 해당 카드사의 카드 목록 불러오기
-            String cardCompany = request.organizationName().name();
+            String cardCompany = request.getOrganizationName().name();
             List<UserCard> myCardList = userCardMapper.getUserCardByUserIdAndCardCompany(userId, cardCompany);
             log.info("소유하고 있는 {} 카드 목록입니다 {}", cardCompany, myCardList);
 
             // 승인 내역 저장
-            userCardTransactionService.saveApprovalTransactions(approvalList, userId, myCardList);
+//            userCardTransactionService.saveApprovalTransactions(approvalList, userId, myCardList);
 
-            ApprovalListResponse response = new ApprovalListResponse(approvalList);
-            return response;
+            return new ApprovalListResponse(approvalList);
 
         } catch (Exception e) {
             throw new RuntimeException("응답 과정 중 오류가 발생했습니다.", e);

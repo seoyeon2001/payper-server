@@ -84,7 +84,6 @@
           AND t.res_account_currency = 'KRW'
     </select>
 
-    <!-- 엔티티 매핑: FQCN 사용 -->
     <resultMap id="UserCardTransactionMap"
                type="com.payper.domain.user.domain.UserCardTransaction">
         <id     property="userCardTransactionId" column="user_card_transaction_id"/>
@@ -123,15 +122,24 @@
         <result property="lastModifiedAt"        column="last_modified_at"/>
     </resultMap>
 
-
-    <!-- 사용자 + 날짜구간 상세 (user_id는 user_card에 있으므로 JOIN) -->
+    <!-- 사용자 + 날짜구간 상세 -->
     <select id="findByUserAndDateRange" resultMap="UserCardTransactionMap">
-        SELECT t.*
+        SELECT t.user_card_transaction_id, t.user_card_id, t.partner_id,
+               t.res_used_date, t.res_used_time, t.res_card_no, t.res_card_no1,
+                 COALESCE(c.card_name, t.res_card_name) AS res_card_name,
+                 t.res_member_store_name, t.res_used_amount, t.res_payment_type,
+                 t.res_installment_month, t.res_approval_no, t.res_payment_due_date,
+                 t.res_home_foreign_type, t.res_member_store_corp_no, t.res_member_store_type,
+                 t.res_member_store_tel_no, t.res_member_store_addr, t.res_member_store_no,
+                 t.res_cancel_yn, t.res_cancel_amount, t.res_vat, t.res_cash_back,
+                 t.res_krw_amt, t.comm_start_date, t.comm_end_date, t.res_account_currency,
+                 t.is_deleted, t.created_at, t.deleted_at, t.last_modified_at
         FROM user_card_transaction t
-                 JOIN user_card uc ON uc.user_card_id = t.user_card_id
-        WHERE uc.user_id = #{userId}
+            JOIN user_card uc ON uc.user_card_id = t.user_card_id
+            JOIN card c ON c.card_id = uc.card_id AND c.is_deleted = FALSE
+        WHERE uc.user_id = #{userId} AND t.is_deleted = FALSE
           AND t.res_used_date BETWEEN #{startDate} AND #{endDate}
-        ORDER BY t.res_used_date DESC, t.res_used_time DESC, t.user_card_transaction_id DESC
+        ORDER BY t.res_used_date DESC, t.res_used_time DESC
     </select>
 
 </mapper>

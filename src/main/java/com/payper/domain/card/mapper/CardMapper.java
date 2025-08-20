@@ -67,6 +67,8 @@ public interface CardMapper {
 
     Integer getCardId(String codefCardName);
 
+    String getCardNameByUserCardId(Integer userCardId);
+
     Integer getCompanyId(@Param("cardCompanyName")String cardCompanyName);
 
     Card getByCardName(String cardName);

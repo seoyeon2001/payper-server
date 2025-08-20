@@ -1,7 +1,6 @@
 package com.payper.domain.partner.domain;
 
 import com.payper.domain.benefit.domain.BenefitPartner;
-import com.payper.domain.partner.dto.PartnerResponse;
 import com.payper.domain.user.domain.UserCardTransaction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

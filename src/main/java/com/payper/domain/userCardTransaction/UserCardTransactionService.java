@@ -1,11 +1,17 @@
 package com.payper.domain.userCardTransaction;
 
+import com.payper.domain.card.mapper.CardMapper;
 import com.payper.domain.partner.PartnerMapper;
 import com.payper.domain.user.UserCardMapper;
+import com.payper.domain.user.UserService;
 import com.payper.domain.user.domain.UserCard;
 import com.payper.domain.user.domain.UserCardTransaction;
+import com.payper.external.codef.CodefService;
 import com.payper.external.codef.dto.output.ApprovalInfo;
+import com.payper.external.codef.dto.request.ApprovalListRequest;
 import com.payper.external.codef.dto.response.ApprovalListResponse;
+import com.payper.external.codef.exception.CodefAccountNotLinkedException;
+import com.payper.external.codef.util.OrganizationCode;
 import com.payper.external.crawling.config.partnerSynonyms;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -24,9 +30,13 @@ public class UserCardTransactionService {
     private final UserCardMapper userCardMapper;
     private final PartnerMapper partnerMapper;
     private final UserCardTransactionMapper userCardTransactionMapper;
+    private final CodefService codefService;
+    private final UserService userService;
+    private final CardMapper cardMapper;
+
 
     @Transactional
-    public void saveApprovalTransactions(List<ApprovalInfo> approvalList, Integer userId, List<UserCard> myCardList) {
+    public void saveApprovalTransactions(List<ApprovalInfo> approvalList, Integer userId) {
         int savedCount = 0;
         int skippedCount = 0;
 
@@ -46,6 +56,9 @@ public class UserCardTransactionService {
                     skippedCount++;
                     continue;
                 }
+
+//                String dbCardName = cardMapper.getCardNameByUserCardId(userCardId);
+//                log.info("해당 카드는 card 테이블의 {}으로 저장되어있습니다.", dbCardName);
 
                 // partnerId 찾기
                 String memberStoreName = approval.getResMemberStoreName();
@@ -177,7 +190,6 @@ public class UserCardTransactionService {
         return null;
     }
 
-
     public ApprovalListResponse getRecentTransactions(Integer userId, int days) {
         // 오늘 포함 최근 N일 (오늘 - (days-1) ~ 오늘)
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
@@ -185,16 +197,50 @@ public class UserCardTransactionService {
 
         String startDate = start.format(DateTimeFormatter.BASIC_ISO_DATE); // yyyyMMdd
         String endDate   = today.format(DateTimeFormatter.BASIC_ISO_DATE); // yyyyMMdd
+        log.info(startDate + " " + endDate);
 
+        // DB 조회
         List<UserCardTransaction> rows = userCardTransactionMapper.findByUserAndDateRange(userId, startDate, endDate);
+        log.info(rows.toString());
 
-        // DB 도메인 → API 응답 DTO(ApprovalInfo) 리스트로 변환
-        List<ApprovalInfo> approvalInfos = rows.stream()
+        if (rows != null && !rows.isEmpty()) {
+            // DB 결과 → ApprovalInfo로 매핑해서 반환
+            List<ApprovalInfo> infos = rows.stream()
+                    .map(ApprovalInfo::fromDomain)
+                    .toList();
+            return ApprovalListResponse.builder()
+                    .approvalList(infos)
+                    .build();
+        }
+
+        log.info("값이 없어 codef를 호출합니다.: {}", userId);
+        // 없으면 Codef 호출
+        String connectedId = userService.getConnectedIdById(userId);
+        if (connectedId == null || connectedId.isEmpty()) {
+            throw new CodefAccountNotLinkedException();
+        }
+
+        ApprovalListRequest req = ApprovalListRequest.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .memberStoreInfoType("3")
+                .organizationName(OrganizationCode.KB국민카드) // KB국민카드
+                .build();
+
+        ApprovalListResponse codefResp = codefService.getApprovalList(req, userId);
+
+        if (codefResp != null && codefResp.getApprovalList() != null) {
+            saveApprovalTransactions(codefResp.getApprovalList(), userId);
+        }
+
+        // 방금 저장된 것을 다시 DB에서 읽어 반환(정합성/정렬 일치)
+        List<UserCardTransaction> saved = userCardTransactionMapper.findByUserAndDateRange(userId, startDate, endDate);
+
+        List<ApprovalInfo> result = saved.stream()
                 .map(ApprovalInfo::fromDomain)
                 .toList();
-
         return ApprovalListResponse.builder()
-                .approvalList(approvalInfos)
+                .approvalList(result)
                 .build();
     }
 }
