@@ -13,7 +13,6 @@ import java.util.Optional;
 @Getter
 @Setter
 public class CustomUser extends org.springframework.security.core.userdetails.User {
-    static private final String commonPassword = "abcd";
     private User user;
 
     public CustomUser(String userId, String password,
@@ -24,7 +23,7 @@ public class CustomUser extends org.springframework.security.core.userdetails.Us
     public CustomUser(User domainUser) {
         super(
                 domainUser.getUserId().toString(),
-                commonPassword,
+                domainUser.getPassword(),
                 Collections.singletonList(
                         new SimpleGrantedAuthority(domainUser.getRole().name())
                 )

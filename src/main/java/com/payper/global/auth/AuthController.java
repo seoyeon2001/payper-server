@@ -1,7 +1,8 @@
 package com.payper.global.auth;
 
-import com.payper.global.auth.dto.KakaoLoginRequest;
-import com.payper.global.auth.dto.LoginResponse;
+import com.payper.domain.user.dto.UserResponse;
+import com.payper.global.auth.dto.BasicLoginRequest;
+import com.payper.global.auth.dto.SignupRequest;
 import com.payper.global.auth.dto.TokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,14 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> loginKakao(@RequestBody KakaoLoginRequest request, HttpServletResponse response) {
+    @PostMapping("/signup")
+    public ResponseEntity<UserResponse> signup(@RequestBody SignupRequest request) {
+        return ResponseEntity.ok(authService.signup(request));
+    }
 
-        return ResponseEntity.ok(authService.login(request.getCode(), response));
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> login(@RequestBody BasicLoginRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.login(request, response));
     }
 
     @GetMapping("/tokens")
