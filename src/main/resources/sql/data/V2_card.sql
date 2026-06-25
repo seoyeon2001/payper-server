@@ -28,8 +28,8 @@ INSERT INTO category (category_name) VALUES ('KB Pay 오프라인'); SET @오프
 INSERT INTO category (category_name) VALUES ('KB Pay 온라인'); SET @온라 = LAST_INSERT_ID();
 
 -- 공통 등급 등록
-INSERT INTO grade (card_id, start, total_discount) VALUES (@card_id, 200000, NULL); SET @grade_id1 = LAST_INSERT_ID();
-INSERT INTO grade (card_id, start, total_discount) VALUES (@card_id, 300000, NULL); SET @grade_id3 = LAST_INSERT_ID();
+# INSERT INTO grade (card_id, start, total_discount) VALUES (@card_id, 200000, NULL); SET @grade_id1 = LAST_INSERT_ID();
+# INSERT INTO grade (card_id, start, total_discount) VALUES (@card_id, 300000, NULL); SET @grade_id3 = LAST_INSERT_ID();
 
 -- ===== 편의점 =====
 INSERT INTO partner (category_id, partner_name) VALUES (@편의점, 'GS25');
@@ -48,8 +48,8 @@ INSERT INTO benefit_category (benefit_id, category_id) VALUES (@benefit_id, @편
 INSERT INTO benefit_partner (benefit_id, partner_id) VALUES
                                                          (@benefit_id, @partner_gs25), (@benefit_id, @partner_cu);
 
-INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount, min_payment)
-VALUES (@grade_id1, @benefit_id, 'RATE', 5, 2000, 0);
+# INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount, min_payment)
+# VALUES (@grade_id1, @benefit_id, 'RATE', 5, 2000, 0);
 
 -- ===== 드럭스토어 =====
 INSERT INTO partner (category_id, partner_name) VALUES
@@ -70,8 +70,8 @@ INSERT INTO benefit_category (benefit_id, category_id) VALUES (@benefit_id, @드
 INSERT INTO benefit_partner (benefit_id, partner_id) VALUES
                                                          (@benefit_id, @partner_olive), (@benefit_id, @partner_hair);
 
-INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
-VALUES (@grade_id1, @benefit_id, 'RATE', 10, 5000);
+# INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
+# VALUES (@grade_id1, @benefit_id, 'RATE', 10, 5000);
 
 -- ===== 디지털 구독 =====
 INSERT INTO partner (category_id, partner_name) VALUES (@디지털, '넷플릭스'); SET @partner_netflix = LAST_INSERT_ID();
@@ -87,8 +87,8 @@ VALUES (
 INSERT INTO benefit_category (benefit_id, category_id) VALUES (@benefit_id, @디지털);
 INSERT INTO benefit_partner (benefit_id, partner_id) VALUES
                                                          (@benefit_id, @partner_netflix), (@benefit_id, @partner_youtube);
-INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
-VALUES (@grade_id3, @benefit_id, 'RATE', 20, 4000);
+# INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
+# VALUES (@grade_id3, @benefit_id, 'RATE', 20, 4000);
 
 -- ===== 배달앱 =====
 INSERT INTO partner (category_id, partner_name) VALUES (@배달, '배달의 민족'); SET @partner_baemin = LAST_INSERT_ID();
@@ -104,8 +104,8 @@ VALUES (
 INSERT INTO benefit_category (benefit_id, category_id) VALUES (@benefit_id, @배달);
 INSERT INTO benefit_partner (benefit_id, partner_id) VALUES
                                                          (@benefit_id, @partner_baemin), (@benefit_id, @partner_yogiyo);
-INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
-VALUES (@grade_id1, @benefit_id, 'RATE', 10, 3000);
+# INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
+# VALUES (@grade_id1, @benefit_id, 'RATE', 10, 3000);
 
 -- ===== 통신요금 =====
 INSERT INTO partner (category_id, partner_name) VALUES (@통신, 'SKT'); SET @partner_skt = LAST_INSERT_ID();
@@ -126,8 +126,8 @@ INSERT INTO benefit_partner (benefit_id, partner_id) VALUES
                                                          (@benefit_id, @partner_kt),
                                                          (@benefit_id, @partner_lgu),
                                                          (@benefit_id, @partner_liiv);
-INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount)
-VALUES (@grade_id3, @benefit_id, 'FIXED_AMOUNT', 5000);
+# INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount)
+# VALUES (@grade_id3, @benefit_id, 'FIXED_AMOUNT', 5000);
 
 -- ===== 영화 =====
 INSERT INTO partner (category_id, partner_name) VALUES (@영화, 'CGV'); SET @partner_cgv = LAST_INSERT_ID();
@@ -141,8 +141,8 @@ VALUES (
 
 INSERT INTO benefit_category (benefit_id, category_id) VALUES (@benefit_id, @영화);
 INSERT INTO benefit_partner (benefit_id, partner_id) VALUES (@benefit_id, @partner_cgv);
-INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_count, min_payment)
-VALUES (@grade_id1, @benefit_id, 'FIXED_AMOUNT', 3000, 1, 10000);
+# INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_count, min_payment)
+# VALUES (@grade_id1, @benefit_id, 'FIXED_AMOUNT', 3000, 1, 10000);
 
 -- ===== 테마파크 =====
 INSERT INTO partner (category_id, partner_name) VALUES (@테마, '에버랜드'); SET @partner_ever = LAST_INSERT_ID();
@@ -158,8 +158,8 @@ VALUES (
 INSERT INTO benefit_category (benefit_id, category_id) VALUES (@benefit_id, @테마);
 INSERT INTO benefit_partner (benefit_id, partner_id) VALUES
                                                          (@benefit_id, @partner_ever), (@benefit_id, @partner_lotte);
-INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_count)
-VALUES (@grade_id3, @benefit_id, 'RATE', 50, 1);
+# INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_count)
+# VALUES (@grade_id3, @benefit_id, 'RATE', 50, 1);
 
 -- ===== KB Pay 오프라인 =====
 INSERT INTO partner (category_id, partner_name) VALUES (@오프, 'KB Pay 오프라인'); SET @partner_kbpay_off = LAST_INSERT_ID();
@@ -173,8 +173,8 @@ VALUES (
 
 INSERT INTO benefit_category (benefit_id, category_id) VALUES (@benefit_id, @오프);
 INSERT INTO benefit_partner (benefit_id, partner_id) VALUES (@benefit_id, @partner_kbpay_off);
-INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
-VALUES (@grade_id1, @benefit_id, 'RATE', 5, 2000);
+# INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
+# VALUES (@grade_id1, @benefit_id, 'RATE', 5, 2000);
 
 -- ===== KB Pay 온라인 =====
 INSERT INTO partner (category_id, partner_name) VALUES (@온라, 'KB Pay 온라인'); SET @partner_kbpay_on = LAST_INSERT_ID();
@@ -188,8 +188,8 @@ VALUES (
 
 INSERT INTO benefit_category (benefit_id, category_id) VALUES (@benefit_id, @온라);
 INSERT INTO benefit_partner (benefit_id, partner_id) VALUES (@benefit_id, @partner_kbpay_on);
-INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
-VALUES (@grade_id1, @benefit_id, 'RATE', 5, 2000);
+# INSERT INTO benefit_grade_discount (grade_id, benefit_id, type, amount, limit_amount)
+# VALUES (@grade_id1, @benefit_id, 'RATE', 5, 2000);
 
 
 COMMIT;

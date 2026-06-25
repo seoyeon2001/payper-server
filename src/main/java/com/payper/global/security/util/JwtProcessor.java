@@ -1,7 +1,5 @@
 package com.payper.global.security.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -77,12 +75,16 @@ public class JwtProcessor {
 
     //유효하지 않을 경우 예외 발생함.
     public boolean validateJwtToken(String token) {
-        Jws<Claims> claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token);
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
 
-        return true;
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public int getRefreshTokenMaxAgeInSeconds() {

@@ -4,11 +4,18 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.payper.domain.user.UserMapper">
 
-    <select id="findByOauthProviderAndOauthId" resultType="User">
-        SELECT user_id, oauth_provider, oauth_id, nickname, connected_id, role, is_deleted, created_at, deleted_at, last_modified_at
+    <select id="findByUsername" resultType="User">
+        SELECT user_id, username, nickname, connected_id, role, is_deleted, created_at, deleted_at, last_modified_at
         FROM user
-        WHERE oauth_provider = #{ oauthProvider }
-          AND oauth_id = #{ oauthId }
+        WHERE username = #{username}
+          AND is_deleted = false
+    </select>
+
+
+    <select id="countByUsername" resultType="int">
+        SELECT COUNT(*)
+        FROM user
+        WHERE username = #{username}
           AND is_deleted = false
     </select>
 
@@ -29,8 +36,8 @@
     </update>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="userId">
-        INSERT INTO user (oauth_provider, oauth_id, nickname, role, last_modified_at)
-        VALUES (#{oauthProvider}, #{oauthId}, #{nickname}, #{role}, NOW())
+        INSERT INTO user (username, password, nickname, role, last_modified_at)
+        VALUES (#{username}, #{password}, #{nickname}, #{role}, NOW())
     </insert>
 
     <select id="getConnectedId" resultType="String">

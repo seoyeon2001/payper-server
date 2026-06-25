@@ -8,16 +8,16 @@
 
 ###  Requirements
 
-| 항목         | 버전           |
-|--------------|----------------|
-| Java         | 17             |
-| Jakarta EE   | 8              |
-| Spring       | 5.3            |
-| Spring Security | 5.8         |
-| MySQL        | 8              |
-| Tomcat       | 9.0.105        |
-| Build Tool   | Gradle         |
-| ORM          | MyBatis        |
+| 항목         | 버전      |
+|--------------|---------|
+| Java         | 17      |
+| Jakarta EE   | 8       |
+| Spring       | 5.3     |
+| Spring Security | 5.8     |
+| MySQL        | 8       |
+| Tomcat       | 11.0.9  |
+| Build Tool   | Gradle  |
+| ORM          | MyBatis |
 
 ---
 

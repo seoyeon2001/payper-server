@@ -50,15 +50,15 @@ BEGIN
     DECLARE i INT DEFAULT 1;
     WHILE i <= p_count
         DO
-            INSERT INTO `user` (oauth_provider,
-                                oauth_id,
+            INSERT INTO `user` (username,
+                                password,
                                 nickname,
                                 connected_id,
                                 role,
                                 is_deleted,
                                 created_at)
-            VALUES (CONCAT('oauth_provider_', i),
-                    CONCAT('oauth_id_', i),
+            VALUES (CONCAT('user', i),
+                    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
                     LEFT(CONCAT('nick', i), 10),
                     NULL,
                     'ROLE_USER',

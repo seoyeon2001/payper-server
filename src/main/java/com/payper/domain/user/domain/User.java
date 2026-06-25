@@ -1,6 +1,5 @@
 package com.payper.domain.user.domain;
 
-import com.payper.global.security.util.OAuthProvider;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +14,8 @@ import java.util.List;
 @Builder
 public class User {
     private Integer userId; // 사용자 id
-    private String oauthProvider; // 소셜 로그인 제공사
-    private String oauthId; // 소셜 id
+    private String username;
+    private String password;
     private String nickname; // 사용자 이름
     private String connectedId; // codef connected id
 
@@ -30,10 +29,10 @@ public class User {
     private Date deletedAt;
     private Date lastModifiedAt;
 
-    public static User createKakaoUser(String kakaoId, String nickname) {
+    public static User createLocalUser(String username, String password, String nickname) {
         return User.builder()
-                .oauthProvider(OAuthProvider.KAKAO.name())
-                .oauthId(kakaoId)
+                .username(username)
+                .password(password)
                 .nickname(nickname)
                 .role(UserRole.ROLE_USER)
                 .build();

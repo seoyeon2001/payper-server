@@ -20,8 +20,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- 사용자
 CREATE TABLE `user` (
                         `user_id` INT NOT NULL AUTO_INCREMENT,
-                        `oauth_provider` VARCHAR(255) NOT NULL,
-                        `oauth_id` VARCHAR(255) NOT NULL,
+                        `username` VARCHAR(50) NOT NULL UNIQUE,
+                        `password` VARCHAR(255) NOT NULL,
                         `nickname` VARCHAR(10) NOT NULL,
                         `connected_id` VARCHAR(255),
                         `role` ENUM('ROLE_USER', 'ROLE_ADMIN') NOT NULL,

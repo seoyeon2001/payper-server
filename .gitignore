@@ -29,7 +29,6 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 application-db.properties
-application-kakao.properties
 application-codef.properties
 application-secret.properties
 
